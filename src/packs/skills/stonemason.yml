@@ -3,7 +3,7 @@ name: Stonemason
 type: skill
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.SkillDescription
   rank: 0
   pass: 0
   fail: 0
@@ -15,3 +15,8 @@ ownership:
 flags:
   mouseguard:
     originalName: Stonemason
+    description:
+      description: MOUSEGUARD.Skill.stonemason.Description
+      supplies: MOUSEGUARD.Skill.stonemason.Supplies
+      factors: MOUSEGUARD.Skill.stonemason.Factors
+      help: MOUSEGUARD.Skill.stonemason.Help

@@ -3,7 +3,7 @@ name: Deep Ear
 type: trait
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.TraitDescription
   level: 1
   usedfor: 0
   usedagainst: 0
@@ -15,3 +15,9 @@ ownership:
 flags:
   mouseguard:
     originalName: Deep Ear
+    description:
+      description: MOUSEGUARD.Trait.deep-ear.Description
+      level1: MOUSEGUARD.Trait.deep-ear.Level1
+      level2: MOUSEGUARD.Trait.deep-ear.Level2
+      level3: MOUSEGUARD.Trait.deep-ear.Level3
+      against: MOUSEGUARD.Trait.deep-ear.Against

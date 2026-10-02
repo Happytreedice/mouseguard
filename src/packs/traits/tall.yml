@@ -3,7 +3,7 @@ name: Tall
 type: trait
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.TraitDescription
   level: 1
   usedfor: 0
   usedagainst: 0
@@ -15,3 +15,9 @@ ownership:
 flags:
   mouseguard:
     originalName: Tall
+    description:
+      description: MOUSEGUARD.Trait.tall.Description
+      level1: MOUSEGUARD.Trait.tall.Level1
+      level2: MOUSEGUARD.Trait.tall.Level2
+      level3: MOUSEGUARD.Trait.tall.Level3
+      against: MOUSEGUARD.Trait.tall.Against

@@ -3,7 +3,7 @@ name: Curious
 type: trait
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.TraitDescription
   level: 1
   usedfor: 0
   usedagainst: 0
@@ -15,3 +15,9 @@ ownership:
 flags:
   mouseguard:
     originalName: Curious
+    description:
+      description: MOUSEGUARD.Trait.curious.Description
+      level1: MOUSEGUARD.Trait.curious.Level1
+      level2: MOUSEGUARD.Trait.curious.Level2
+      level3: MOUSEGUARD.Trait.curious.Level3
+      against: MOUSEGUARD.Trait.curious.Against

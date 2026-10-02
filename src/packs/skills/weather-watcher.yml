@@ -3,7 +3,7 @@ name: Weather Watcher
 type: skill
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.SkillDescription
   rank: 0
   pass: 0
   fail: 0
@@ -15,3 +15,8 @@ ownership:
 flags:
   mouseguard:
     originalName: Weather Watcher
+    description:
+      description: MOUSEGUARD.Skill.weather-watcher.Description
+      supplies: MOUSEGUARD.Skill.weather-watcher.Supplies
+      factors: MOUSEGUARD.Skill.weather-watcher.Factors
+      help: MOUSEGUARD.Skill.weather-watcher.Help

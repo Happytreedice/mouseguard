@@ -3,7 +3,7 @@ name: Miller
 type: skill
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.SkillDescription
   rank: 0
   pass: 0
   fail: 0
@@ -15,3 +15,8 @@ ownership:
 flags:
   mouseguard:
     originalName: Miller
+    description:
+      description: MOUSEGUARD.Skill.miller.Description
+      supplies: MOUSEGUARD.Skill.miller.Supplies
+      factors: MOUSEGUARD.Skill.miller.Factors
+      help: MOUSEGUARD.Skill.miller.Help

@@ -3,7 +3,7 @@ name: Fearless
 type: trait
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.TraitDescription
   level: 1
   usedfor: 0
   usedagainst: 0
@@ -15,3 +15,9 @@ ownership:
 flags:
   mouseguard:
     originalName: Fearless
+    description:
+      description: MOUSEGUARD.Trait.fearless.Description
+      level1: MOUSEGUARD.Trait.fearless.Level1
+      level2: MOUSEGUARD.Trait.fearless.Level2
+      level3: MOUSEGUARD.Trait.fearless.Level3
+      against: MOUSEGUARD.Trait.fearless.Against

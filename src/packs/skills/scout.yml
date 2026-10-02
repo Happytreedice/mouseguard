@@ -3,7 +3,7 @@ name: Scout
 type: skill
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.SkillDescription
   rank: 0
   pass: 0
   fail: 0
@@ -15,3 +15,8 @@ ownership:
 flags:
   mouseguard:
     originalName: Scout
+    description:
+      description: MOUSEGUARD.Skill.scout.Description
+      supplies: MOUSEGUARD.Skill.scout.Supplies
+      factors: MOUSEGUARD.Skill.scout.Factors
+      help: MOUSEGUARD.Skill.scout.Help

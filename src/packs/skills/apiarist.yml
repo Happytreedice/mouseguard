@@ -3,7 +3,7 @@ name: Apiarist
 type: skill
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.SkillDescription
   rank: 0
   pass: 0
   fail: 0
@@ -15,3 +15,8 @@ ownership:
 flags:
   mouseguard:
     originalName: Apiarist
+    description:
+      description: MOUSEGUARD.Skill.Apiarist.Description
+      supplies: MOUSEGUARD.Skill.Apiarist.Supplies
+      factors: MOUSEGUARD.Skill.Apiarist.Factors
+      help: MOUSEGUARD.Skill.Apiarist.Help

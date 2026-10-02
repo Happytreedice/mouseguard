@@ -3,7 +3,7 @@ name: Armorer
 type: skill
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.SkillDescription
   rank: 0
   pass: 0
   fail: 0
@@ -15,3 +15,8 @@ ownership:
 flags:
   mouseguard:
     originalName: Armorer
+    description:
+      description: MOUSEGUARD.Skill.armorer.Description
+      supplies: MOUSEGUARD.Skill.armorer.Supplies
+      factors: MOUSEGUARD.Skill.armorer.Factors
+      help: MOUSEGUARD.Skill.armorer.Help

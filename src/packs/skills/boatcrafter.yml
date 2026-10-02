@@ -3,7 +3,7 @@ name: Boatcrafter
 type: skill
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.SkillDescription
   rank: 0
   pass: 0
   fail: 0
@@ -15,3 +15,8 @@ ownership:
 flags:
   mouseguard:
     originalName: Boatcrafter
+    description:
+      description: MOUSEGUARD.Skill.boatcrafter.Description
+      supplies: MOUSEGUARD.Skill.boatcrafter.Supplies
+      factors: MOUSEGUARD.Skill.boatcrafter.Factors
+      help: MOUSEGUARD.Skill.boatcrafter.Help

@@ -3,7 +3,7 @@ name: Bigpaw
 type: trait
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.TraitDescription
   level: 1
   usedfor: 0
   usedagainst: 0
@@ -15,3 +15,9 @@ ownership:
 flags:
   mouseguard:
     originalName: Bigpaw
+    description:
+      description: MOUSEGUARD.Trait.bigpaw.Description
+      level1: MOUSEGUARD.Trait.bigpaw.Level1
+      level2: MOUSEGUARD.Trait.bigpaw.Level2
+      level3: MOUSEGUARD.Trait.bigpaw.Level3
+      against: MOUSEGUARD.Trait.bigpaw.Against

@@ -3,7 +3,7 @@ name: Insectrist
 type: skill
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.SkillDescription
   rank: 0
   pass: 0
   fail: 0
@@ -15,3 +15,8 @@ ownership:
 flags:
   mouseguard:
     originalName: Insectrist
+    description:
+      description: MOUSEGUARD.Skill.insectrist.Description
+      supplies: MOUSEGUARD.Skill.insectrist.Supplies
+      factors: MOUSEGUARD.Skill.insectrist.Factors
+      help: MOUSEGUARD.Skill.insectrist.Help

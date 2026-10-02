@@ -3,7 +3,7 @@ name: Baker
 type: skill
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.SkillDescription
   rank: 0
   pass: 0
   fail: 0
@@ -15,3 +15,8 @@ ownership:
 flags:
   mouseguard:
     originalName: Baker
+    description:
+      description: MOUSEGUARD.Skill.baker.Description
+      supplies: MOUSEGUARD.Skill.baker.Supplies
+      factors: MOUSEGUARD.Skill.baker.Factors
+      help: MOUSEGUARD.Skill.baker.Help

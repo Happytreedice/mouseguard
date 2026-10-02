@@ -3,7 +3,7 @@ name: Survivalist
 type: skill
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.SkillDescription
   rank: 0
   pass: 0
   fail: 0
@@ -15,3 +15,8 @@ ownership:
 flags:
   mouseguard:
     originalName: Survivalist
+    description:
+      description: MOUSEGUARD.Skill.survivalist.Description
+      supplies: MOUSEGUARD.Skill.survivalist.Supplies
+      factors: MOUSEGUARD.Skill.survivalist.Factors
+      help: MOUSEGUARD.Skill.survivalist.Help

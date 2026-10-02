@@ -3,7 +3,7 @@ name: Oldfur
 type: trait
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.TraitDescription
   level: 1
   usedfor: 0
   usedagainst: 0
@@ -15,3 +15,9 @@ ownership:
 flags:
   mouseguard:
     originalName: Oldfur
+    description:
+      description: MOUSEGUARD.Trait.oldfur.Description
+      level1: MOUSEGUARD.Trait.oldfur.Level1
+      level2: MOUSEGUARD.Trait.oldfur.Level2
+      level3: MOUSEGUARD.Trait.oldfur.Level3
+      against: MOUSEGUARD.Trait.oldfur.Against

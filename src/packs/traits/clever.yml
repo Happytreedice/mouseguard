@@ -3,7 +3,7 @@ name: Clever
 type: trait
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.TraitDescription
   level: 1
   usedfor: 0
   usedagainst: 0
@@ -15,3 +15,9 @@ ownership:
 flags:
   mouseguard:
     originalName: Clever
+    description:
+      description: MOUSEGUARD.Trait.clever.Description
+      level1: MOUSEGUARD.Trait.clever.Level1
+      level2: MOUSEGUARD.Trait.clever.Level2
+      level3: MOUSEGUARD.Trait.clever.Level3
+      against: MOUSEGUARD.Trait.clever.Against

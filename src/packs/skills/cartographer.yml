@@ -3,7 +3,7 @@ name: Cartographer
 type: skill
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.SkillDescription
   rank: 0
   pass: 0
   fail: 0
@@ -15,3 +15,8 @@ ownership:
 flags:
   mouseguard:
     originalName: Cartographer
+    description:
+      description: MOUSEGUARD.Skill.cartographer.Description
+      supplies: MOUSEGUARD.Skill.cartographer.Supplies
+      factors: MOUSEGUARD.Skill.cartographer.Factors
+      help: MOUSEGUARD.Skill.cartographer.Help

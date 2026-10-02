@@ -3,7 +3,7 @@ name: Quiet
 type: trait
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.TraitDescription
   level: 1
   usedfor: 0
   usedagainst: 0
@@ -15,3 +15,9 @@ ownership:
 flags:
   mouseguard:
     originalName: Quiet
+    description:
+      description: MOUSEGUARD.Trait.quiet.Description
+      level1: MOUSEGUARD.Trait.quiet.Level1
+      level2: MOUSEGUARD.Trait.quiet.Level2
+      level3: MOUSEGUARD.Trait.quiet.Level3
+      against: MOUSEGUARD.Trait.quiet.Against

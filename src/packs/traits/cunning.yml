@@ -3,7 +3,7 @@ name: Cunning
 type: trait
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.TraitDescription
   level: 1
   usedfor: 0
   usedagainst: 0
@@ -15,3 +15,9 @@ ownership:
 flags:
   mouseguard:
     originalName: Cunning
+    description:
+      description: MOUSEGUARD.Trait.cunning.Description
+      level1: MOUSEGUARD.Trait.cunning.Level1
+      level2: MOUSEGUARD.Trait.cunning.Level2
+      level3: MOUSEGUARD.Trait.cunning.Level3
+      against: MOUSEGUARD.Trait.cunning.Against

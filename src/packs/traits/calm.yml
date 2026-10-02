@@ -3,7 +3,7 @@ name: Calm
 type: trait
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.TraitDescription
   level: 1
   usedfor: 0
   usedagainst: 0
@@ -15,3 +15,9 @@ ownership:
 flags:
   mouseguard:
     originalName: Calm
+    description:
+      description: MOUSEGUARD.Trait.calm.Description
+      level1: MOUSEGUARD.Trait.calm.Level1
+      level2: MOUSEGUARD.Trait.calm.Level2
+      level3: MOUSEGUARD.Trait.calm.Level3
+      against: MOUSEGUARD.Trait.calm.Against

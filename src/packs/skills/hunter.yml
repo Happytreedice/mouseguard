@@ -3,7 +3,7 @@ name: Hunter
 type: skill
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.SkillDescription
   rank: 0
   pass: 0
   fail: 0
@@ -15,3 +15,8 @@ ownership:
 flags:
   mouseguard:
     originalName: Hunter
+    description:
+      description: MOUSEGUARD.Skill.hunter.Description
+      supplies: MOUSEGUARD.Skill.hunter.Supplies
+      factors: MOUSEGUARD.Skill.hunter.Factors
+      help: MOUSEGUARD.Skill.hunter.Help

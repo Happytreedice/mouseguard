@@ -3,7 +3,7 @@ name: Loremouse
 type: skill
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.SkillDescription
   rank: 0
   pass: 0
   fail: 0
@@ -15,3 +15,8 @@ ownership:
 flags:
   mouseguard:
     originalName: Loremouse
+    description:
+      description: MOUSEGUARD.Skill.loremouse.Description
+      supplies: MOUSEGUARD.Skill.loremouse.Supplies
+      factors: MOUSEGUARD.Skill.loremouse.Factors
+      help: MOUSEGUARD.Skill.loremouse.Help

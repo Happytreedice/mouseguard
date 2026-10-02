@@ -3,7 +3,7 @@ name: Guard's Honor
 type: trait
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.TraitDescription
   level: 1
   usedfor: 0
   usedagainst: 0
@@ -15,3 +15,9 @@ ownership:
 flags:
   mouseguard:
     originalName: Guard's Honor
+    description:
+      description: MOUSEGUARD.Trait.guard-s-honor.Description
+      level1: MOUSEGUARD.Trait.guard-s-honor.Level1
+      level2: MOUSEGUARD.Trait.guard-s-honor.Level2
+      level3: MOUSEGUARD.Trait.guard-s-honor.Level3
+      against: MOUSEGUARD.Trait.guard-s-honor.Against

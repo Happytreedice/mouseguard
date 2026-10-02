@@ -3,7 +3,7 @@ name: Skinny
 type: trait
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.TraitDescription
   level: 1
   usedfor: 0
   usedagainst: 0
@@ -15,3 +15,9 @@ ownership:
 flags:
   mouseguard:
     originalName: Skinny
+    description:
+      description: MOUSEGUARD.Trait.skinny.Description
+      level1: MOUSEGUARD.Trait.skinny.Level1
+      level2: MOUSEGUARD.Trait.skinny.Level2
+      level3: MOUSEGUARD.Trait.skinny.Level3
+      against: MOUSEGUARD.Trait.skinny.Against

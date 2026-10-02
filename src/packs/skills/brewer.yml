@@ -3,7 +3,7 @@ name: Brewer
 type: skill
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.SkillDescription
   rank: 0
   pass: 0
   fail: 0
@@ -15,3 +15,8 @@ ownership:
 flags:
   mouseguard:
     originalName: Brewer
+    description:
+      description: MOUSEGUARD.Skill.brewer.Description
+      supplies: MOUSEGUARD.Skill.brewer.Supplies
+      factors: MOUSEGUARD.Skill.brewer.Factors
+      help: MOUSEGUARD.Skill.brewer.Help

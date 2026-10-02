@@ -3,7 +3,7 @@ name: Manipulator
 type: skill
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.SkillDescription
   rank: 0
   pass: 0
   fail: 0
@@ -15,3 +15,8 @@ ownership:
 flags:
   mouseguard:
     originalName: Manipulator
+    description:
+      description: MOUSEGUARD.Skill.manipulator.Description
+      supplies: MOUSEGUARD.Skill.manipulator.Supplies
+      factors: MOUSEGUARD.Skill.manipulator.Factors
+      help: MOUSEGUARD.Skill.manipulator.Help

@@ -3,7 +3,7 @@ name: Hard Worker
 type: trait
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.TraitDescription
   level: 1
   usedfor: 0
   usedagainst: 0
@@ -15,3 +15,9 @@ ownership:
 flags:
   mouseguard:
     originalName: Hard Worker
+    description:
+      description: MOUSEGUARD.Trait.hard-worker.Description
+      level1: MOUSEGUARD.Trait.hard-worker.Level1
+      level2: MOUSEGUARD.Trait.hard-worker.Level2
+      level3: MOUSEGUARD.Trait.hard-worker.Level3
+      against: MOUSEGUARD.Trait.hard-worker.Against

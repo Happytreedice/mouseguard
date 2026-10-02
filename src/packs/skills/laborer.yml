@@ -3,7 +3,7 @@ name: Laborer
 type: skill
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.SkillDescription
   rank: 0
   pass: 0
   fail: 0
@@ -15,3 +15,8 @@ ownership:
 flags:
   mouseguard:
     originalName: Laborer
+    description:
+      description: MOUSEGUARD.Skill.laborer.Description
+      supplies: MOUSEGUARD.Skill.laborer.Supplies
+      factors: MOUSEGUARD.Skill.laborer.Factors
+      help: MOUSEGUARD.Skill.laborer.Help

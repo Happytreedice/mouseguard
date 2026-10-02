@@ -3,7 +3,7 @@ name: Harvester
 type: skill
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.SkillDescription
   rank: 0
   pass: 0
   fail: 0
@@ -15,3 +15,8 @@ ownership:
 flags:
   mouseguard:
     originalName: Harvester
+    description:
+      description: MOUSEGUARD.Skill.harvester.Description
+      supplies: MOUSEGUARD.Skill.harvester.Supplies
+      factors: MOUSEGUARD.Skill.harvester.Factors
+      help: MOUSEGUARD.Skill.harvester.Help

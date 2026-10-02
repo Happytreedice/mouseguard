@@ -3,7 +3,7 @@ name: Haggler
 type: skill
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.SkillDescription
   rank: 0
   pass: 0
   fail: 0
@@ -15,3 +15,8 @@ ownership:
 flags:
   mouseguard:
     originalName: Haggler
+    description:
+      description: MOUSEGUARD.Skill.haggler.Description
+      supplies: MOUSEGUARD.Skill.haggler.Supplies
+      factors: MOUSEGUARD.Skill.haggler.Factors
+      help: MOUSEGUARD.Skill.haggler.Help

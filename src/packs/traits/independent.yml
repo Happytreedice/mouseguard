@@ -3,7 +3,7 @@ name: Independent
 type: trait
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.TraitDescription
   level: 1
   usedfor: 0
   usedagainst: 0
@@ -15,3 +15,9 @@ ownership:
 flags:
   mouseguard:
     originalName: Independent
+    description:
+      description: MOUSEGUARD.Trait.independent.Description
+      level1: MOUSEGUARD.Trait.independent.Level1
+      level2: MOUSEGUARD.Trait.independent.Level2
+      level3: MOUSEGUARD.Trait.independent.Level3
+      against: MOUSEGUARD.Trait.independent.Against

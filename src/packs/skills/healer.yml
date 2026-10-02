@@ -3,7 +3,7 @@ name: Healer
 type: skill
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.SkillDescription
   rank: 0
   pass: 0
   fail: 0
@@ -15,3 +15,8 @@ ownership:
 flags:
   mouseguard:
     originalName: Healer
+    description:
+      description: MOUSEGUARD.Skill.healer.Description
+      supplies: MOUSEGUARD.Skill.healer.Supplies
+      factors: MOUSEGUARD.Skill.healer.Factors
+      help: MOUSEGUARD.Skill.healer.Help

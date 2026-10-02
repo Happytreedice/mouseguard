@@ -3,7 +3,7 @@ name: Weather Sense
 type: trait
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.TraitDescription
   level: 1
   usedfor: 0
   usedagainst: 0
@@ -15,3 +15,9 @@ ownership:
 flags:
   mouseguard:
     originalName: Weather Sense
+    description:
+      description: MOUSEGUARD.Trait.weather-sense.Description
+      level1: MOUSEGUARD.Trait.weather-sense.Level1
+      level2: MOUSEGUARD.Trait.weather-sense.Level2
+      level3: MOUSEGUARD.Trait.weather-sense.Level3
+      against: MOUSEGUARD.Trait.weather-sense.Against

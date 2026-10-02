@@ -2,6 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');
 const { ClassicLevel } = require('classic-level');
+const LOCALE_FILE = path.join(__dirname, '../lang/en.json');
+const locale = JSON.parse(fs.readFileSync(LOCALE_FILE, 'utf8'));
 
 const PACKS = [
     {
@@ -17,6 +19,39 @@ const PACKS = [
         type: 'trait'
     }
 ];
+
+function validateDocument(doc, file, pack) {
+    const missing = [];
+    if (typeof doc._id !== 'string' || !doc._id.trim()) missing.push('_id');
+    if (typeof doc.name !== 'string' || !doc.name.trim()) missing.push('name');
+    if (doc.type !== pack.type) missing.push(`type=${pack.type}`);
+    if (!doc.system || typeof doc.system.description !== 'string') missing.push('system.description');
+    if (pack.type === 'skill') {
+        for (const key of ['rank', 'pass', 'fail']) {
+            if (!Number.isFinite(doc.system[key])) missing.push(`system.${key}`);
+        }
+        for (const key of ['description', 'supplies', 'factors', 'help']) {
+            const value = doc.flags?.mouseguard?.description?.[key];
+            const localized = typeof value === 'string' && Object.prototype.hasOwnProperty.call(locale, value);
+            if (typeof value !== 'string' || (!value.trim() && !localized)) {
+                missing.push(`flags.mouseguard.description.${key}`);
+            }
+        }
+    }
+    if (pack.type === 'trait') {
+        for (const key of ['level', 'usedfor', 'usedagainst']) {
+            if (!Number.isFinite(doc.system[key])) missing.push(`system.${key}`);
+        }
+        for (const key of ['description', 'level1', 'level2', 'level3', 'against']) {
+            const value = doc.flags?.mouseguard?.description?.[key];
+            const localized = typeof value === 'string' && Object.prototype.hasOwnProperty.call(locale, value);
+            if (typeof value !== 'string' || (!value.trim() && !localized)) {
+                missing.push(`flags.mouseguard.description.${key}`);
+            }
+        }
+    }
+    if (missing.length) throw new Error(`${file}: missing or invalid ${missing.join(', ')}`);
+}
 
 async function compilePack(pack) {
     if (!fs.existsSync(pack.srcDir)) {
@@ -34,21 +69,24 @@ async function compilePack(pack) {
     const files = fs.readdirSync(pack.srcDir).filter(f => f.endsWith('.yml') || f.endsWith('.yaml'));
     console.log(`Compiling ${files.length} items for pack: ${pack.name}...`);
 
-    const batch = db.batch();
+    const items = [];
 
     for (const file of files) {
         const filePath = path.join(pack.srcDir, file);
         const raw = fs.readFileSync(filePath, 'utf8');
         const doc = yaml.load(raw);
 
-        if (!doc || !doc._id) {
-            console.warn(`Skipping invalid doc in ${file}: missing _id`);
-            continue;
-        }
+        if (!doc || typeof doc !== 'object') throw new Error(`${file}: expected a YAML mapping`);
+        validateDocument(doc, file, pack);
+        const descriptionParts = doc.flags.mouseguard.description;
+        const localizedDescription = {
+            template: pack.type === 'skill' ? 'MOUSEGUARD.SkillDescription' : 'MOUSEGUARD.TraitDescription',
+            parts: Object.fromEntries(Object.keys(descriptionParts).map((key) => [key, `MOUSEGUARD.${pack.type === 'skill' ? 'Skill' : 'Trait'}.${path.basename(file, path.extname(file)).split('-').map(part => part[0].toUpperCase() + part.slice(1)).join('')}.${key[0].toUpperCase()}${key.slice(1)}`]))
+        };
 
         // Format system data cleanly
         const system = {
-            description: doc.system?.description || ''
+            description: localizedDescription
         };
 
         if (pack.type === 'skill') {
@@ -80,9 +118,11 @@ async function compilePack(pack) {
             item.flags.mouseguard.details = doc.details;
         }
 
-        batch.put(`!items!${item._id}`, item);
+        items.push(item);
     }
 
+    const batch = db.batch();
+    for (const item of items) batch.put(`!items!${item._id}`, item);
     await batch.write();
     await db.close();
     console.log(`Successfully compiled pack: ${pack.name} (${files.length} items)`);
@@ -101,4 +141,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = { compilePack, buildAll };
+module.exports = { compilePack, buildAll, validateDocument };

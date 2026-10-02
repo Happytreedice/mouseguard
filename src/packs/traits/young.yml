@@ -3,7 +3,7 @@ name: Young
 type: trait
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.TraitDescription
   level: 1
   usedfor: 0
   usedagainst: 0
@@ -15,3 +15,9 @@ ownership:
 flags:
   mouseguard:
     originalName: Young
+    description:
+      description: MOUSEGUARD.Trait.young.Description
+      level1: MOUSEGUARD.Trait.young.Level1
+      level2: MOUSEGUARD.Trait.young.Level2
+      level3: MOUSEGUARD.Trait.young.Level3
+      against: MOUSEGUARD.Trait.young.Against

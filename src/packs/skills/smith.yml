@@ -3,7 +3,7 @@ name: Smith
 type: skill
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.SkillDescription
   rank: 0
   pass: 0
   fail: 0
@@ -15,3 +15,8 @@ ownership:
 flags:
   mouseguard:
     originalName: Smith
+    description:
+      description: MOUSEGUARD.Skill.smith.Description
+      supplies: MOUSEGUARD.Skill.smith.Supplies
+      factors: MOUSEGUARD.Skill.smith.Factors
+      help: MOUSEGUARD.Skill.smith.Help

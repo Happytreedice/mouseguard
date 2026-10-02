@@ -3,7 +3,7 @@ name: Persuader
 type: skill
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.SkillDescription
   rank: 0
   pass: 0
   fail: 0
@@ -15,3 +15,8 @@ ownership:
 flags:
   mouseguard:
     originalName: Persuader
+    description:
+      description: MOUSEGUARD.Skill.persuader.Description
+      supplies: MOUSEGUARD.Skill.persuader.Supplies
+      factors: MOUSEGUARD.Skill.persuader.Factors
+      help: MOUSEGUARD.Skill.persuader.Help

@@ -3,7 +3,7 @@ name: Open-Minded
 type: trait
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.TraitDescription
   level: 1
   usedfor: 0
   usedagainst: 0
@@ -15,3 +15,9 @@ ownership:
 flags:
   mouseguard:
     originalName: Open-Minded
+    description:
+      description: MOUSEGUARD.Trait.open-minded.Description
+      level1: MOUSEGUARD.Trait.open-minded.Level1
+      level2: MOUSEGUARD.Trait.open-minded.Level2
+      level3: MOUSEGUARD.Trait.open-minded.Level3
+      against: MOUSEGUARD.Trait.open-minded.Against

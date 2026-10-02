@@ -3,7 +3,7 @@ name: Extrovert
 type: trait
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.TraitDescription
   level: 1
   usedfor: 0
   usedagainst: 0
@@ -15,3 +15,9 @@ ownership:
 flags:
   mouseguard:
     originalName: Extrovert
+    description:
+      description: MOUSEGUARD.Trait.extrovert.Description
+      level1: MOUSEGUARD.Trait.extrovert.Level1
+      level2: MOUSEGUARD.Trait.extrovert.Level2
+      level3: MOUSEGUARD.Trait.extrovert.Level3
+      against: MOUSEGUARD.Trait.extrovert.Against

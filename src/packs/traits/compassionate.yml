@@ -3,7 +3,7 @@ name: Compassionate
 type: trait
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.TraitDescription
   level: 1
   usedfor: 0
   usedagainst: 0
@@ -15,3 +15,9 @@ ownership:
 flags:
   mouseguard:
     originalName: Compassionate
+    description:
+      description: MOUSEGUARD.Trait.compassionate.Description
+      level1: MOUSEGUARD.Trait.compassionate.Level1
+      level2: MOUSEGUARD.Trait.compassionate.Level2
+      level3: MOUSEGUARD.Trait.compassionate.Level3
+      against: MOUSEGUARD.Trait.compassionate.Against

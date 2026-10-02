@@ -3,7 +3,7 @@ name: Inquisitive
 type: trait
 img: icons/svg/item-bag.svg
 system:
-  description: ''
+  description: MOUSEGUARD.TraitDescription
   level: 1
   usedfor: 0
   usedagainst: 0
@@ -15,3 +15,9 @@ ownership:
 flags:
   mouseguard:
     originalName: Inquisitive
+    description:
+      description: MOUSEGUARD.Trait.inquisitive.Description
+      level1: MOUSEGUARD.Trait.inquisitive.Level1
+      level2: MOUSEGUARD.Trait.inquisitive.Level2
+      level3: MOUSEGUARD.Trait.inquisitive.Level3
+      against: MOUSEGUARD.Trait.inquisitive.Against
