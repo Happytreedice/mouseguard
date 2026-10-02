@@ -1,43 +1,35 @@
-//import { EntitySheetHelper } from "./helper.js";
-
 /**
- * Extend the base Actor document to support attributes and groups with a custom template creation dialog.
+ * Extend the base Actor document to support custom Mouse Guard character logic.
  * @extends {Actor}
  */
 export class MouseGuardActor extends Actor {
     /** @inheritdoc */
     prepareDerivedData() {
         super.prepareDerivedData();
-        //this.system.groups = this.system.groups || {};
-        //this.system.attributes = this.system.attributes || {};
     }
 
+    /** @inheritdoc */
     prepareData() {
         super.prepareData();
-        //const actorData = this.data;
-        //console.log(actorData);
-        this._prepareCharacterData(this);
+        this._prepareCharacterData();
     }
 
-    _prepareCharacterData(actorData) {
+    _prepareCharacterData() {
         this.system.itemTypes = this.itemTypes;
-        //mergeObject(actorData.data, this.itemTypes)
     }
 
+    /** @inheritdoc */
     async _preCreate(data, options, user) {
-        await super._preCreate(data, options, user);
-        //this.data.update({name: "Some other name"});
-        //Create Abilities using localization
+        const allowed = await super._preCreate(data, options, user);
+        if (allowed === false) return false;
 
         const abilities = [];
-
         let create_ability;
 
         if (
             (data.type === "character" || data.type === "mouse") &&
             this.itemTypes.ability.length <= 0
         ) {
-            //Setup Abilities
             create_ability = [
                 "MOUSEGUARD.MNature",
                 "MOUSEGUARD.Will",
@@ -49,7 +41,6 @@ export class MouseGuardActor extends Actor {
             data.type === "weasel" &&
             this.itemTypes.ability.length <= 0
         ) {
-            //Setup Abilities
             create_ability = [
                 "MOUSEGUARD.WNature",
                 "MOUSEGUARD.Will",
@@ -61,14 +52,13 @@ export class MouseGuardActor extends Actor {
             data.type === "animal" &&
             this.itemTypes.ability.length <= 0
         ) {
-            //Setup Abilities
             create_ability = [
                 game.i18n.localize("MOUSEGUARD.Nature") + " (" + data.name + ")"
             ];
         }
 
-        if (Object(create_ability).length > 0) {
-            for (let i of create_ability) {
+        if (create_ability && create_ability.length > 0) {
+            for (const i of create_ability) {
                 abilities.push({
                     name: i,
                     type: "ability"
@@ -79,5 +69,7 @@ export class MouseGuardActor extends Actor {
                 img: "systems/mouseguard/assets/icons/seated-mouse.svg"
             });
         }
+
+        return allowed;
     }
 }

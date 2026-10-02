@@ -8,11 +8,10 @@ const esbuildSvelte = require("esbuild-svelte");
 /*  Compile LESS
 /* ----------------------------------------- */
 
-const MOUSEGUARD_LESS = ["styles/*.less"];
 function compileLESS() {
-  return gulp.src("styles/simple.less")
+  return gulp.src("styles/mouseguard.less")
     .pipe(less())
-    .pipe(gulp.dest("./styles/"))
+    .pipe(gulp.dest("./styles/"));
 }
 const css = gulp.series(compileLESS);
 
@@ -32,17 +31,17 @@ async function buildCode() {
   });
 }
 
-const build = gulp.series(buildCode);
+const build = gulp.series(compileLESS, buildCode);
 exports.build = build;
 
-const STSTEM_JS = ["module/**/*.js", "module/*.js", "module/**/*.svelte"];
+const SYSTEM_FILES = ["module/**/*.js", "module/*.js", "module/**/*.svelte", "styles/*.less"];
 
 /* ----------------------------------------- */
 /*  Watch Updates
 /* ----------------------------------------- */
 
 function watchUpdates() {
-  gulp.watch(STSTEM_JS, build);
+  gulp.watch(SYSTEM_FILES, build);
 }
 
 /* ----------------------------------------- */
@@ -50,7 +49,7 @@ function watchUpdates() {
 /* ----------------------------------------- */
 
 exports.default = gulp.series(
+  build,
   watchUpdates,
-  buildCode,
 );
 exports.css = css;

@@ -1,46 +1,67 @@
-export class EffectsPanel extends Application {
-    constructor(...args) {
-        super(...args);
+/**
+ * Modern ApplicationV2 Effects Panel for displaying active status conditions on controlled token / user character.
+ * @extends {foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2)}
+ */
+const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
-        //this.ConflictCaptain = false;
-        //this._initialSidebarWidth = ui.sidebar.element.outerWidth();
-    }
+export class EffectsPanel extends HandlebarsApplicationMixin(ApplicationV2) {
+    /** @inheritDoc */
+    static DEFAULT_OPTIONS = {
+        id: "mouseguard-effects-panel",
+        classes: ["mouseguard", "effects-panel"],
+        tag: "aside",
+        window: {
+            frame: false,
+            positioned: false
+        }
+    };
+
+    /** @inheritDoc */
+    static PARTS = {
+        panel: {
+            root: true,
+            template: "systems/mouseguard/templates/effects/effects-panel.hbs"
+        }
+    };
 
     /**
-     * Debounce and slightly delayed request to re-render this panel. Necessary for situations where it is not possible
-     * to properly wait for promises to resolve before refreshing the UI.
+     * Debounce and slightly delayed request to re-render this panel.
      */
-    refresh = foundry.utils.debounce(this.render, 100);
-
-    static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
-            ...super.defaultOptions,
-            id: "mouseguard-effects-panel",
-            popOut: false,
-            classes: ["mouseguard"],
-            template: "systems/mouseguard/templates/effects/effects-panel.hbs"
-        });
-    }
+    refresh = foundry.utils.debounce(() => {
+        if (this.rendered) this.render(false);
+    }, 100);
 
     get token() {
-        return canvas.tokens.controlled.at(0)?.document ?? null;
+        return canvas.tokens?.controlled?.at(0)?.document ?? null;
     }
 
     get actor() {
         return this.token?.actor ?? game.user?.character ?? null;
     }
 
-    async getData() {
+    /** @inheritDoc */
+    async _prepareContext(options) {
         let currentStatus = [];
         const { actor } = this;
-        if (actor == null) return;
-        const { token } = this;
-        //const { effects } = actor.itemTypes.effect;
-        currentStatus = Array.from(actor.statuses);
+        if (actor) {
+            currentStatus = Array.from(actor.statuses ?? []);
+        }
         return { currentStatus };
     }
 
-    async refresh(force) {
-        return foundry.utils.debounce(this.render.bind(this, force), 100)();
+    /** @inheritDoc */
+    _onRender(context, options) {
+        super._onRender(context, options);
+
+        // Click to toggle status effect on actor
+        this.element.querySelectorAll(".effect-item").forEach((el) => {
+            el.addEventListener("click", async (event) => {
+                event.preventDefault();
+                const effectId = el.dataset.effectId;
+                if (this.actor && effectId) {
+                    await this.actor.toggleStatusEffect(effectId);
+                }
+            });
+        });
     }
 }

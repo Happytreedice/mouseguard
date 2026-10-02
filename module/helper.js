@@ -381,24 +381,22 @@ export class EntitySheetHelper {
     let groupContainer = groupHeader.closest(".group");
     let group = $(groupHeader).find('.group-key');
     // Create a dialog to confirm group deletion.
-    new Dialog({
-      title: game.i18n.localize("MOUSEGUARD.DeleteGroup"),
+    const confirmed = await foundry.applications.api.DialogV2.confirm({
+      window: { title: game.i18n.localize("MOUSEGUARD.DeleteGroup") },
       content: `${game.i18n.localize("MOUSEGUARD.DeleteGroupContent")} <strong>${group.val()}</strong>`,
-      buttons: {
-        confirm: {
-          icon: '<i class="fas fa-trash"></i>',
-          label: game.i18n.localize("Yes"),
-          callback: async () => {
-            groupContainer.parentElement.removeChild(groupContainer);
-            await app._onSubmit(event);
-          }
-        },
-        cancel: {
-          icon: '<i class="fas fa-times"></i>',
-          label: game.i18n.localize("No"),
-        }
+      yes: {
+        icon: '<i class="fas fa-trash"></i>',
+        label: game.i18n.localize("Yes")
+      },
+      no: {
+        icon: '<i class="fas fa-times"></i>',
+        label: game.i18n.localize("No")
       }
-    }).render(true);
+    });
+    if (confirmed) {
+      groupContainer.parentElement.removeChild(groupContainer);
+      await app._onSubmit(event);
+    }
   }
 
   /* -------------------------------------------- */

@@ -14,7 +14,7 @@
 <largecard>
     <div class="item-controls item-create">
         <a
-            on:click={sheet?._onItemCreate.bind(sheet)}
+            on:click={(e) => sheet?._onItemCreate(e)}
             class="item-control"
             title={game.i18n.localize("MOUSEGUARD.AddWise")}
             data-type="wise"
@@ -108,7 +108,7 @@
             </div>
             <div class="item-controls">
                 <a
-                    on:click={sheet?._onItemDelete(wise.id)}
+                    on:click={() => sheet?._onItemDelete(wise.id)}
                     class="item-control item-delete"
                     title="Delete Item"><i class="fas fa-trash" /></a
                 >

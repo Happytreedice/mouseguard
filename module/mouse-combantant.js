@@ -1,35 +1,14 @@
 /**
- * A specialized form used to pop out the editor.
+ * Custom Combatant implementation for Mouse Guard conflicts.
  * @extends {Combatant}
- *
- * OPTIONS:
- *
- *
  */
-
 export default class MouseCombatant extends Combatant {
-    constructor(...args) {
-        super(...args);
-        //this.ConflictCaptain = false;
-    }
-
-    prepareDerivedData() {
-        super.prepareDerivedData();
-    }
-
-    getData() {
-        // Get current value
-        const context = super.getData();
-        //context.data.ConflictCaptain = this.ConflictCaptain;
-        return context;
-    }
-
     get ConflictCaptain() {
-        return this.getFlag("mouseguard", "ConflictCaptain");
+        return this.getFlag("mouseguard", "ConflictCaptain") ?? false;
     }
 
     get team() {
-        return this.getFlag("mouseguard", "Team");
+        return this.getFlag("mouseguard", "Team") ?? "0";
     }
 
     async setConflictCaptain(value) {
@@ -37,52 +16,57 @@ export default class MouseCombatant extends Combatant {
     }
 
     async SetMove(move) {
-        this.setFlag("mouseguard", "Moves", move);
+        return this.setFlag("mouseguard", "Moves", move);
     }
 
     async setTeam(value) {
-        return this.setFlag("mouseguard", "Team", value);
+        return this.setFlag("mouseguard", "Team", String(value));
     }
 
+    /** @inheritDoc */
     async _preCreate(data, options, user) {
-        await super._preCreate(data, options, user);
-        //console.log(data);
+        const allowed = await super._preCreate(data, options, user);
+        if (allowed === false) return false;
+
         let init = 0;
-        let actor = game.actors.get(data.actorId);
-        if (actor.type == "character") init = 1;
+        const actor = this.actor ?? game.actors.get(data.actorId);
+        if (actor?.type === "character") init = 1;
+
         this.updateSource({
             initiative: init,
             flags: {
                 mouseguard: {
                     ConflictCaptain: false,
                     Moves: [],
-                    Team: 0
+                    Team: "0"
                 }
             }
         });
+        return allowed;
     }
 
     async doMove(id) {
-        let Moves = this.getFlag("mouseguard", "Moves");
-        //Get the Move being used.
-        let theMove = Moves.filter((item) => item.id == id);
+        const moves = this.getFlag("mouseguard", "Moves") || [];
+        const theMove = moves.find((item) => item.id == id);
+        if (!theMove) return;
 
-        //Send it to chat
-        let template = "systems/mouseguard/templates/chat/combat-action.hbs";
-        let data = { actor: [this.actor][0], move: theMove[0].move };
+        const template = "systems/mouseguard/templates/chat/combat-action.hbs";
+        const data = { actor: this.actor, move: theMove.move };
+        const content = await renderTemplate(template, data);
 
-        var content = await renderTemplate(template, data);
-
-        let chatData = {
-            user: game.user.id,
-            speaker: ChatMessage.getSpeaker({ actor: data.actor }),
-            flags: { "mouseguard.unflipped": true }
+        const chatData = {
+            author: game.user.id,
+            speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+            content: content,
+            flags: {
+                mouseguard: {
+                    unflipped: true
+                }
+            }
         };
-        chatData.content = content;
-        ChatMessage.create(chatData);
+        await ChatMessage.create(chatData);
 
-        //Remove move from array and save other moves
-        let otherMoves = Moves.filter((item) => item.id !== id);
-        this.SetMove(otherMoves);
+        const otherMoves = moves.filter((item) => item.id != id);
+        await this.SetMove(otherMoves);
     }
 }

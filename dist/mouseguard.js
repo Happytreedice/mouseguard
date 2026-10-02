@@ -7,108 +7,121 @@ var __publicField = (obj, key, value) => {
   __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
   return value;
 };
+var __accessCheck = (obj, member, msg) => {
+  if (!member.has(obj))
+    throw TypeError("Cannot " + msg);
+};
+var __privateAdd = (obj, member, value) => {
+  if (member.has(obj))
+    throw TypeError("Cannot add the same private member more than once");
+  member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
+};
+var __privateMethod = (obj, member, method) => {
+  __accessCheck(obj, member, "access private method");
+  return method;
+};
 
-// fakecss:D:/FoundryData/Data/systems/mouseguard/module/svelte/MouseGuardEditor.esbuild-svelte-fake-css
+// fakecss:/mnt/win-data/Users/Andrey/Documents/ANDREY_CAMPAGNE/modules/mouseguard/module/svelte/MouseGuardEditor.esbuild-svelte-fake-css
 var require_ = __commonJS({
-  "fakecss:D:/FoundryData/Data/systems/mouseguard/module/svelte/MouseGuardEditor.esbuild-svelte-fake-css"(exports, module) {
+  "fakecss:/mnt/win-data/Users/Andrey/Documents/ANDREY_CAMPAGNE/modules/mouseguard/module/svelte/MouseGuardEditor.esbuild-svelte-fake-css"(exports, module) {
     module.exports = {};
   }
 });
 
-// fakecss:D:/FoundryData/Data/systems/mouseguard/module/svelte/MouseGuardActorSheetMouseDetails.esbuild-svelte-fake-css
+// fakecss:/mnt/win-data/Users/Andrey/Documents/ANDREY_CAMPAGNE/modules/mouseguard/module/svelte/MouseGuardActorSheetMouseDetails.esbuild-svelte-fake-css
 var require_2 = __commonJS({
-  "fakecss:D:/FoundryData/Data/systems/mouseguard/module/svelte/MouseGuardActorSheetMouseDetails.esbuild-svelte-fake-css"(exports, module) {
+  "fakecss:/mnt/win-data/Users/Andrey/Documents/ANDREY_CAMPAGNE/modules/mouseguard/module/svelte/MouseGuardActorSheetMouseDetails.esbuild-svelte-fake-css"(exports, module) {
     module.exports = {};
   }
 });
 
-// fakecss:D:/FoundryData/Data/systems/mouseguard/module/svelte/MouseGuardActorSheetMouseRewards.esbuild-svelte-fake-css
+// fakecss:/mnt/win-data/Users/Andrey/Documents/ANDREY_CAMPAGNE/modules/mouseguard/module/svelte/MouseGuardActorSheetMouseRewards.esbuild-svelte-fake-css
 var require_3 = __commonJS({
-  "fakecss:D:/FoundryData/Data/systems/mouseguard/module/svelte/MouseGuardActorSheetMouseRewards.esbuild-svelte-fake-css"(exports, module) {
+  "fakecss:/mnt/win-data/Users/Andrey/Documents/ANDREY_CAMPAGNE/modules/mouseguard/module/svelte/MouseGuardActorSheetMouseRewards.esbuild-svelte-fake-css"(exports, module) {
     module.exports = {};
   }
 });
 
-// fakecss:D:/FoundryData/Data/systems/mouseguard/module/svelte/MouseGuardActorSheetMouseAbilities.esbuild-svelte-fake-css
+// fakecss:/mnt/win-data/Users/Andrey/Documents/ANDREY_CAMPAGNE/modules/mouseguard/module/svelte/MouseGuardActorSheetMouseAbilities.esbuild-svelte-fake-css
 var require_4 = __commonJS({
-  "fakecss:D:/FoundryData/Data/systems/mouseguard/module/svelte/MouseGuardActorSheetMouseAbilities.esbuild-svelte-fake-css"(exports, module) {
+  "fakecss:/mnt/win-data/Users/Andrey/Documents/ANDREY_CAMPAGNE/modules/mouseguard/module/svelte/MouseGuardActorSheetMouseAbilities.esbuild-svelte-fake-css"(exports, module) {
     module.exports = {};
   }
 });
 
-// fakecss:D:/FoundryData/Data/systems/mouseguard/module/svelte/MouseGuardActorSheetMouseSkills.esbuild-svelte-fake-css
+// fakecss:/mnt/win-data/Users/Andrey/Documents/ANDREY_CAMPAGNE/modules/mouseguard/module/svelte/MouseGuardActorSheetMouseSkills.esbuild-svelte-fake-css
 var require_5 = __commonJS({
-  "fakecss:D:/FoundryData/Data/systems/mouseguard/module/svelte/MouseGuardActorSheetMouseSkills.esbuild-svelte-fake-css"(exports, module) {
+  "fakecss:/mnt/win-data/Users/Andrey/Documents/ANDREY_CAMPAGNE/modules/mouseguard/module/svelte/MouseGuardActorSheetMouseSkills.esbuild-svelte-fake-css"(exports, module) {
     module.exports = {};
   }
 });
 
-// fakecss:D:/FoundryData/Data/systems/mouseguard/module/svelte/MouseGuardActorSheetMouseWises.esbuild-svelte-fake-css
+// fakecss:/mnt/win-data/Users/Andrey/Documents/ANDREY_CAMPAGNE/modules/mouseguard/module/svelte/MouseGuardActorSheetMouseWises.esbuild-svelte-fake-css
 var require_6 = __commonJS({
-  "fakecss:D:/FoundryData/Data/systems/mouseguard/module/svelte/MouseGuardActorSheetMouseWises.esbuild-svelte-fake-css"(exports, module) {
+  "fakecss:/mnt/win-data/Users/Andrey/Documents/ANDREY_CAMPAGNE/modules/mouseguard/module/svelte/MouseGuardActorSheetMouseWises.esbuild-svelte-fake-css"(exports, module) {
     module.exports = {};
   }
 });
 
-// fakecss:D:/FoundryData/Data/systems/mouseguard/module/svelte/MouseGuardActorSheetMouseTraits.esbuild-svelte-fake-css
+// fakecss:/mnt/win-data/Users/Andrey/Documents/ANDREY_CAMPAGNE/modules/mouseguard/module/svelte/MouseGuardActorSheetMouseTraits.esbuild-svelte-fake-css
 var require_7 = __commonJS({
-  "fakecss:D:/FoundryData/Data/systems/mouseguard/module/svelte/MouseGuardActorSheetMouseTraits.esbuild-svelte-fake-css"(exports, module) {
+  "fakecss:/mnt/win-data/Users/Andrey/Documents/ANDREY_CAMPAGNE/modules/mouseguard/module/svelte/MouseGuardActorSheetMouseTraits.esbuild-svelte-fake-css"(exports, module) {
     module.exports = {};
   }
 });
 
-// fakecss:D:/FoundryData/Data/systems/mouseguard/module/svelte/MouseGuardActorSheetMouseSkillAbilityTab.esbuild-svelte-fake-css
+// fakecss:/mnt/win-data/Users/Andrey/Documents/ANDREY_CAMPAGNE/modules/mouseguard/module/svelte/MouseGuardActorSheetMouseSkillAbilityTab.esbuild-svelte-fake-css
 var require_8 = __commonJS({
-  "fakecss:D:/FoundryData/Data/systems/mouseguard/module/svelte/MouseGuardActorSheetMouseSkillAbilityTab.esbuild-svelte-fake-css"(exports, module) {
+  "fakecss:/mnt/win-data/Users/Andrey/Documents/ANDREY_CAMPAGNE/modules/mouseguard/module/svelte/MouseGuardActorSheetMouseSkillAbilityTab.esbuild-svelte-fake-css"(exports, module) {
     module.exports = {};
   }
 });
 
-// fakecss:D:/FoundryData/Data/systems/mouseguard/module/svelte/MouseGuardActorSheetMouseDispo.esbuild-svelte-fake-css
+// fakecss:/mnt/win-data/Users/Andrey/Documents/ANDREY_CAMPAGNE/modules/mouseguard/module/svelte/MouseGuardActorSheetMouseDispo.esbuild-svelte-fake-css
 var require_9 = __commonJS({
-  "fakecss:D:/FoundryData/Data/systems/mouseguard/module/svelte/MouseGuardActorSheetMouseDispo.esbuild-svelte-fake-css"(exports, module) {
+  "fakecss:/mnt/win-data/Users/Andrey/Documents/ANDREY_CAMPAGNE/modules/mouseguard/module/svelte/MouseGuardActorSheetMouseDispo.esbuild-svelte-fake-css"(exports, module) {
     module.exports = {};
   }
 });
 
-// fakecss:D:/FoundryData/Data/systems/mouseguard/module/svelte/MouseGuardActorSheetMousePortrait.esbuild-svelte-fake-css
+// fakecss:/mnt/win-data/Users/Andrey/Documents/ANDREY_CAMPAGNE/modules/mouseguard/module/svelte/MouseGuardActorSheetMousePortrait.esbuild-svelte-fake-css
 var require_10 = __commonJS({
-  "fakecss:D:/FoundryData/Data/systems/mouseguard/module/svelte/MouseGuardActorSheetMousePortrait.esbuild-svelte-fake-css"(exports, module) {
+  "fakecss:/mnt/win-data/Users/Andrey/Documents/ANDREY_CAMPAGNE/modules/mouseguard/module/svelte/MouseGuardActorSheetMousePortrait.esbuild-svelte-fake-css"(exports, module) {
     module.exports = {};
   }
 });
 
-// fakecss:D:/FoundryData/Data/systems/mouseguard/module/svelte/MouseGuardActorSheetMouseName.esbuild-svelte-fake-css
+// fakecss:/mnt/win-data/Users/Andrey/Documents/ANDREY_CAMPAGNE/modules/mouseguard/module/svelte/MouseGuardActorSheetMouseName.esbuild-svelte-fake-css
 var require_11 = __commonJS({
-  "fakecss:D:/FoundryData/Data/systems/mouseguard/module/svelte/MouseGuardActorSheetMouseName.esbuild-svelte-fake-css"(exports, module) {
+  "fakecss:/mnt/win-data/Users/Andrey/Documents/ANDREY_CAMPAGNE/modules/mouseguard/module/svelte/MouseGuardActorSheetMouseName.esbuild-svelte-fake-css"(exports, module) {
     module.exports = {};
   }
 });
 
-// fakecss:D:/FoundryData/Data/systems/mouseguard/module/svelte/MouseGuardActorSheetBase.esbuild-svelte-fake-css
+// fakecss:/mnt/win-data/Users/Andrey/Documents/ANDREY_CAMPAGNE/modules/mouseguard/module/svelte/MouseGuardActorSheetBase.esbuild-svelte-fake-css
 var require_12 = __commonJS({
-  "fakecss:D:/FoundryData/Data/systems/mouseguard/module/svelte/MouseGuardActorSheetBase.esbuild-svelte-fake-css"(exports, module) {
+  "fakecss:/mnt/win-data/Users/Andrey/Documents/ANDREY_CAMPAGNE/modules/mouseguard/module/svelte/MouseGuardActorSheetBase.esbuild-svelte-fake-css"(exports, module) {
     module.exports = {};
   }
 });
 
-// fakecss:D:/FoundryData/Data/systems/mouseguard/module/svelte/MouseGuardActorSheetHeader.esbuild-svelte-fake-css
+// fakecss:/mnt/win-data/Users/Andrey/Documents/ANDREY_CAMPAGNE/modules/mouseguard/module/svelte/MouseGuardActorSheetHeader.esbuild-svelte-fake-css
 var require_13 = __commonJS({
-  "fakecss:D:/FoundryData/Data/systems/mouseguard/module/svelte/MouseGuardActorSheetHeader.esbuild-svelte-fake-css"(exports, module) {
+  "fakecss:/mnt/win-data/Users/Andrey/Documents/ANDREY_CAMPAGNE/modules/mouseguard/module/svelte/MouseGuardActorSheetHeader.esbuild-svelte-fake-css"(exports, module) {
     module.exports = {};
   }
 });
 
-// fakecss:D:/FoundryData/Data/systems/mouseguard/module/svelte/MouseGuardNPCActorSheetBody.esbuild-svelte-fake-css
+// fakecss:/mnt/win-data/Users/Andrey/Documents/ANDREY_CAMPAGNE/modules/mouseguard/module/svelte/MouseGuardNPCActorSheetBody.esbuild-svelte-fake-css
 var require_14 = __commonJS({
-  "fakecss:D:/FoundryData/Data/systems/mouseguard/module/svelte/MouseGuardNPCActorSheetBody.esbuild-svelte-fake-css"(exports, module) {
+  "fakecss:/mnt/win-data/Users/Andrey/Documents/ANDREY_CAMPAGNE/modules/mouseguard/module/svelte/MouseGuardNPCActorSheetBody.esbuild-svelte-fake-css"(exports, module) {
     module.exports = {};
   }
 });
 
-// fakecss:D:/FoundryData/Data/systems/mouseguard/module/svelte/MouseGuardNPCActorSheetBase.esbuild-svelte-fake-css
+// fakecss:/mnt/win-data/Users/Andrey/Documents/ANDREY_CAMPAGNE/modules/mouseguard/module/svelte/MouseGuardNPCActorSheetBase.esbuild-svelte-fake-css
 var require_15 = __commonJS({
-  "fakecss:D:/FoundryData/Data/systems/mouseguard/module/svelte/MouseGuardNPCActorSheetBase.esbuild-svelte-fake-css"(exports, module) {
+  "fakecss:/mnt/win-data/Users/Andrey/Documents/ANDREY_CAMPAGNE/modules/mouseguard/module/svelte/MouseGuardNPCActorSheetBase.esbuild-svelte-fake-css"(exports, module) {
     module.exports = {};
   }
 });
@@ -120,13 +133,15 @@ var MouseGuardActor = class extends Actor {
   }
   prepareData() {
     super.prepareData();
-    this._prepareCharacterData(this);
+    this._prepareCharacterData();
   }
-  _prepareCharacterData(actorData) {
+  _prepareCharacterData() {
     this.system.itemTypes = this.itemTypes;
   }
   async _preCreate(data, options, user) {
-    await super._preCreate(data, options, user);
+    const allowed = await super._preCreate(data, options, user);
+    if (allowed === false)
+      return false;
     const abilities = [];
     let create_ability;
     if ((data.type === "character" || data.type === "mouse") && this.itemTypes.ability.length <= 0) {
@@ -150,8 +165,8 @@ var MouseGuardActor = class extends Actor {
         game.i18n.localize("MOUSEGUARD.Nature") + " (" + data.name + ")"
       ];
     }
-    if (Object(create_ability).length > 0) {
-      for (let i of create_ability) {
+    if (create_ability && create_ability.length > 0) {
+      for (const i of create_ability) {
         abilities.push({
           name: i,
           type: "ability"
@@ -162,6 +177,7 @@ var MouseGuardActor = class extends Actor {
         img: "systems/mouseguard/assets/icons/seated-mouse.svg"
       });
     }
+    return allowed;
   }
 };
 
@@ -169,38 +185,42 @@ var MouseGuardActor = class extends Actor {
 var MouseGuardItem = class extends Item {
   prepareDerivedData() {
     super.prepareDerivedData();
-    this.system.groups = this.system.groups || {};
-    this.system.attributes = this.system.attributes || {};
   }
 };
 
 // module/item-sheet.js
-var MouseGuardItemSheet = class extends ItemSheet {
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["mouseguard", "sheet", "item"],
-      template: "systems/mouseguard/templates/item-sheet.html",
-      width: 520,
-      height: 480,
-      tabs: [
-        {
-          navSelector: ".sheet-tabs",
-          contentSelector: ".sheet-body",
-          initial: "description"
-        }
-      ],
-      scrollY: [".attributes"]
-    });
-  }
-  getData() {
-    const context = super.getData();
-    context.systemData = context.item.system;
-    return context;
-  }
-  async activateListeners(html) {
-    super.activateListeners(html);
+var MouseGuardItemSheet = class extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ItemSheetV2) {
+  async _prepareContext(options) {
+    const item = this.item;
+    return {
+      document: item,
+      item,
+      data: item.toObject(false),
+      system: item.system,
+      systemData: item.system,
+      rollData: item.getRollData(),
+      editable: this.isEditable,
+      owner: item.isOwner
+    };
   }
 };
+__publicField(MouseGuardItemSheet, "DEFAULT_OPTIONS", {
+  classes: ["mouseguard", "sheet", "item"],
+  position: {
+    width: 520,
+    height: 480
+  },
+  form: {
+    submitOnChange: true,
+    closeOnSubmit: false
+  }
+});
+__publicField(MouseGuardItemSheet, "PARTS", {
+  sheet: {
+    template: "systems/mouseguard/templates/item-sheet.html",
+    root: true
+  }
+});
 
 // node_modules/svelte/internal/index.mjs
 function noop() {
@@ -219,6 +239,14 @@ function is_function(thing) {
 }
 function safe_not_equal(a, b) {
   return a != a ? b == b : a !== b || (a && typeof a === "object" || typeof a === "function");
+}
+var src_url_equal_anchor;
+function src_url_equal(element_src, url) {
+  if (!src_url_equal_anchor) {
+    src_url_equal_anchor = document.createElement("a");
+  }
+  src_url_equal_anchor.href = url;
+  return element_src === src_url_equal_anchor.href;
 }
 function is_empty(obj) {
   return Object.keys(obj).length === 0;
@@ -241,78 +269,11 @@ function start_hydrating() {
 function end_hydrating() {
   is_hydrating = false;
 }
-function upper_bound(low, high, key, value) {
-  while (low < high) {
-    const mid = low + (high - low >> 1);
-    if (key(mid) <= value) {
-      low = mid + 1;
-    } else {
-      high = mid;
-    }
-  }
-  return low;
-}
-function init_hydrate(target) {
-  if (target.hydrate_init)
-    return;
-  target.hydrate_init = true;
-  const children2 = target.childNodes;
-  const m = new Int32Array(children2.length + 1);
-  const p = new Int32Array(children2.length);
-  m[0] = -1;
-  let longest = 0;
-  for (let i = 0; i < children2.length; i++) {
-    const current = children2[i].claim_order;
-    const seqLen = upper_bound(1, longest + 1, (idx) => children2[m[idx]].claim_order, current) - 1;
-    p[i] = m[seqLen] + 1;
-    const newLen = seqLen + 1;
-    m[newLen] = i;
-    longest = Math.max(newLen, longest);
-  }
-  const lis = [];
-  const toMove = [];
-  let last = children2.length - 1;
-  for (let cur = m[longest] + 1; cur != 0; cur = p[cur - 1]) {
-    lis.push(children2[cur - 1]);
-    for (; last >= cur; last--) {
-      toMove.push(children2[last]);
-    }
-    last--;
-  }
-  for (; last >= 0; last--) {
-    toMove.push(children2[last]);
-  }
-  lis.reverse();
-  toMove.sort((a, b) => a.claim_order - b.claim_order);
-  for (let i = 0, j = 0; i < toMove.length; i++) {
-    while (j < lis.length && toMove[i].claim_order >= lis[j].claim_order) {
-      j++;
-    }
-    const anchor = j < lis.length ? lis[j] : null;
-    target.insertBefore(toMove[i], anchor);
-  }
-}
 function append(target, node) {
-  if (is_hydrating) {
-    init_hydrate(target);
-    if (target.actual_end_child === void 0 || target.actual_end_child !== null && target.actual_end_child.parentElement !== target) {
-      target.actual_end_child = target.firstChild;
-    }
-    if (node !== target.actual_end_child) {
-      target.insertBefore(node, target.actual_end_child);
-    } else {
-      target.actual_end_child = node.nextSibling;
-    }
-  } else if (node.parentNode !== target) {
-    target.appendChild(node);
-  }
+  target.appendChild(node);
 }
 function insert(target, node, anchor) {
-  if (is_hydrating && !anchor) {
-    append(target, node);
-  } else if (node.parentNode !== target || anchor && node.nextSibling !== anchor) {
-    target.insertBefore(node, anchor || null);
-  }
+  target.insertBefore(node, anchor || null);
 }
 function detach(node) {
   if (node.parentNode) {
@@ -408,7 +369,10 @@ function add_resize_listener(node, fn) {
     detach(iframe);
   };
 }
-var active_docs = new Set();
+function construct_svelte_component(component, props) {
+  return new component(props);
+}
+var managed_styles = new Map();
 var current_component;
 function set_current_component(component) {
   current_component = component;
@@ -423,6 +387,7 @@ function onDestroy(fn) {
 }
 function setContext(key, context) {
   get_current_component().$$.context.set(key, context);
+  return context;
 }
 function getContext(key) {
   return get_current_component().$$.context.get(key);
@@ -442,20 +407,29 @@ function schedule_update() {
 function add_render_callback(fn) {
   render_callbacks.push(fn);
 }
-var flushing = false;
 var seen_callbacks = new Set();
+var flushidx = 0;
 function flush() {
-  if (flushing)
+  if (flushidx !== 0) {
     return;
-  flushing = true;
+  }
+  const saved_component = current_component;
   do {
-    for (let i = 0; i < dirty_components.length; i += 1) {
-      const component = dirty_components[i];
-      set_current_component(component);
-      update(component.$$);
+    try {
+      while (flushidx < dirty_components.length) {
+        const component = dirty_components[flushidx];
+        flushidx++;
+        set_current_component(component);
+        update(component.$$);
+      }
+    } catch (e) {
+      dirty_components.length = 0;
+      flushidx = 0;
+      throw e;
     }
     set_current_component(null);
     dirty_components.length = 0;
+    flushidx = 0;
     while (binding_callbacks.length)
       binding_callbacks.pop()();
     for (let i = 0; i < render_callbacks.length; i += 1) {
@@ -471,8 +445,8 @@ function flush() {
     flush_callbacks.pop()();
   }
   update_scheduled = false;
-  flushing = false;
   seen_callbacks.clear();
+  set_current_component(saved_component);
 }
 function update($$) {
   if ($$.fragment !== null) {
@@ -519,6 +493,8 @@ function transition_out(block, local, detach2, callback) {
       }
     });
     block.o(local);
+  } else if (callback) {
+    callback();
   }
 }
 var globals = typeof window !== "undefined" ? window : typeof globalThis !== "undefined" ? globalThis : global;
@@ -535,7 +511,9 @@ var boolean_attributes = new Set([
   "disabled",
   "formnovalidate",
   "hidden",
+  "inert",
   "ismap",
+  "itemscope",
   "loop",
   "multiple",
   "muted",
@@ -552,13 +530,13 @@ function create_component(block) {
   block && block.c();
 }
 function mount_component(component, target, anchor, customElement) {
-  const { fragment, on_mount, on_destroy, after_update } = component.$$;
+  const { fragment, after_update } = component.$$;
   fragment && fragment.m(target, anchor);
   if (!customElement) {
     add_render_callback(() => {
-      const new_on_destroy = on_mount.map(run).filter(is_function);
-      if (on_destroy) {
-        on_destroy.push(...new_on_destroy);
+      const new_on_destroy = component.$$.on_mount.map(run).filter(is_function);
+      if (component.$$.on_destroy) {
+        component.$$.on_destroy.push(...new_on_destroy);
       } else {
         run_all(new_on_destroy);
       }
@@ -584,12 +562,12 @@ function make_dirty(component, i) {
   }
   component.$$.dirty[i / 31 | 0] |= 1 << i % 31;
 }
-function init(component, options, instance15, create_fragment16, not_equal, props, dirty = [-1]) {
+function init(component, options, instance15, create_fragment16, not_equal, props, append_styles, dirty = [-1]) {
   const parent_component = current_component;
   set_current_component(component);
   const $$ = component.$$ = {
     fragment: null,
-    ctx: null,
+    ctx: [],
     props,
     update: noop,
     not_equal,
@@ -599,11 +577,13 @@ function init(component, options, instance15, create_fragment16, not_equal, prop
     on_disconnect: [],
     before_update: [],
     after_update: [],
-    context: new Map(parent_component ? parent_component.$$.context : options.context || []),
+    context: new Map(options.context || (parent_component ? parent_component.$$.context : [])),
     callbacks: blank_object(),
     dirty,
-    skip_bound: false
+    skip_bound: false,
+    root: options.target || parent_component.$$.root
   };
+  append_styles && append_styles($$.root);
   let ready = false;
   $$.ctx = instance15 ? instance15(component, options.props || {}, (i, ret, ...rest) => {
     const value = rest.length ? rest[0] : ret;
@@ -661,6 +641,9 @@ if (typeof HTMLElement === "function") {
       this.$destroy = noop;
     }
     $on(type, callback) {
+      if (!is_function(callback)) {
+        return noop;
+      }
       const callbacks = this.$$.callbacks[type] || (this.$$.callbacks[type] = []);
       callbacks.push(callback);
       return () => {
@@ -684,6 +667,9 @@ var SvelteComponent = class {
     this.$destroy = noop;
   }
   $on(type, callback) {
+    if (!is_function(callback)) {
+      return noop;
+    }
     const callbacks = this.$$.callbacks[type] || (this.$$.callbacks[type] = []);
     callbacks.push(callback);
     return () => {
@@ -1173,7 +1159,7 @@ function create_fragment2(ctx) {
       current = true;
     },
     p(ctx2, [dirty]) {
-      if (!current || dirty & 1 && input0_value_value !== (input0_value_value = ctx2[0].system.details.age)) {
+      if (!current || dirty & 1 && input0_value_value !== (input0_value_value = ctx2[0].system.details.age) && input0.value !== input0_value_value) {
         input0.value = input0_value_value;
       }
       if (!current || dirty & 1 && input1_value_value !== (input1_value_value = ctx2[0].system.details.parents) && input1.value !== input1_value_value) {
@@ -1439,13 +1425,13 @@ function create_fragment3(ctx) {
       append(rewardbox2, textarea2);
     },
     p(ctx2, [dirty]) {
-      if (dirty & 1 && input0_value_value !== (input0_value_value = ctx2[0].system.rewards.fate)) {
+      if (dirty & 1 && input0_value_value !== (input0_value_value = ctx2[0].system.rewards.fate) && input0.value !== input0_value_value) {
         input0.value = input0_value_value;
       }
-      if (dirty & 1 && input1_value_value !== (input1_value_value = ctx2[0].system.rewards.persona)) {
+      if (dirty & 1 && input1_value_value !== (input1_value_value = ctx2[0].system.rewards.persona) && input1.value !== input1_value_value) {
         input1.value = input1_value_value;
       }
-      if (dirty & 1 && input2_value_value !== (input2_value_value = ctx2[0].system.rewards.check)) {
+      if (dirty & 1 && input2_value_value !== (input2_value_value = ctx2[0].system.rewards.check) && input2.value !== input2_value_value) {
         input2.value = input2_value_value;
       }
       if (dirty & 1 && textarea0_value_value !== (textarea0_value_value = ctx2[0].system.rewards.belief)) {
@@ -1489,7 +1475,7 @@ var MouseGuardActorSheetMouseRewards_default = MouseGuardActorSheetMouseRewards;
 require_3();
 
 // module/svelte/MouseGuardCommon.svelte
-function updateRating(sheet, item2, type, value) {
+function updateRating(sheet, item, type, value) {
   const ob = { [type]: value };
   if (type == "rank" || type == "rating" || type == "level") {
     if (value < 1)
@@ -1497,7 +1483,7 @@ function updateRating(sheet, item2, type, value) {
     ob.fail = 0;
     ob.pass = 0;
   }
-  sheet?._updateEmbededItem(item2, ob);
+  sheet?._updateEmbededItem(item, ob);
 }
 function setMouseDice(sheet, count, message = "") {
   sheet?._setMouseDice(count, message);
@@ -1547,7 +1533,7 @@ function create_if_block_2(ctx) {
       if (dirty & 1 && input_name_value !== (input_name_value = ctx2[12].id)) {
         attr(input, "name", input_name_value);
       }
-      if (dirty & 1 && input_value_value !== (input_value_value = ctx2[12].system.tax)) {
+      if (dirty & 1 && input_value_value !== (input_value_value = ctx2[12].system.tax) && input.value !== input_value_value) {
         input.value = input_value_value;
       }
     },
@@ -1814,14 +1800,14 @@ function create_each_block(ctx) {
       t4 = space();
       pass = element("pass");
       t5 = text(t5_value);
-      t6 = text(":\r\n                    ");
+      t6 = text(":\n                    ");
       for (let i = 0; i < each_blocks_1.length; i += 1) {
         each_blocks_1[i].c();
       }
       t7 = space();
       fail = element("fail");
       t8 = text(t8_value);
-      t9 = text(":\r\n                    ");
+      t9 = text(":\n                    ");
       for (let i = 0; i < each_blocks.length; i += 1) {
         each_blocks[i].c();
       }
@@ -1879,7 +1865,7 @@ function create_each_block(ctx) {
       if (dirty & 1 && input_name_value !== (input_name_value = ctx[12].id)) {
         attr(input, "name", input_name_value);
       }
-      if (dirty & 1 && input_value_value !== (input_value_value = ctx[12].system.rating)) {
+      if (dirty & 1 && input_value_value !== (input_value_value = ctx[12].system.rating) && input.value !== input_value_value) {
         input.value = input_value_value;
       }
       if (ctx[12].name === "MOUSEGUARD.MNature") {
@@ -2058,19 +2044,19 @@ require_4();
 // module/svelte/MouseGuardActorSheetMouseSkills.svelte
 function get_each_context2(ctx, list, i) {
   const child_ctx = ctx.slice();
-  child_ctx[12] = list[i];
+  child_ctx[13] = list[i];
   return child_ctx;
 }
 function get_each_context_12(ctx, list, i) {
   const child_ctx = ctx.slice();
-  child_ctx[15] = list[i];
-  child_ctx[17] = i;
+  child_ctx[16] = list[i];
+  child_ctx[18] = i;
   return child_ctx;
 }
 function get_each_context_22(ctx, list, i) {
   const child_ctx = ctx.slice();
-  child_ctx[15] = list[i];
-  child_ctx[17] = i;
+  child_ctx[16] = list[i];
+  child_ctx[18] = i;
   return child_ctx;
 }
 function create_else_block_12(ctx) {
@@ -2078,7 +2064,7 @@ function create_else_block_12(ctx) {
   let mounted;
   let dispose;
   function click_handler_2(...args) {
-    return ctx[8](ctx[12], ...args);
+    return ctx[8](ctx[13], ...args);
   }
   return {
     c() {
@@ -2108,7 +2094,7 @@ function create_if_block_12(ctx) {
   let mounted;
   let dispose;
   function click_handler_1(...args) {
-    return ctx[7](ctx[12], ...args);
+    return ctx[7](ctx[13], ...args);
   }
   return {
     c() {
@@ -2136,7 +2122,7 @@ function create_if_block_12(ctx) {
 function create_each_block_22(ctx) {
   let if_block_anchor;
   function select_block_type(ctx2, dirty) {
-    if (ctx2[12].system.pass > ctx2[17])
+    if (ctx2[13].system.pass > ctx2[18])
       return create_if_block_12;
     return create_else_block_12;
   }
@@ -2175,7 +2161,7 @@ function create_else_block2(ctx) {
   let mounted;
   let dispose;
   function click_handler_4(...args) {
-    return ctx[10](ctx[12], ...args);
+    return ctx[10](ctx[13], ...args);
   }
   return {
     c() {
@@ -2205,7 +2191,7 @@ function create_if_block3(ctx) {
   let mounted;
   let dispose;
   function click_handler_3(...args) {
-    return ctx[9](ctx[12], ...args);
+    return ctx[9](ctx[13], ...args);
   }
   return {
     c() {
@@ -2233,7 +2219,7 @@ function create_if_block3(ctx) {
 function create_each_block_12(ctx) {
   let if_block_anchor;
   function select_block_type_1(ctx2, dirty) {
-    if (ctx2[12].system.fail > ctx2[17])
+    if (ctx2[13].system.fail > ctx2[18])
       return create_if_block3;
     return create_else_block2;
   }
@@ -2272,7 +2258,7 @@ function create_each_block2(ctx) {
   let div0;
   let label;
   let a0;
-  let t0_value = game.i18n.localize(ctx[12].name) + "";
+  let t0_value = game.i18n.localize(ctx[13].name) + "";
   let t0;
   let t1;
   let t2;
@@ -2297,21 +2283,24 @@ function create_each_block2(ctx) {
   let mounted;
   let dispose;
   function click_handler(...args) {
-    return ctx[5](ctx[12], ...args);
+    return ctx[5](ctx[13], ...args);
   }
   let each_value_2 = {
-    length: parseInt(ctx[12].system.rank) + 1
+    length: parseInt(ctx[13].system.rank) + 1
   };
   let each_blocks_1 = [];
   for (let i = 0; i < each_value_2.length; i += 1) {
     each_blocks_1[i] = create_each_block_22(get_each_context_22(ctx, each_value_2, i));
   }
   let each_value_1 = {
-    length: parseInt(ctx[12].system.rank)
+    length: parseInt(ctx[13].system.rank)
   };
   let each_blocks = [];
   for (let i = 0; i < each_value_1.length; i += 1) {
     each_blocks[i] = create_each_block_12(get_each_context_12(ctx, each_value_1, i));
+  }
+  function click_handler_5() {
+    return ctx[11](ctx[13]);
   }
   return {
     c() {
@@ -2326,14 +2315,14 @@ function create_each_block2(ctx) {
       t3 = space();
       pass = element("pass");
       t4 = text(t4_value);
-      t5 = text(":\r\n                    ");
+      t5 = text(":\n                    ");
       for (let i = 0; i < each_blocks_1.length; i += 1) {
         each_blocks_1[i].c();
       }
       t6 = space();
       fail = element("fail");
       t7 = text(t7_value);
-      t8 = text(":\r\n                    ");
+      t8 = text(":\n                    ");
       for (let i = 0; i < each_blocks.length; i += 1) {
         each_blocks[i].c();
       }
@@ -2343,14 +2332,14 @@ function create_each_block2(ctx) {
       a1.innerHTML = `<i class="fas fa-trash"></i>`;
       t10 = space();
       attr(label, "class", "header svelte-1v01e5x");
-      attr(input, "name", input_name_value = ctx[12].id);
+      attr(input, "name", input_name_value = ctx[13].id);
       attr(input, "type", "number");
       attr(input, "min", "0");
-      input.value = input_value_value = ctx[12].system.rank;
+      input.value = input_value_value = ctx[13].system.rank;
       attr(input, "class", "svelte-1v01e5x");
       attr(pass, "class", "svelte-1v01e5x");
       attr(fail, "class", "svelte-1v01e5x");
-      attr(div0, "name", div0_name_value = ctx[12].id);
+      attr(div0, "name", div0_name_value = ctx[13].id);
       attr(a1, "class", "item-control item-delete");
       attr(a1, "title", "Delete Item");
       attr(div1, "class", "item-controls svelte-1v01e5x");
@@ -2387,27 +2376,24 @@ function create_each_block2(ctx) {
         dispose = [
           listen(label, "click", click_handler),
           listen(input, "change", ctx[6]),
-          listen(a1, "click", function() {
-            if (is_function(ctx[2]?._onItemDelete(ctx[12].id)))
-              ctx[2]?._onItemDelete(ctx[12].id).apply(this, arguments);
-          })
+          listen(a1, "click", click_handler_5)
         ];
         mounted = true;
       }
     },
     p(new_ctx, dirty) {
       ctx = new_ctx;
-      if (dirty & 1 && t0_value !== (t0_value = game.i18n.localize(ctx[12].name) + ""))
+      if (dirty & 1 && t0_value !== (t0_value = game.i18n.localize(ctx[13].name) + ""))
         set_data(t0, t0_value);
-      if (dirty & 1 && input_name_value !== (input_name_value = ctx[12].id)) {
+      if (dirty & 1 && input_name_value !== (input_name_value = ctx[13].id)) {
         attr(input, "name", input_name_value);
       }
-      if (dirty & 1 && input_value_value !== (input_value_value = ctx[12].system.rank)) {
+      if (dirty & 1 && input_value_value !== (input_value_value = ctx[13].system.rank) && input.value !== input_value_value) {
         input.value = input_value_value;
       }
       if (dirty & 5) {
         each_value_2 = {
-          length: parseInt(ctx[12].system.rank) + 1
+          length: parseInt(ctx[13].system.rank) + 1
         };
         let i;
         for (i = 0; i < each_value_2.length; i += 1) {
@@ -2427,7 +2413,7 @@ function create_each_block2(ctx) {
       }
       if (dirty & 5) {
         each_value_1 = {
-          length: parseInt(ctx[12].system.rank)
+          length: parseInt(ctx[13].system.rank)
         };
         let i;
         for (i = 0; i < each_value_1.length; i += 1) {
@@ -2445,7 +2431,7 @@ function create_each_block2(ctx) {
         }
         each_blocks.length = each_value_1.length;
       }
-      if (dirty & 1 && div0_name_value !== (div0_name_value = ctx[12].id)) {
+      if (dirty & 1 && div0_name_value !== (div0_name_value = ctx[13].id)) {
         attr(div0, "name", div0_name_value);
       }
     },
@@ -2564,6 +2550,7 @@ function instance5($$self, $$props, $$invalidate) {
   const click_handler_2 = (skill, e) => updateRating(sheet, skill.id, "pass", parseInt(skill.system.pass) + 1);
   const click_handler_3 = (skill, e) => updateRating(sheet, skill.id, "fail", parseInt(skill.system.fail) - 1);
   const click_handler_4 = (skill, e) => updateRating(sheet, skill.id, "fail", parseInt(skill.system.fail) + 1);
+  const click_handler_5 = (skill) => sheet?._onItemDelete(skill.id);
   $$self.$$.update = () => {
     if ($$self.$$.dirty & 16) {
       $:
@@ -2585,7 +2572,8 @@ function instance5($$self, $$props, $$invalidate) {
     click_handler_1,
     click_handler_2,
     click_handler_3,
-    click_handler_4
+    click_handler_4,
+    click_handler_5
   ];
 }
 var MouseGuardActorSheetMouseSkills = class extends SvelteComponent {
@@ -2600,32 +2588,62 @@ require_5();
 // module/svelte/MouseGuardActorSheetMouseWises.svelte
 function get_each_context3(ctx, list, i) {
   const child_ctx = ctx.slice();
-  child_ctx[11] = list[i];
+  child_ctx[13] = list[i];
   return child_ctx;
 }
 function get_each_context_13(ctx, list, i) {
   const child_ctx = ctx.slice();
-  child_ctx[14] = list[i];
-  child_ctx[16] = i;
+  child_ctx[16] = list[i];
+  child_ctx[18] = i;
   return child_ctx;
 }
 function get_each_context_23(ctx, list, i) {
   const child_ctx = ctx.slice();
-  child_ctx[14] = list[i];
-  child_ctx[16] = i;
+  child_ctx[16] = list[i];
+  child_ctx[18] = i;
   return child_ctx;
 }
 function create_else_block_13(ctx) {
   let div;
   let mounted;
   let dispose;
-  function click_handler_2(...args) {
-    return ctx[7](ctx[11], ...args);
+  function click_handler_3(...args) {
+    return ctx[8](ctx[13], ...args);
   }
   return {
     c() {
       div = element("div");
       attr(div, "class", "no-checkmark svelte-ebjd4e");
+    },
+    m(target, anchor) {
+      insert(target, div, anchor);
+      if (!mounted) {
+        dispose = listen(div, "click", click_handler_3);
+        mounted = true;
+      }
+    },
+    p(new_ctx, dirty) {
+      ctx = new_ctx;
+    },
+    d(detaching) {
+      if (detaching)
+        detach(div);
+      mounted = false;
+      dispose();
+    }
+  };
+}
+function create_if_block_13(ctx) {
+  let div;
+  let mounted;
+  let dispose;
+  function click_handler_2(...args) {
+    return ctx[7](ctx[13], ...args);
+  }
+  return {
+    c() {
+      div = element("div");
+      attr(div, "class", "checkmark svelte-ebjd4e");
     },
     m(target, anchor) {
       insert(target, div, anchor);
@@ -2645,40 +2663,10 @@ function create_else_block_13(ctx) {
     }
   };
 }
-function create_if_block_13(ctx) {
-  let div;
-  let mounted;
-  let dispose;
-  function click_handler_1(...args) {
-    return ctx[6](ctx[11], ...args);
-  }
-  return {
-    c() {
-      div = element("div");
-      attr(div, "class", "checkmark svelte-ebjd4e");
-    },
-    m(target, anchor) {
-      insert(target, div, anchor);
-      if (!mounted) {
-        dispose = listen(div, "click", click_handler_1);
-        mounted = true;
-      }
-    },
-    p(new_ctx, dirty) {
-      ctx = new_ctx;
-    },
-    d(detaching) {
-      if (detaching)
-        detach(div);
-      mounted = false;
-      dispose();
-    }
-  };
-}
 function create_each_block_23(ctx) {
   let if_block_anchor;
   function select_block_type(ctx2, dirty) {
-    if (ctx2[11].system.pass > ctx2[16])
+    if (ctx2[13].system.pass > ctx2[18])
       return create_if_block_13;
     return create_else_block_13;
   }
@@ -2716,13 +2704,43 @@ function create_else_block3(ctx) {
   let div;
   let mounted;
   let dispose;
-  function click_handler_4(...args) {
-    return ctx[9](ctx[11], ...args);
+  function click_handler_5(...args) {
+    return ctx[10](ctx[13], ...args);
   }
   return {
     c() {
       div = element("div");
       attr(div, "class", "no-checkmark svelte-ebjd4e");
+    },
+    m(target, anchor) {
+      insert(target, div, anchor);
+      if (!mounted) {
+        dispose = listen(div, "click", click_handler_5);
+        mounted = true;
+      }
+    },
+    p(new_ctx, dirty) {
+      ctx = new_ctx;
+    },
+    d(detaching) {
+      if (detaching)
+        detach(div);
+      mounted = false;
+      dispose();
+    }
+  };
+}
+function create_if_block4(ctx) {
+  let div;
+  let mounted;
+  let dispose;
+  function click_handler_4(...args) {
+    return ctx[9](ctx[13], ...args);
+  }
+  return {
+    c() {
+      div = element("div");
+      attr(div, "class", "checkmark svelte-ebjd4e");
     },
     m(target, anchor) {
       insert(target, div, anchor);
@@ -2742,40 +2760,10 @@ function create_else_block3(ctx) {
     }
   };
 }
-function create_if_block4(ctx) {
-  let div;
-  let mounted;
-  let dispose;
-  function click_handler_3(...args) {
-    return ctx[8](ctx[11], ...args);
-  }
-  return {
-    c() {
-      div = element("div");
-      attr(div, "class", "checkmark svelte-ebjd4e");
-    },
-    m(target, anchor) {
-      insert(target, div, anchor);
-      if (!mounted) {
-        dispose = listen(div, "click", click_handler_3);
-        mounted = true;
-      }
-    },
-    p(new_ctx, dirty) {
-      ctx = new_ctx;
-    },
-    d(detaching) {
-      if (detaching)
-        detach(div);
-      mounted = false;
-      dispose();
-    }
-  };
-}
 function create_each_block_13(ctx) {
   let if_block_anchor;
   function select_block_type_1(ctx2, dirty) {
-    if (ctx2[11].system.fail > ctx2[16])
+    if (ctx2[13].system.fail > ctx2[18])
       return create_if_block4;
     return create_else_block3;
   }
@@ -2814,7 +2802,7 @@ function create_each_block3(ctx) {
   let div0;
   let label;
   let a0;
-  let t0_value = game.i18n.localize(ctx[11].name) + "";
+  let t0_value = game.i18n.localize(ctx[13].name) + "";
   let t0;
   let t1;
   let t2;
@@ -2838,22 +2826,25 @@ function create_each_block3(ctx) {
   let t10;
   let mounted;
   let dispose;
-  function click_handler(...args) {
-    return ctx[4](ctx[11], ...args);
+  function click_handler_1(...args) {
+    return ctx[5](ctx[13], ...args);
   }
   let each_value_2 = {
-    length: parseInt(ctx[11].system.rank) + 1
+    length: parseInt(ctx[13].system.rank) + 1
   };
   let each_blocks_1 = [];
   for (let i = 0; i < each_value_2.length; i += 1) {
     each_blocks_1[i] = create_each_block_23(get_each_context_23(ctx, each_value_2, i));
   }
   let each_value_1 = {
-    length: parseInt(ctx[11].system.rank)
+    length: parseInt(ctx[13].system.rank)
   };
   let each_blocks = [];
   for (let i = 0; i < each_value_1.length; i += 1) {
     each_blocks[i] = create_each_block_13(get_each_context_13(ctx, each_value_1, i));
+  }
+  function click_handler_6() {
+    return ctx[11](ctx[13]);
   }
   return {
     c() {
@@ -2868,14 +2859,14 @@ function create_each_block3(ctx) {
       t3 = space();
       pass = element("pass");
       t4 = text(t4_value);
-      t5 = text(":\r\n                    ");
+      t5 = text(":\n                    ");
       for (let i = 0; i < each_blocks_1.length; i += 1) {
         each_blocks_1[i].c();
       }
       t6 = space();
       fail = element("fail");
       t7 = text(t7_value);
-      t8 = text(":\r\n                    ");
+      t8 = text(":\n                    ");
       for (let i = 0; i < each_blocks.length; i += 1) {
         each_blocks[i].c();
       }
@@ -2885,14 +2876,14 @@ function create_each_block3(ctx) {
       a1.innerHTML = `<i class="fas fa-trash"></i>`;
       t10 = space();
       attr(label, "class", "header svelte-ebjd4e");
-      attr(input, "name", input_name_value = ctx[11].id);
+      attr(input, "name", input_name_value = ctx[13].id);
       attr(input, "type", "number");
       attr(input, "min", "0");
-      input.value = input_value_value = ctx[11].system.rank;
+      input.value = input_value_value = ctx[13].system.rank;
       attr(input, "class", "svelte-ebjd4e");
       attr(pass, "class", "svelte-ebjd4e");
       attr(fail, "class", "svelte-ebjd4e");
-      attr(div0, "name", div0_name_value = ctx[11].id);
+      attr(div0, "name", div0_name_value = ctx[13].id);
       attr(a1, "class", "item-control item-delete");
       attr(a1, "title", "Delete Item");
       attr(div1, "class", "item-controls svelte-ebjd4e");
@@ -2927,29 +2918,26 @@ function create_each_block3(ctx) {
       append(wise, t10);
       if (!mounted) {
         dispose = [
-          listen(label, "click", click_handler),
-          listen(input, "change", ctx[5]),
-          listen(a1, "click", function() {
-            if (is_function(ctx[2]?._onItemDelete(ctx[11].id)))
-              ctx[2]?._onItemDelete(ctx[11].id).apply(this, arguments);
-          })
+          listen(label, "click", click_handler_1),
+          listen(input, "change", ctx[6]),
+          listen(a1, "click", click_handler_6)
         ];
         mounted = true;
       }
     },
     p(new_ctx, dirty) {
       ctx = new_ctx;
-      if (dirty & 1 && t0_value !== (t0_value = game.i18n.localize(ctx[11].name) + ""))
+      if (dirty & 1 && t0_value !== (t0_value = game.i18n.localize(ctx[13].name) + ""))
         set_data(t0, t0_value);
-      if (dirty & 1 && input_name_value !== (input_name_value = ctx[11].id)) {
+      if (dirty & 1 && input_name_value !== (input_name_value = ctx[13].id)) {
         attr(input, "name", input_name_value);
       }
-      if (dirty & 1 && input_value_value !== (input_value_value = ctx[11].system.rank)) {
+      if (dirty & 1 && input_value_value !== (input_value_value = ctx[13].system.rank) && input.value !== input_value_value) {
         input.value = input_value_value;
       }
       if (dirty & 5) {
         each_value_2 = {
-          length: parseInt(ctx[11].system.rank) + 1
+          length: parseInt(ctx[13].system.rank) + 1
         };
         let i;
         for (i = 0; i < each_value_2.length; i += 1) {
@@ -2969,7 +2957,7 @@ function create_each_block3(ctx) {
       }
       if (dirty & 5) {
         each_value_1 = {
-          length: parseInt(ctx[11].system.rank)
+          length: parseInt(ctx[13].system.rank)
         };
         let i;
         for (i = 0; i < each_value_1.length; i += 1) {
@@ -2987,7 +2975,7 @@ function create_each_block3(ctx) {
         }
         each_blocks.length = each_value_1.length;
       }
-      if (dirty & 1 && div0_name_value !== (div0_name_value = ctx[11].id)) {
+      if (dirty & 1 && div0_name_value !== (div0_name_value = ctx[13].id)) {
         attr(div0, "name", div0_name_value);
       }
     },
@@ -3057,7 +3045,7 @@ function create_fragment6(ctx) {
         each_blocks[i2].m(largecard, null);
       }
       if (!mounted) {
-        dispose = listen(a, "click", ctx[2]?._onItemCreate.bind(ctx[2]));
+        dispose = listen(a, "click", ctx[4]);
         mounted = true;
       }
     },
@@ -3099,12 +3087,14 @@ function instance6($$self, $$props, $$invalidate) {
   component_subscribe($$self, sheetData, (value) => $$invalidate(3, $sheetData = value));
   let { sheet } = $sheetData;
   let data;
-  const click_handler = (wise, e) => setMouseDice(sheet, wise.system.rank, game.i18n.localize(wise.name));
+  const click_handler = (e) => sheet?._onItemCreate(e);
+  const click_handler_1 = (wise, e) => setMouseDice(sheet, wise.system.rank, game.i18n.localize(wise.name));
   const change_handler = (e) => updateRating(sheet, e.target.name, "rank", parseInt(e.target.value));
-  const click_handler_1 = (wise, e) => updateRating(sheet, wise.id, "pass", parseInt(wise.system.pass) - 1);
-  const click_handler_2 = (wise, e) => updateRating(sheet, wise.id, "pass", parseInt(wise.system.pass) + 1);
-  const click_handler_3 = (wise, e) => updateRating(sheet, wise.id, "fail", parseInt(wise.system.fail) - 1);
-  const click_handler_4 = (wise, e) => updateRating(sheet, wise.id, "fail", parseInt(wise.system.fail) + 1);
+  const click_handler_2 = (wise, e) => updateRating(sheet, wise.id, "pass", parseInt(wise.system.pass) - 1);
+  const click_handler_3 = (wise, e) => updateRating(sheet, wise.id, "pass", parseInt(wise.system.pass) + 1);
+  const click_handler_4 = (wise, e) => updateRating(sheet, wise.id, "fail", parseInt(wise.system.fail) - 1);
+  const click_handler_5 = (wise, e) => updateRating(sheet, wise.id, "fail", parseInt(wise.system.fail) + 1);
+  const click_handler_6 = (wise) => sheet?._onItemDelete(wise.id);
   $$self.$$.update = () => {
     if ($$self.$$.dirty & 8) {
       $:
@@ -3121,11 +3111,13 @@ function instance6($$self, $$props, $$invalidate) {
     sheet,
     $sheetData,
     click_handler,
-    change_handler,
     click_handler_1,
+    change_handler,
     click_handler_2,
     click_handler_3,
-    click_handler_4
+    click_handler_4,
+    click_handler_5,
+    click_handler_6
   ];
 }
 var MouseGuardActorSheetMouseWises = class extends SvelteComponent {
@@ -3140,19 +3132,19 @@ require_6();
 // module/svelte/MouseGuardActorSheetMouseTraits.svelte
 function get_each_context4(ctx, list, i) {
   const child_ctx = ctx.slice();
-  child_ctx[12] = list[i];
+  child_ctx[13] = list[i];
   return child_ctx;
 }
 function get_each_context_14(ctx, list, i) {
   const child_ctx = ctx.slice();
-  child_ctx[15] = list[i];
-  child_ctx[17] = i;
+  child_ctx[16] = list[i];
+  child_ctx[18] = i;
   return child_ctx;
 }
 function get_each_context_24(ctx, list, i) {
   const child_ctx = ctx.slice();
-  child_ctx[15] = list[i];
-  child_ctx[17] = i;
+  child_ctx[16] = list[i];
+  child_ctx[18] = i;
   return child_ctx;
 }
 function create_else_block_14(ctx) {
@@ -3160,7 +3152,7 @@ function create_else_block_14(ctx) {
   let mounted;
   let dispose;
   function click_handler_2(...args) {
-    return ctx[8](ctx[12], ...args);
+    return ctx[8](ctx[13], ...args);
   }
   return {
     c() {
@@ -3190,7 +3182,7 @@ function create_if_block_14(ctx) {
   let mounted;
   let dispose;
   function click_handler_1(...args) {
-    return ctx[7](ctx[12], ...args);
+    return ctx[7](ctx[13], ...args);
   }
   return {
     c() {
@@ -3218,7 +3210,7 @@ function create_if_block_14(ctx) {
 function create_each_block_24(ctx) {
   let if_block_anchor;
   function select_block_type(ctx2, dirty) {
-    if (ctx2[12].system.usedfor > ctx2[17])
+    if (ctx2[13].system.usedfor > ctx2[18])
       return create_if_block_14;
     return create_else_block_14;
   }
@@ -3257,7 +3249,7 @@ function create_else_block4(ctx) {
   let mounted;
   let dispose;
   function click_handler_4(...args) {
-    return ctx[10](ctx[12], ...args);
+    return ctx[10](ctx[13], ...args);
   }
   return {
     c() {
@@ -3287,7 +3279,7 @@ function create_if_block5(ctx) {
   let mounted;
   let dispose;
   function click_handler_3(...args) {
-    return ctx[9](ctx[12], ...args);
+    return ctx[9](ctx[13], ...args);
   }
   return {
     c() {
@@ -3315,7 +3307,7 @@ function create_if_block5(ctx) {
 function create_each_block_14(ctx) {
   let if_block_anchor;
   function select_block_type_1(ctx2, dirty) {
-    if (ctx2[12].system.usedagainst > ctx2[17])
+    if (ctx2[13].system.usedagainst > ctx2[18])
       return create_if_block5;
     return create_else_block4;
   }
@@ -3354,7 +3346,7 @@ function create_each_block4(ctx) {
   let div0;
   let label;
   let a0;
-  let t0_value = game.i18n.localize(ctx[12].name) + "";
+  let t0_value = game.i18n.localize(ctx[13].name) + "";
   let t0;
   let t1;
   let t2;
@@ -3379,7 +3371,7 @@ function create_each_block4(ctx) {
   let mounted;
   let dispose;
   function click_handler(...args) {
-    return ctx[5](ctx[12], ...args);
+    return ctx[5](ctx[13], ...args);
   }
   let each_value_2 = { length: 1 };
   let each_blocks_1 = [];
@@ -3390,6 +3382,9 @@ function create_each_block4(ctx) {
   let each_blocks = [];
   for (let i = 0; i < each_value_1.length; i += 1) {
     each_blocks[i] = create_each_block_14(get_each_context_14(ctx, each_value_1, i));
+  }
+  function click_handler_5() {
+    return ctx[11](ctx[13]);
   }
   return {
     c() {
@@ -3404,14 +3399,14 @@ function create_each_block4(ctx) {
       t3 = space();
       for_1 = element("for");
       t4 = text(t4_value);
-      t5 = text(":\r\n                    ");
+      t5 = text(":\n                    ");
       for (let i = 0; i < each_blocks_1.length; i += 1) {
         each_blocks_1[i].c();
       }
       t6 = space();
       pass = element("pass");
       t7 = text(t7_value);
-      t8 = text(":\r\n                    ");
+      t8 = text(":\n                    ");
       for (let i = 0; i < each_blocks.length; i += 1) {
         each_blocks[i].c();
       }
@@ -3421,15 +3416,15 @@ function create_each_block4(ctx) {
       a1.innerHTML = `<i class="fas fa-trash"></i>`;
       t10 = space();
       attr(label, "class", "header svelte-11zbf01");
-      attr(input, "name", input_name_value = ctx[12].id);
+      attr(input, "name", input_name_value = ctx[13].id);
       attr(input, "type", "number");
       attr(input, "min", "1");
       attr(input, "max", "3");
-      input.value = input_value_value = ctx[12].system.level;
+      input.value = input_value_value = ctx[13].system.level;
       attr(input, "class", "svelte-11zbf01");
       attr(for_1, "class", "svelte-11zbf01");
       attr(pass, "class", "svelte-11zbf01");
-      attr(div0, "name", div0_name_value = ctx[12].id);
+      attr(div0, "name", div0_name_value = ctx[13].id);
       attr(a1, "class", "item-control item-delete");
       attr(a1, "title", "Delete Item");
       attr(div1, "class", "item-controls svelte-11zbf01");
@@ -3466,22 +3461,19 @@ function create_each_block4(ctx) {
         dispose = [
           listen(label, "click", click_handler),
           listen(input, "change", ctx[6]),
-          listen(a1, "click", function() {
-            if (is_function(ctx[2]?._onItemDelete(ctx[12].id)))
-              ctx[2]?._onItemDelete(ctx[12].id).apply(this, arguments);
-          })
+          listen(a1, "click", click_handler_5)
         ];
         mounted = true;
       }
     },
     p(new_ctx, dirty) {
       ctx = new_ctx;
-      if (dirty & 1 && t0_value !== (t0_value = game.i18n.localize(ctx[12].name) + ""))
+      if (dirty & 1 && t0_value !== (t0_value = game.i18n.localize(ctx[13].name) + ""))
         set_data(t0, t0_value);
-      if (dirty & 1 && input_name_value !== (input_name_value = ctx[12].id)) {
+      if (dirty & 1 && input_name_value !== (input_name_value = ctx[13].id)) {
         attr(input, "name", input_name_value);
       }
-      if (dirty & 1 && input_value_value !== (input_value_value = ctx[12].system.level)) {
+      if (dirty & 1 && input_value_value !== (input_value_value = ctx[13].system.level) && input.value !== input_value_value) {
         input.value = input_value_value;
       }
       if (dirty & 5) {
@@ -3520,7 +3512,7 @@ function create_each_block4(ctx) {
         }
         each_blocks.length = each_value_1.length;
       }
-      if (dirty & 1 && div0_name_value !== (div0_name_value = ctx[12].id)) {
+      if (dirty & 1 && div0_name_value !== (div0_name_value = ctx[13].id)) {
         attr(div0, "name", div0_name_value);
       }
     },
@@ -3639,6 +3631,7 @@ function instance7($$self, $$props, $$invalidate) {
   const click_handler_2 = (trait, e) => updateRating(sheet, trait.id, "usedfor", parseInt(trait.system.usedfor) + 1);
   const click_handler_3 = (trait, e) => updateRating(sheet, trait.id, "usedagainst", parseInt(trait.system.usedagainst) - 1);
   const click_handler_4 = (trait, e) => updateRating(sheet, trait.id, "usedagainst", parseInt(trait.system.usedagainst) + 1);
+  const click_handler_5 = (trait) => sheet?._onItemDelete(trait.id);
   $$self.$$.update = () => {
     if ($$self.$$.dirty & 16) {
       $:
@@ -3660,7 +3653,8 @@ function instance7($$self, $$props, $$invalidate) {
     click_handler_1,
     click_handler_2,
     click_handler_3,
-    click_handler_4
+    click_handler_4,
+    click_handler_5
   ];
 }
 var MouseGuardActorSheetMouseTraits = class extends SvelteComponent {
@@ -3841,10 +3835,10 @@ function create_fragment9(ctx) {
       append(currentBox, input1);
     },
     p(ctx2, [dirty]) {
-      if (dirty & 1 && input0_value_value !== (input0_value_value = ctx2[0].system.disposition.starting)) {
+      if (dirty & 1 && input0_value_value !== (input0_value_value = ctx2[0].system.disposition.starting) && input0.value !== input0_value_value) {
         input0.value = input0_value_value;
       }
-      if (dirty & 1 && input1_value_value !== (input1_value_value = ctx2[0].system.disposition.current)) {
+      if (dirty & 1 && input1_value_value !== (input1_value_value = ctx2[0].system.disposition.current) && input1.value !== input1_value_value) {
         input1.value = input1_value_value;
       }
     },
@@ -3891,7 +3885,7 @@ function create_fragment10(ctx) {
       portrait = element("portrait");
       img = element("img");
       attr(img, "class", "profile-img svelte-1qaezql");
-      if (img.src !== (img_src_value = ctx[0].img))
+      if (!src_url_equal(img.src, img_src_value = ctx[0].img))
         attr(img, "src", img_src_value);
       attr(img, "data-edit", "img");
       attr(img, "title", img_title_value = ctx[0].name);
@@ -3907,7 +3901,7 @@ function create_fragment10(ctx) {
       }
     },
     p(ctx2, [dirty]) {
-      if (dirty & 1 && img.src !== (img_src_value = ctx2[0].img)) {
+      if (dirty & 1 && !src_url_equal(img.src, img_src_value = ctx2[0].img)) {
         attr(img, "src", img_src_value);
       }
       if (dirty & 1 && img_title_value !== (img_title_value = ctx2[0].name)) {
@@ -4078,7 +4072,7 @@ function create_if_block6(ctx) {
     return {};
   }
   if (switch_value) {
-    switch_instance = new switch_value(switch_props(ctx));
+    switch_instance = construct_svelte_component(switch_value, switch_props(ctx));
   }
   return {
     c() {
@@ -4087,9 +4081,8 @@ function create_if_block6(ctx) {
       switch_instance_anchor = empty();
     },
     m(target, anchor) {
-      if (switch_instance) {
+      if (switch_instance)
         mount_component(switch_instance, target, anchor);
-      }
       insert(target, switch_instance_anchor, anchor);
       current = true;
     },
@@ -4104,7 +4097,7 @@ function create_if_block6(ctx) {
           check_outros();
         }
         if (switch_value) {
-          switch_instance = new switch_value(switch_props(ctx2));
+          switch_instance = construct_svelte_component(switch_value, switch_props(ctx2));
           create_component(switch_instance.$$.fragment);
           transition_in(switch_instance.$$.fragment, 1);
           mount_component(switch_instance, switch_instance_anchor.parentNode, switch_instance_anchor);
@@ -4304,16 +4297,15 @@ require_12();
 var subscriber_queue = [];
 function writable(value, start = noop) {
   let stop;
-  const subscribers = [];
+  const subscribers = new Set();
   function set(new_value) {
     if (safe_not_equal(value, new_value)) {
       value = new_value;
       if (stop) {
         const run_queue = !subscriber_queue.length;
-        for (let i = 0; i < subscribers.length; i += 1) {
-          const s = subscribers[i];
-          s[1]();
-          subscriber_queue.push(s, value);
+        for (const subscriber of subscribers) {
+          subscriber[1]();
+          subscriber_queue.push(subscriber, value);
         }
         if (run_queue) {
           for (let i = 0; i < subscriber_queue.length; i += 2) {
@@ -4329,17 +4321,14 @@ function writable(value, start = noop) {
   }
   function subscribe2(run2, invalidate = noop) {
     const subscriber = [run2, invalidate];
-    subscribers.push(subscriber);
-    if (subscribers.length === 1) {
+    subscribers.add(subscriber);
+    if (subscribers.size === 1) {
       stop = start(set) || noop;
     }
     run2(value);
     return () => {
-      const index = subscribers.indexOf(subscriber);
-      if (index !== -1) {
-        subscribers.splice(index, 1);
-      }
-      if (subscribers.length === 0) {
+      subscribers.delete(subscriber);
+      if (subscribers.size === 0) {
         stop();
         stop = null;
       }
@@ -4349,67 +4338,48 @@ function writable(value, start = noop) {
 }
 
 // module/actor-sheet.js
-var MouseGuardActorSheet = class extends ActorSheet {
+var MouseGuardActorSheet = class extends foundry.applications.sheets.ActorSheetV2 {
   app = null;
   dataStore = null;
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["mouseguard", "sheet", "actor"],
-      template: "systems/mouseguard/templates/actor-sheetv2.html",
-      width: 850,
-      height: 600,
-      tabs: []
-    });
+  async _prepareContext(options) {
+    const actorData = this.actor.toObject(false);
+    actorData.system.itemTypes = this.actor.itemTypes;
+    return {
+      actor: this.actor,
+      document: this.actor,
+      data: actorData,
+      system: this.actor.system,
+      sheet: this,
+      editable: this.isEditable,
+      owner: this.actor.isOwner
+    };
   }
-  getData() {
-    const context = super.getData();
-    context.sheet = this;
-    return context;
+  async _renderHTML(context, options) {
+    return "";
   }
-  activateListeners(html) {
-    super.activateListeners(html);
-    if (!this.isEditable)
-      return;
-    html.find(".item-control").click(this._onItemControl.bind(this));
-    html.find(".items .rollable").on("click", this._onItemRoll.bind(this));
+  _replaceHTML(result, content, options) {
   }
-  _onItemControl(event) {
-    event.preventDefault();
-    const button = event.currentTarget;
-    const li = button.closest(".item");
-    const item2 = this.actor.items.get(li?.dataset.itemId);
-    switch (button.dataset.action) {
-      case "create":
-        const cls = getDocumentClass("Item");
-        return cls.create({
-          name: game.i18n.localize("MOUSEGUARD.ItemNew"),
-          type: "item"
-        }, { parent: this.actor });
-      case "edit":
-        return item2.sheet.render(true);
-      case "delete":
-        return item2.delete();
+  _onRender(context, options) {
+    super._onRender(context, options);
+    if (!this.app) {
+      this.dataStore = writable(context);
+      this.app = new MouseGuardActorSheetBase_default({
+        target: this.element,
+        props: {
+          dataStore: this.dataStore
+        }
+      });
+    } else {
+      this.dataStore?.set(context);
     }
   }
-  _onItemRoll(event) {
-    let button = $(event.currentTarget);
-    const li = button.parents(".item");
-    const item2 = this.actor.items.get(li.data("itemId"));
-    let r = new Roll(button.data("roll"), this.actor.getRollData());
-    return r.toMessage({
-      user: game.user.id,
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      flavor: `<h2>${item2.name}</h2><h3>${button.text()}</h3>`
-    });
-  }
-  __onSubmit(event) {
-    event = super._onSubmit(event);
-    console.log(event);
-    return event;
-  }
-  _getSubmitData(updateData) {
-    let formData = super._getSubmitData(updateData);
-    return formData;
+  _onClose(options) {
+    if (this.app) {
+      this.app.$destroy();
+      this.app = null;
+      this.dataStore = null;
+    }
+    super._onClose(options);
   }
   _setMouseDice(count, message = "") {
     game.mouseguard.RollCount = count;
@@ -4418,72 +4388,60 @@ var MouseGuardActorSheet = class extends ActorSheet {
   }
   async _updateActorAbility(id, type, value) {
     await this.actor.updateEmbeddedDocuments("Item", [
-      { _id: id, data: { [type]: value } }
+      { _id: id, system: { [type]: value } }
     ]);
   }
   async _updateEmbededItem(id, _data) {
     await this.actor.updateEmbeddedDocuments("Item", [
-      { _id: id, data: _data }
+      { _id: id, system: _data }
     ]);
   }
   async _onItemDelete(itemId) {
-    console.log(itemId);
-    const item2 = this.actor.items.get(itemId);
-    item2.delete();
-    this.render();
+    const item = this.actor.items.get(itemId);
+    if (item)
+      await item.delete();
   }
   async _onItemCreate(event) {
     event.preventDefault();
     const header = event.currentTarget;
     const type = header.dataset.type;
-    const data = duplicate(header.dataset);
     const name = `New ${type.capitalize()}`;
     const itemData = {
       name,
       type,
-      data
+      system: { rank: 1 }
     };
-    itemData.data = { rank: 1 };
-    delete itemData.data["type"];
-    return await Item.create(itemData, { parent: this.actor }).then((item2) => {
-      item2.sheet.render(true);
-    });
+    const [item] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
+    item?.sheet?.render(true);
+    return item;
   }
-  render(force = false, options = {}) {
-    let sheetData = this.getData();
-    if (this.app !== null) {
-      let states = Application.RENDER_STATES;
-      if (this._state == states.RENDERING || this._state == states.RENDERED) {
-        this.dataStore?.set(sheetData);
-        return;
-      }
-    }
-    this._render(force, options).catch((err) => {
-      err.message = `An error occurred while rendering ${this.constructor.name} ${this.appId}: ${err.message}`;
-      console.error(err);
-      this._state = Application.RENDER_STATES.ERROR;
-    }).then((rendered) => {
-      this.dataStore = writable(sheetData);
-      this.app = new MouseGuardActorSheetBase_default({
-        target: this.element.find("form").get(0),
-        props: {
-          dataStore: this.dataStore
-        }
-      });
+  async _onItemRoll(event) {
+    const button = event.currentTarget;
+    const li = button.closest(".item");
+    const itemId = li?.dataset.itemId;
+    const item = this.actor.items.get(itemId);
+    const formula = button.dataset.roll;
+    if (!formula)
+      return;
+    const r = new Roll(formula, this.actor.getRollData());
+    await r.evaluate();
+    return r.toMessage({
+      author: game.user.id,
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      flavor: `<h2>${item?.name ?? ""}</h2><h3>${button.textContent}</h3>`
     });
-    options.editable = options.editable ?? this.object.isOwner;
-    this.object.apps[this.appId] = this;
-    return this;
-  }
-  close(options = {}) {
-    if (this.app != null) {
-      this.app.$destroy();
-      this.app = null;
-      this.dataStore = null;
-    }
-    return super.close(options);
   }
 };
+__publicField(MouseGuardActorSheet, "DEFAULT_OPTIONS", {
+  classes: ["mouseguard", "sheet", "actor"],
+  position: {
+    width: 850,
+    height: 600
+  },
+  window: {
+    resizable: true
+  }
+});
 
 // module/svelte/MouseGuardActorSheetHeader.svelte
 function create_fragment13(ctx) {
@@ -4578,22 +4536,22 @@ require_13();
 // module/svelte/MouseGuardNPCActorSheetBody.svelte
 function get_each_context6(ctx, list, i) {
   const child_ctx = ctx.slice();
-  child_ctx[16] = list[i];
+  child_ctx[19] = list[i];
   return child_ctx;
 }
 function get_each_context_15(ctx, list, i) {
   const child_ctx = ctx.slice();
-  child_ctx[19] = list[i];
+  child_ctx[22] = list[i];
   return child_ctx;
 }
 function get_each_context_25(ctx, list, i) {
   const child_ctx = ctx.slice();
-  child_ctx[22] = list[i];
+  child_ctx[25] = list[i];
   return child_ctx;
 }
 function get_each_context_3(ctx, list, i) {
   const child_ctx = ctx.slice();
-  child_ctx[25] = list[i];
+  child_ctx[28] = list[i];
   return child_ctx;
 }
 function create_each_block_3(ctx) {
@@ -4601,7 +4559,7 @@ function create_each_block_3(ctx) {
   let div;
   let label;
   let a;
-  let t0_value = game.i18n.localize(ctx[25].name) + "";
+  let t0_value = game.i18n.localize(ctx[28].name) + "";
   let t0;
   let t1;
   let t2;
@@ -4613,7 +4571,7 @@ function create_each_block_3(ctx) {
   let mounted;
   let dispose;
   function click_handler(...args) {
-    return ctx[7](ctx[25], ...args);
+    return ctx[7](ctx[28], ...args);
   }
   return {
     c() {
@@ -4627,12 +4585,12 @@ function create_each_block_3(ctx) {
       input = element("input");
       t3 = space();
       attr(label, "class", "header svelte-1f8afzj");
-      attr(input, "name", input_name_value = ctx[25].id);
+      attr(input, "name", input_name_value = ctx[28].id);
       attr(input, "type", "number");
       attr(input, "min", "0");
-      input.value = input_value_value = ctx[25].system.rating;
+      input.value = input_value_value = ctx[28].system.rating;
       attr(input, "class", "svelte-1f8afzj");
-      attr(div, "name", div_name_value = ctx[25].id);
+      attr(div, "name", div_name_value = ctx[28].id);
       attr(ability, "class", "svelte-1f8afzj");
     },
     m(target, anchor) {
@@ -4655,15 +4613,15 @@ function create_each_block_3(ctx) {
     },
     p(new_ctx, dirty) {
       ctx = new_ctx;
-      if (dirty & 1 && t0_value !== (t0_value = game.i18n.localize(ctx[25].name) + ""))
+      if (dirty & 1 && t0_value !== (t0_value = game.i18n.localize(ctx[28].name) + ""))
         set_data(t0, t0_value);
-      if (dirty & 1 && input_name_value !== (input_name_value = ctx[25].id)) {
+      if (dirty & 1 && input_name_value !== (input_name_value = ctx[28].id)) {
         attr(input, "name", input_name_value);
       }
-      if (dirty & 1 && input_value_value !== (input_value_value = ctx[25].system.rating)) {
+      if (dirty & 1 && input_value_value !== (input_value_value = ctx[28].system.rating) && input.value !== input_value_value) {
         input.value = input_value_value;
       }
-      if (dirty & 1 && div_name_value !== (div_name_value = ctx[25].id)) {
+      if (dirty & 1 && div_name_value !== (div_name_value = ctx[28].id)) {
         attr(div, "name", div_name_value);
       }
     },
@@ -4680,7 +4638,7 @@ function create_if_block_22(ctx) {
   let largecard;
   let h1;
   let t1;
-  let each_value_2 = ctx[1];
+  let each_value_2 = ctx[3];
   let each_blocks = [];
   for (let i = 0; i < each_value_2.length; i += 1) {
     each_blocks[i] = create_each_block_25(get_each_context_25(ctx, each_value_2, i));
@@ -4709,8 +4667,8 @@ function create_if_block_22(ctx) {
       }
     },
     p(ctx2, dirty) {
-      if (dirty & 34) {
-        each_value_2 = ctx2[1];
+      if (dirty & 40) {
+        each_value_2 = ctx2[3];
         let i;
         for (i = 0; i < each_value_2.length; i += 1) {
           const child_ctx = get_each_context_25(ctx2, each_value_2, i);
@@ -4740,7 +4698,7 @@ function create_each_block_25(ctx) {
   let div0;
   let label;
   let a0;
-  let t0_value = game.i18n.localize(ctx[22].name) + "";
+  let t0_value = game.i18n.localize(ctx[25].name) + "";
   let t0;
   let t1;
   let t2;
@@ -4755,7 +4713,10 @@ function create_each_block_25(ctx) {
   let mounted;
   let dispose;
   function click_handler_1(...args) {
-    return ctx[9](ctx[22], ...args);
+    return ctx[9](ctx[25], ...args);
+  }
+  function click_handler_2() {
+    return ctx[11](ctx[25]);
   }
   return {
     c() {
@@ -4773,11 +4734,11 @@ function create_each_block_25(ctx) {
       a1.innerHTML = `<i class="fas fa-trash"></i>`;
       t4 = space();
       attr(label, "class", "header svelte-1f8afzj");
-      attr(input, "name", input_name_value = ctx[22].id);
+      attr(input, "name", input_name_value = ctx[25].id);
       attr(input, "type", "number");
-      input.value = input_value_value = ctx[22].system.rank;
+      input.value = input_value_value = ctx[25].system.rank;
       attr(input, "class", "svelte-1f8afzj");
-      attr(div0, "name", div0_name_value = ctx[22].id);
+      attr(div0, "name", div0_name_value = ctx[25].id);
       attr(a1, "class", "item-control item-delete");
       attr(a1, "title", "Delete Item");
       attr(div1, "class", "item-controls");
@@ -4800,25 +4761,22 @@ function create_each_block_25(ctx) {
         dispose = [
           listen(label, "click", click_handler_1),
           listen(input, "change", ctx[10]),
-          listen(a1, "click", function() {
-            if (is_function(ctx[5]?._onItemDelete(ctx[22]._id)))
-              ctx[5]?._onItemDelete(ctx[22]._id).apply(this, arguments);
-          })
+          listen(a1, "click", click_handler_2)
         ];
         mounted = true;
       }
     },
     p(new_ctx, dirty) {
       ctx = new_ctx;
-      if (dirty & 2 && t0_value !== (t0_value = game.i18n.localize(ctx[22].name) + ""))
+      if (dirty & 8 && t0_value !== (t0_value = game.i18n.localize(ctx[25].name) + ""))
         set_data(t0, t0_value);
-      if (dirty & 2 && input_name_value !== (input_name_value = ctx[22].id)) {
+      if (dirty & 8 && input_name_value !== (input_name_value = ctx[25].id)) {
         attr(input, "name", input_name_value);
       }
-      if (dirty & 2 && input_value_value !== (input_value_value = ctx[22].system.rank)) {
+      if (dirty & 8 && input_value_value !== (input_value_value = ctx[25].system.rank) && input.value !== input_value_value) {
         input.value = input_value_value;
       }
-      if (dirty & 2 && div0_name_value !== (div0_name_value = ctx[22].id)) {
+      if (dirty & 8 && div0_name_value !== (div0_name_value = ctx[25].id)) {
         attr(div0, "name", div0_name_value);
       }
     },
@@ -4835,7 +4793,7 @@ function create_if_block_15(ctx) {
   let largecard;
   let h1;
   let t1;
-  let each_value_1 = ctx[3];
+  let each_value_1 = ctx[1];
   let each_blocks = [];
   for (let i = 0; i < each_value_1.length; i += 1) {
     each_blocks[i] = create_each_block_15(get_each_context_15(ctx, each_value_1, i));
@@ -4864,8 +4822,8 @@ function create_if_block_15(ctx) {
       }
     },
     p(ctx2, dirty) {
-      if (dirty & 40) {
-        each_value_1 = ctx2[3];
+      if (dirty & 34) {
+        each_value_1 = ctx2[1];
         let i;
         for (i = 0; i < each_value_1.length; i += 1) {
           const child_ctx = get_each_context_15(ctx2, each_value_1, i);
@@ -4895,7 +4853,7 @@ function create_each_block_15(ctx) {
   let div0;
   let label;
   let a0;
-  let t0_value = game.i18n.localize(ctx[19].name) + "";
+  let t0_value = game.i18n.localize(ctx[22].name) + "";
   let t0;
   let t1;
   let t2;
@@ -4909,8 +4867,11 @@ function create_each_block_15(ctx) {
   let t4;
   let mounted;
   let dispose;
-  function click_handler_2(...args) {
-    return ctx[11](ctx[19], ...args);
+  function click_handler_3(...args) {
+    return ctx[12](ctx[22], ...args);
+  }
+  function click_handler_4() {
+    return ctx[14](ctx[22]);
   }
   return {
     c() {
@@ -4928,11 +4889,11 @@ function create_each_block_15(ctx) {
       a1.innerHTML = `<i class="fas fa-trash"></i>`;
       t4 = space();
       attr(label, "class", "header svelte-1f8afzj");
-      attr(input, "name", input_name_value = ctx[19].id);
+      attr(input, "name", input_name_value = ctx[22].id);
       attr(input, "type", "number");
-      input.value = input_value_value = ctx[19].system.level;
+      input.value = input_value_value = ctx[22].system.level;
       attr(input, "class", "svelte-1f8afzj");
-      attr(div0, "name", div0_name_value = ctx[19].id);
+      attr(div0, "name", div0_name_value = ctx[22].id);
       attr(a1, "class", "item-control item-delete");
       attr(a1, "title", "Delete Item");
       attr(div1, "class", "item-controls");
@@ -4953,27 +4914,24 @@ function create_each_block_15(ctx) {
       append(trait, t4);
       if (!mounted) {
         dispose = [
-          listen(label, "click", click_handler_2),
-          listen(input, "change", ctx[12]),
-          listen(a1, "click", function() {
-            if (is_function(ctx[5]?._onItemDelete(ctx[19]._id)))
-              ctx[5]?._onItemDelete(ctx[19]._id).apply(this, arguments);
-          })
+          listen(label, "click", click_handler_3),
+          listen(input, "change", ctx[13]),
+          listen(a1, "click", click_handler_4)
         ];
         mounted = true;
       }
     },
     p(new_ctx, dirty) {
       ctx = new_ctx;
-      if (dirty & 8 && t0_value !== (t0_value = game.i18n.localize(ctx[19].name) + ""))
+      if (dirty & 2 && t0_value !== (t0_value = game.i18n.localize(ctx[22].name) + ""))
         set_data(t0, t0_value);
-      if (dirty & 8 && input_name_value !== (input_name_value = ctx[19].id)) {
+      if (dirty & 2 && input_name_value !== (input_name_value = ctx[22].id)) {
         attr(input, "name", input_name_value);
       }
-      if (dirty & 8 && input_value_value !== (input_value_value = ctx[19].system.level)) {
+      if (dirty & 2 && input_value_value !== (input_value_value = ctx[22].system.level) && input.value !== input_value_value) {
         input.value = input_value_value;
       }
-      if (dirty & 8 && div0_name_value !== (div0_name_value = ctx[19].id)) {
+      if (dirty & 2 && div0_name_value !== (div0_name_value = ctx[22].id)) {
         attr(div0, "name", div0_name_value);
       }
     },
@@ -5049,7 +5007,7 @@ function create_each_block6(ctx) {
   let div0;
   let label;
   let a0;
-  let t0_value = game.i18n.localize(ctx[16].name) + "";
+  let t0_value = game.i18n.localize(ctx[19].name) + "";
   let t0;
   let t1;
   let t2;
@@ -5063,8 +5021,11 @@ function create_each_block6(ctx) {
   let t4;
   let mounted;
   let dispose;
-  function click_handler_3(...args) {
-    return ctx[13](ctx[16], ...args);
+  function click_handler_5(...args) {
+    return ctx[15](ctx[19], ...args);
+  }
+  function click_handler_6() {
+    return ctx[17](ctx[19]);
   }
   return {
     c() {
@@ -5082,11 +5043,11 @@ function create_each_block6(ctx) {
       a1.innerHTML = `<i class="fas fa-trash"></i>`;
       t4 = space();
       attr(label, "class", "header svelte-1f8afzj");
-      attr(input, "name", input_name_value = ctx[16].id);
+      attr(input, "name", input_name_value = ctx[19].id);
       attr(input, "type", "number");
-      input.value = input_value_value = ctx[16].system.rank;
+      input.value = input_value_value = ctx[19].system.rank;
       attr(input, "class", "svelte-1f8afzj");
-      attr(div0, "name", div0_name_value = ctx[16].id);
+      attr(div0, "name", div0_name_value = ctx[19].id);
       attr(a1, "class", "item-control item-delete");
       attr(a1, "title", "Delete Item");
       attr(div1, "class", "item-controls");
@@ -5107,27 +5068,24 @@ function create_each_block6(ctx) {
       append(wise, t4);
       if (!mounted) {
         dispose = [
-          listen(label, "click", click_handler_3),
-          listen(input, "change", ctx[14]),
-          listen(a1, "click", function() {
-            if (is_function(ctx[5]?._onItemDelete(ctx[16]._id)))
-              ctx[5]?._onItemDelete(ctx[16]._id).apply(this, arguments);
-          })
+          listen(label, "click", click_handler_5),
+          listen(input, "change", ctx[16]),
+          listen(a1, "click", click_handler_6)
         ];
         mounted = true;
       }
     },
     p(new_ctx, dirty) {
       ctx = new_ctx;
-      if (dirty & 4 && t0_value !== (t0_value = game.i18n.localize(ctx[16].name) + ""))
+      if (dirty & 4 && t0_value !== (t0_value = game.i18n.localize(ctx[19].name) + ""))
         set_data(t0, t0_value);
-      if (dirty & 4 && input_name_value !== (input_name_value = ctx[16].id)) {
+      if (dirty & 4 && input_name_value !== (input_name_value = ctx[19].id)) {
         attr(input, "name", input_name_value);
       }
-      if (dirty & 4 && input_value_value !== (input_value_value = ctx[16].system.rank)) {
+      if (dirty & 4 && input_value_value !== (input_value_value = ctx[19].system.rank) && input.value !== input_value_value) {
         input.value = input_value_value;
       }
-      if (dirty & 4 && div0_name_value !== (div0_name_value = ctx[16].id)) {
+      if (dirty & 4 && div0_name_value !== (div0_name_value = ctx[19].id)) {
         attr(div0, "name", div0_name_value);
       }
     },
@@ -5146,9 +5104,9 @@ function create_fragment14(ctx) {
   let t1;
   let div0;
   let t2;
-  let show_if_2 = Object(ctx[1]).length > 0;
+  let show_if_2 = Object(ctx[3]).length > 0;
   let t3;
-  let show_if_1 = Object(ctx[3]).length > 0;
+  let show_if_1 = Object(ctx[1]).length > 0;
   let t4;
   let show_if = Object(ctx[2]).length > 0;
   let if_block2_anchor;
@@ -5225,8 +5183,8 @@ function create_fragment14(ctx) {
         }
         each_blocks.length = each_value_3.length;
       }
-      if (dirty & 2)
-        show_if_2 = Object(ctx2[1]).length > 0;
+      if (dirty & 8)
+        show_if_2 = Object(ctx2[3]).length > 0;
       if (show_if_2) {
         if (if_block0) {
           if_block0.p(ctx2, dirty);
@@ -5239,8 +5197,8 @@ function create_fragment14(ctx) {
         if_block0.d(1);
         if_block0 = null;
       }
-      if (dirty & 8)
-        show_if_1 = Object(ctx2[3]).length > 0;
+      if (dirty & 2)
+        show_if_1 = Object(ctx2[1]).length > 0;
       if (show_if_1) {
         if (if_block1) {
           if_block1.p(ctx2, dirty);
@@ -5305,10 +5263,13 @@ function instance13($$self, $$props, $$invalidate) {
   const change_handler = (e) => updateRating(sheet, e.target.name, "rating", parseInt(e.target.value));
   const click_handler_1 = (skill, e) => setMouseDice(sheet, skill.system.rank, game.i18n.localize(skill.name));
   const change_handler_1 = (e) => updateRating(sheet, e.target.name, "rank", parseInt(e.target.value));
-  const click_handler_2 = (trait, e) => setMouseDice(sheet, trait.system.level, game.i18n.localize(trait.name));
+  const click_handler_2 = (skill) => sheet?._onItemDelete(skill.id ?? skill._id);
+  const click_handler_3 = (trait, e) => setMouseDice(sheet, trait.system.level, game.i18n.localize(trait.name));
   const change_handler_2 = (e) => updateRating(sheet, e.target.name, "level", parseInt(e.target.value));
-  const click_handler_3 = (wise, e) => setMouseDice(sheet, wise.system.rank, game.i18n.localize(wise.name));
+  const click_handler_4 = (trait) => sheet?._onItemDelete(trait.id ?? trait._id);
+  const click_handler_5 = (wise, e) => setMouseDice(sheet, wise.system.rank, game.i18n.localize(wise.name));
   const change_handler_3 = (e) => updateRating(sheet, e.target.name, "rank", parseInt(e.target.value));
+  const click_handler_6 = (wise) => sheet?._onItemDelete(wise.id ?? wise._id);
   $$self.$$.update = () => {
     if ($$self.$$.dirty & 64) {
       $:
@@ -5320,7 +5281,7 @@ function instance13($$self, $$props, $$invalidate) {
     }
     if ($$self.$$.dirty & 64) {
       $:
-        $$invalidate(1, skills = $sheetData.data.system.itemTypes.skill);
+        $$invalidate(3, skills = $sheetData.data.system.itemTypes.skill);
     }
     if ($$self.$$.dirty & 64) {
       $:
@@ -5328,14 +5289,14 @@ function instance13($$self, $$props, $$invalidate) {
     }
     if ($$self.$$.dirty & 64) {
       $:
-        $$invalidate(3, traits = $sheetData.data.system.itemTypes.trait);
+        $$invalidate(1, traits = $sheetData.data.system.itemTypes.trait);
     }
   };
   return [
     abilities,
-    skills,
-    wises,
     traits,
+    wises,
+    skills,
     sheetData,
     sheet,
     $sheetData,
@@ -5344,9 +5305,12 @@ function instance13($$self, $$props, $$invalidate) {
     click_handler_1,
     change_handler_1,
     click_handler_2,
-    change_handler_2,
     click_handler_3,
-    change_handler_3
+    change_handler_2,
+    click_handler_4,
+    click_handler_5,
+    change_handler_3,
+    click_handler_6
   ];
 }
 var MouseGuardNPCActorSheetBody = class extends SvelteComponent {
@@ -5448,153 +5412,140 @@ var MouseGuardNPCActorSheetBase_default = MouseGuardNPCActorSheetBase;
 require_15();
 
 // module/npcactor-sheet.js
-var MouseGuardNPCActorSheet = class extends ActorSheet {
+var MouseGuardNPCActorSheet = class extends foundry.applications.sheets.ActorSheetV2 {
   app = null;
   dataStore = null;
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["mouseguard", "sheet", "actor"],
-      template: "systems/mouseguard/templates/actor-sheetv2.html",
-      width: 550,
-      height: 600,
-      tabs: []
-    });
+  async _prepareContext(options) {
+    const actorData = this.actor.toObject(false);
+    actorData.system.itemTypes = this.actor.itemTypes;
+    return {
+      actor: this.actor,
+      document: this.actor,
+      data: actorData,
+      system: this.actor.system,
+      systemData: this.actor.system,
+      sheet: this,
+      editable: this.isEditable,
+      owner: this.actor.isOwner
+    };
   }
-  getData() {
-    const context = super.getData();
-    context.systemData = context.system;
-    context.sheet = this;
-    return context;
+  async _renderHTML(context, options) {
+    return "";
   }
-  activateListeners(html) {
-    super.activateListeners(html);
-    if (!this.isEditable)
-      return;
-    html.find(".item-control").click(this._onItemControl.bind(this));
-    html.find(".items .rollable").on("click", this._onItemRoll.bind(this));
+  _replaceHTML(result, content, options) {
   }
-  _onItemControl(event) {
-    event.preventDefault();
-    const button = event.currentTarget;
-    const li = button.closest(".item");
-    const item2 = this.actor.items.get(li?.dataset.itemId);
-    switch (button.dataset.action) {
-      case "create":
-        const cls = getDocumentClass("Item");
-        return cls.create({
-          name: game.i18n.localize("MOUSEGUARD.ItemNew"),
-          type: "item"
-        }, { parent: this.actor });
-      case "edit":
-        return item2.sheet.render(true);
-      case "delete":
-        return item2.delete();
+  _onRender(context, options) {
+    super._onRender(context, options);
+    if (!this.app) {
+      this.dataStore = writable(context);
+      this.app = new MouseGuardNPCActorSheetBase_default({
+        target: this.element,
+        props: {
+          dataStore: this.dataStore
+        }
+      });
+    } else {
+      this.dataStore?.set(context);
     }
   }
-  _onItemRoll(event) {
-    let button = $(event.currentTarget);
-    const li = button.parents(".item");
-    const item2 = this.actor.items.get(li.data("itemId"));
-    let r = new Roll(button.data("roll"), this.actor.getRollData());
-    return r.toMessage({
-      user: game.user.id,
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      flavor: `<h2>${item2.name}</h2><h3>${button.text()}</h3>`
-    });
+  _onClose(options) {
+    if (this.app) {
+      this.app.$destroy();
+      this.app = null;
+      this.dataStore = null;
+    }
+    super._onClose(options);
   }
-  _getSubmitData(updateData) {
-    let formData = super._getSubmitData(updateData);
-    return formData;
-  }
-  _setMouseDice(count) {
+  _setMouseDice(count, message = "") {
     game.mouseguard.RollCount = count;
+    game.mouseguard.RollMessage = message;
     game.mouseguard.updateDisplay(count);
   }
   async _updateActorAbility(id, type, value) {
     await this.actor.updateEmbeddedDocuments("Item", [
-      { _id: id, data: { [type]: value } }
+      { _id: id, system: { [type]: value } }
     ]);
   }
   async _updateEmbededItem(id, _data) {
     await this.actor.updateEmbeddedDocuments("Item", [
-      { _id: id, data: _data }
+      { _id: id, system: _data }
     ]);
   }
   async _onItemDelete(itemId) {
-    const item2 = this.actor.items.get(itemId);
-    item2.delete();
-    this.render();
+    const item = this.actor.items.get(itemId);
+    if (item)
+      await item.delete();
   }
   async _onItemCreate(event) {
     event.preventDefault();
     const header = event.currentTarget;
     const type = header.dataset.type;
-    const data = duplicate(header.dataset);
     const name = `New ${type.capitalize()}`;
     const itemData = {
       name,
       type,
-      data
+      system: { rank: 1 }
     };
-    itemData.data = { rank: 1 };
-    delete itemData.data["type"];
-    return await Item.create(itemData, { parent: this.actor }).then((item2) => {
-      item2.sheet.render(true);
-    });
+    const [item] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
+    item?.sheet?.render(true);
+    return item;
   }
-  render(force = false, options = {}) {
-    let sheetData = this.getData();
-    if (this.app !== null) {
-      let states = Application.RENDER_STATES;
-      if (this._state == states.RENDERING || this._state == states.RENDERED) {
-        this.dataStore?.set(sheetData);
-        return;
-      }
-    }
-    this._render(force, options).catch((err) => {
-      err.message = `An error occurred while rendering ${this.constructor.name} ${this.appId}: ${err.message}`;
-      console.error(err);
-      this._state = Application.RENDER_STATES.ERROR;
-    }).then((rendered) => {
-      this.dataStore = writable(sheetData);
-      this.app = new MouseGuardNPCActorSheetBase_default({
-        target: this.element.find("form").get(0),
-        props: {
-          dataStore: this.dataStore
-        }
-      });
+  async _onItemRoll(event) {
+    const button = event.currentTarget;
+    const li = button.closest(".item");
+    const itemId = li?.dataset.itemId;
+    const item = this.actor.items.get(itemId);
+    const formula = button.dataset.roll;
+    if (!formula)
+      return;
+    const r = new Roll(formula, this.actor.getRollData());
+    await r.evaluate();
+    return r.toMessage({
+      author: game.user.id,
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      flavor: `<h2>${item?.name ?? ""}</h2><h3>${button.textContent}</h3>`
     });
-    options.editable = options.editable ?? this.object.isOwner;
-    this.object.apps[this.appId] = this;
-    return this;
-  }
-  close(options = {}) {
-    if (this.app != null) {
-      this.app.$destroy();
-      this.app = null;
-      this.dataStore = null;
-    }
-    return super.close(options);
   }
 };
+__publicField(MouseGuardNPCActorSheet, "DEFAULT_OPTIONS", {
+  classes: ["mouseguard", "sheet", "actor"],
+  position: {
+    width: 550,
+    height: 600
+  },
+  window: {
+    resizable: true
+  }
+});
 
 // module/templates.js
 var preloadHandlebarsTemplates = async function() {
   const templatePaths = [
+    "systems/mouseguard/templates/sidebar/tabs/combat/header.hbs",
+    "systems/mouseguard/templates/sidebar/tabs/combat/tracker.hbs",
+    "systems/mouseguard/templates/effects/effects-panel.hbs",
+    "systems/mouseguard/templates/effects/effect.hbs",
+    "systems/mouseguard/templates/parts/conflict-manager.hbs",
+    "systems/mouseguard/templates/parts/conflict-move-manager.hbs",
     "systems/mouseguard/templates/parts/sheet-attributes.html",
     "systems/mouseguard/templates/parts/sheet-groups.html",
-    "systems/mouseguard/templates/sidebar/combatant.html",
-    "systems/mouseguard/templates/effects/effects-panel.hbs",
-    "systems/mouseguard/templates/effects/effect.hbs"
+    "systems/mouseguard/templates/chat/combat-action.hbs",
+    "systems/mouseguard/templates/chat/mission.hbs"
   ];
-  return loadTemplates(templatePaths);
+  const loader = foundry.applications.handlebars?.loadTemplates ?? loadTemplates;
+  return loader(templatePaths);
 };
 
 // module/macro.js
 async function createMouseGuardMacro(data, slot) {
   const command = `const roll = new Roll("${data.roll}", actor ? actor.getRollData() : {});
-  roll.toMessage({speaker, flavor: "${data.label}"});`;
-  let macro = game.macros.entities.find((m) => m.name === item.label && m.command === command);
+await roll.evaluate();
+await roll.toMessage({
+    author: game.user.id,
+    speaker: ChatMessage.getSpeaker({ actor: actor }),
+    flavor: "${data.label}"
+});`;
+  let macro = game.macros.find((m) => m.name === data.label && m.command === command);
   if (!macro) {
     macro = await Macro.create({
       name: data.label,
@@ -5615,12 +5566,12 @@ var MouseDie = class extends Die {
   }
   getResultLabel(result) {
     return {
-      1: '<img src="systems/mouseguard/assets/dice/snake.png" />',
-      2: '<img src="systems/mouseguard/assets/dice/snake.png" />',
-      3: '<img src="systems/mouseguard/assets/dice/snake.png" />',
-      4: '<img src="systems/mouseguard/assets/dice/sword.png" />',
-      5: '<img src="systems/mouseguard/assets/dice/sword.png" />',
-      6: '<img src="systems/mouseguard/assets/dice/axe.png" />'
+      1: '<img src="systems/mouseguard/assets/dice/snake.png" alt="snake" />',
+      2: '<img src="systems/mouseguard/assets/dice/snake.png" alt="snake" />',
+      3: '<img src="systems/mouseguard/assets/dice/snake.png" alt="snake" />',
+      4: '<img src="systems/mouseguard/assets/dice/sword.png" alt="sword" />',
+      5: '<img src="systems/mouseguard/assets/dice/sword.png" alt="sword" />',
+      6: '<img src="systems/mouseguard/assets/dice/axe.png" alt="axe" />'
     }[result.result];
   }
 };
@@ -5628,100 +5579,82 @@ __publicField(MouseDie, "DENOMINATION", "m");
 var mouseChatData = async (roll, chatOptions) => {
   const isPrivate = chatOptions.isPrivate;
   return {
-    formula: isPrivate ? "???" : roll._formula,
+    formula: isPrivate ? "???" : roll.formula,
     flavor: isPrivate ? null : chatOptions.flavor,
-    user: chatOptions.user,
+    user: chatOptions.author ?? chatOptions.user ?? game.user.id,
     tooltip: isPrivate ? "" : await roll.getTooltip(),
-    result: isPrivate ? "?" : roll.result,
-    dice_count: isPrivate ? "?" : roll.terms[0].number,
+    result: isPrivate ? "?" : roll.total ?? 0,
+    dice_count: isPrivate ? "?" : roll.terms?.[0]?.number ?? 1,
     drop: false,
     claimed: roll.claimed ?? false
   };
 };
 var MouseRoll = class extends Roll {
-  constructor(...args) {
-    super(...args);
-  }
   async render(chatOptions = {}) {
     chatOptions = foundry.utils.mergeObject({
-      user: game.user.id,
+      author: game.user.id,
       flavor: null,
       template: this.constructor.CHAT_TEMPLATE,
       blind: false
     }, chatOptions);
     if (!this._evaluated)
-      this.evaluate();
-    let chatData = await mouseChatData(this, chatOptions);
+      await this.evaluate();
+    const chatData = await mouseChatData(this, chatOptions);
     return renderTemplate(chatOptions.template, chatData);
   }
 };
 __publicField(MouseRoll, "CHAT_TEMPLATE", "systems/mouseguard/templates/dice/roll.html");
 
 // module/conflict-tracker.js
-var ConflictTracker = class extends FormApplication {
-  constructor(object = {}, options = {}) {
-    super(object, options);
-    this.isRunningQueue = false;
-    if (options?.menu) {
-      this.menu = options.menu;
-    }
-  }
-  static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
-      id: "conflict-tracker",
-      classes: ["mouseguard"],
-      title: "Conflict Tracker",
-      template: "systems/mouseguard/templates/conflict-tracker.html"
-    });
-  }
-  getData() {
-    const context = super.getData();
-    context.isGM = game.user.isGM;
-    const x = $(window).width();
-    this.position.left = x / 2 - 505 / 2;
-    this.position.top = 10;
-    this.position.width = 150;
-    this.position.height = 105;
-    return context;
-  }
-  async close(options = {}) {
-  }
-  activateListeners(html) {
+var { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+var ConflictTracker = class extends HandlebarsApplicationMixin(ApplicationV2) {
+  async _prepareContext(options) {
+    return {
+      isGM: game.user.isGM
+    };
   }
 };
+__publicField(ConflictTracker, "DEFAULT_OPTIONS", {
+  id: "conflict-tracker",
+  classes: ["mouseguard"],
+  window: {
+    title: "Conflict Tracker"
+  },
+  position: {
+    width: 150,
+    height: 105
+  }
+});
+__publicField(ConflictTracker, "PARTS", {
+  tracker: {
+    template: "systems/mouseguard/templates/conflict-tracker.html"
+  }
+});
 
 // module/mouse-combantant.js
 var MouseCombatant = class extends Combatant {
-  constructor(...args) {
-    super(...args);
-  }
-  prepareDerivedData() {
-    super.prepareDerivedData();
-  }
-  getData() {
-    const context = super.getData();
-    return context;
-  }
   get ConflictCaptain() {
-    return this.getFlag("mouseguard", "ConflictCaptain");
+    return this.getFlag("mouseguard", "ConflictCaptain") ?? false;
   }
   get team() {
-    return this.getFlag("mouseguard", "Team");
+    return this.getFlag("mouseguard", "Team") ?? "0";
   }
   async setConflictCaptain(value) {
     return this.setFlag("mouseguard", "ConflictCaptain", value);
   }
   async SetMove(move) {
-    this.setFlag("mouseguard", "Moves", move);
+    return this.setFlag("mouseguard", "Moves", move);
   }
   async setTeam(value) {
-    return this.setFlag("mouseguard", "Team", value);
+    return this.setFlag("mouseguard", "Team", String(value));
   }
   async _preCreate(data, options, user) {
-    await super._preCreate(data, options, user);
+    const allowed = await super._preCreate(data, options, user);
+    if (allowed === false)
+      return false;
     let init2 = 0;
-    let actor = game.actors.get(data.actorId);
-    if (actor.type == "character")
+    const actor = this.actor ?? game.actors.get(data.actorId);
+    if (actor?.type === "character")
       init2 = 1;
     this.updateSource({
       initiative: init2,
@@ -5729,147 +5662,161 @@ var MouseCombatant = class extends Combatant {
         mouseguard: {
           ConflictCaptain: false,
           Moves: [],
-          Team: 0
+          Team: "0"
         }
       }
     });
+    return allowed;
   }
   async doMove(id) {
-    let Moves = this.getFlag("mouseguard", "Moves");
-    let theMove = Moves.filter((item2) => item2.id == id);
-    let template = "systems/mouseguard/templates/chat/combat-action.hbs";
-    let data = { actor: [this.actor][0], move: theMove[0].move };
-    var content = await renderTemplate(template, data);
-    let chatData = {
-      user: game.user.id,
-      speaker: ChatMessage.getSpeaker({ actor: data.actor }),
-      flags: { "mouseguard.unflipped": true }
+    const moves = this.getFlag("mouseguard", "Moves") || [];
+    const theMove = moves.find((item) => item.id == id);
+    if (!theMove)
+      return;
+    const template = "systems/mouseguard/templates/chat/combat-action.hbs";
+    const data = { actor: this.actor, move: theMove.move };
+    const content = await renderTemplate(template, data);
+    const chatData = {
+      author: game.user.id,
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      content,
+      flags: {
+        mouseguard: {
+          unflipped: true
+        }
+      }
     };
-    chatData.content = content;
-    ChatMessage.create(chatData);
-    let otherMoves = Moves.filter((item2) => item2.id !== id);
-    this.SetMove(otherMoves);
+    await ChatMessage.create(chatData);
+    const otherMoves = moves.filter((item) => item.id != id);
+    await this.SetMove(otherMoves);
   }
 };
 
 // module/socket.js
 var MouseSocket = class {
   static async askGoal(data) {
-    data.this = this;
-    let dlg = await renderTemplate("systems/mouseguard/templates/parts/conflict-manager.hbs", data);
-    new Dialog({
-      title: `Conflict Manager`,
-      content: dlg,
-      buttons: {
-        ok: {
+    const htmlContent = await renderTemplate("systems/mouseguard/templates/parts/conflict-manager.hbs", data);
+    const dialog = new foundry.applications.api.DialogV2({
+      window: {
+        title: "Conflict Manager"
+      },
+      content: htmlContent,
+      buttons: [
+        {
+          action: "ok",
           label: "Apply",
-          callback: async (html) => {
-            data.this.goalManager(html, data);
+          default: true,
+          callback: (event, button, dialog2) => {
+            const form = dialog2.element.querySelector("form") ?? dialog2.element;
+            const conflictGoal = form.querySelector("#conflict_goal")?.value ?? "";
+            const combatId = data.combat?.id ?? data.combat?._id ?? data.combat;
+            const goalData = {
+              action: "setGoal",
+              combat: combatId,
+              goal: conflictGoal,
+              team: data.team
+            };
+            if (game.user.isGM) {
+              this.setGoal(goalData);
+            } else {
+              game.socket.emit("system.mouseguard", goalData);
+            }
           }
         },
-        cancel: {
+        {
+          action: "cancel",
           label: "Cancel"
         }
-      },
-      default: "ok"
-    }).render(true);
-  }
-  static async goalManager(html, data) {
-    let conflictGoal = html.find("#conflict_goal")[0].value;
-    let goalData = {
-      action: "setGoal",
-      combat: data.combat._id,
-      goal: conflictGoal,
-      team: data.team
-    };
-    if (game.user.isGM) {
-      this.setGoal(goalData);
-    } else {
-      await game.socket.emit("system.mouseguard", goalData);
-    }
+      ]
+    });
+    dialog.render(true);
   }
   static async setGoal(data) {
     if (game.user.isGM) {
-      let combat = await game.combats.get(data.combat);
-      combat.setGoal(data.goal, data.team);
+      const combatId = data.combat?.id ?? data.combat?._id ?? data.combat;
+      const combat = game.combats.get(combatId);
+      if (combat) {
+        await combat.setGoal(data.goal, data.team);
+      }
     }
   }
   static async askMoves(data) {
-    let dlg = await renderTemplate("systems/mouseguard/templates/parts/conflict-move-manager.hbs", data);
-    new Dialog({
-      title: `Conflict Manager`,
-      content: dlg,
-      buttons: {
-        ok: {
+    const htmlContent = await renderTemplate("systems/mouseguard/templates/parts/conflict-move-manager.hbs", data);
+    const dialog = new foundry.applications.api.DialogV2({
+      window: {
+        title: "Conflict Manager"
+      },
+      content: htmlContent,
+      buttons: [
+        {
+          action: "ok",
           label: game.i18n.localize("MOUSEGUARD.Send"),
-          callback: async (html) => {
-            let error = false;
-            let Move1Actor = html.find("#move0-actor")[0].value;
-            let Move1Move = html.find(".move0:checked").val();
-            let Move2Actor = html.find("#move1-actor")[0].value;
-            let Move2Move = html.find(".move1:checked").val();
-            let Move3Actor = html.find("#move2-actor")[0].value;
-            let Move3Move = html.find(".move2:checked").val();
-            let CombatantData = {
-              [Move1Actor]: [],
-              [Move2Actor]: [],
-              [Move3Actor]: []
-            };
-            if (!!Move1Move == false)
-              error = true;
-            if (!!Move2Move == false)
-              error = true;
-            if (!!Move3Move == false)
-              error = true;
-            if (error) {
-              ui.notifications.error("An error occured while setting your moves. Please select new moves.");
+          default: true,
+          callback: async (event, button, dialog2) => {
+            const element2 = dialog2.element;
+            const move1Actor = element2.querySelector("#move0-actor")?.value;
+            const move1Move = element2.querySelector(".move0:checked")?.value;
+            const move2Actor = element2.querySelector("#move1-actor")?.value;
+            const move2Move = element2.querySelector(".move1:checked")?.value;
+            const move3Actor = element2.querySelector("#move2-actor")?.value;
+            const move3Move = element2.querySelector(".move2:checked")?.value;
+            if (!move1Move || !move2Move || !move3Move || !move1Actor || !move2Actor || !move3Actor) {
+              ui.notifications.error("An error occurred while setting your moves. Please select new moves.");
               this.askMoves(data);
               return;
             }
-            CombatantData[Move1Actor].push({
-              id: randomID(),
-              move: Move1Move,
-              combatant: Move1Actor
+            const combatantData = {
+              [move1Actor]: [],
+              [move2Actor]: [],
+              [move3Actor]: []
+            };
+            combatantData[move1Actor].push({
+              id: foundry.utils.randomID(),
+              move: move1Move,
+              combatant: move1Actor
             });
-            CombatantData[Move2Actor].push({
-              id: randomID(),
-              move: Move2Move,
-              combatant: Move2Actor
+            combatantData[move2Actor].push({
+              id: foundry.utils.randomID(),
+              move: move2Move,
+              combatant: move2Actor
             });
-            CombatantData[Move3Actor].push({
-              id: randomID(),
-              move: Move3Move,
-              combatant: Move3Actor
+            combatantData[move3Actor].push({
+              id: foundry.utils.randomID(),
+              move: move3Move,
+              combatant: move3Actor
             });
-            let moveData = {
+            const combatId = data.combat?.id ?? data.combat?._id ?? (typeof data.combat === "string" ? data.combat : null);
+            const moveData = {
               action: "setMoves",
-              combat: data.combat,
-              data: CombatantData
+              combat: combatId,
+              data: combatantData
             };
             if (game.user.isGM) {
-              moveData.combat = data.combat;
               this.setMoves(moveData);
             } else {
               await game.socket.emit("system.mouseguard", moveData);
             }
           }
         },
-        cancel: {
+        {
+          action: "cancel",
           label: "Cancel"
         }
-      },
-      default: "ok"
-    }).render(true);
-  }
-  static async moveManger(html, data) {
+      ]
+    });
+    dialog.render(true);
   }
   static async setMoves(data) {
     if (game.user.isGM) {
-      let combat = await game.combats.get(data.combat._id);
-      let x = Object.keys(data.data).length;
+      const combatId = data.combat?.id ?? data.combat?._id ?? data.combat;
+      const combat = game.combats.get(combatId);
+      if (!combat)
+        return;
       for (const key of Object.keys(data.data)) {
-        let combatant = await combat.combatants.get(key);
-        await combatant.setFlag("mouseguard", "Moves", data.data[key]);
+        const combatant = combat.combatants.get(key);
+        if (combatant) {
+          await combatant.setFlag("mouseguard", "Moves", data.data[key]);
+        }
       }
     }
   }
@@ -5877,13 +5824,6 @@ var MouseSocket = class {
 
 // module/mouse-combat.js
 var MouseCombat = class extends Combat {
-  constructor(object = {}, options = {}) {
-    super(object, options);
-  }
-  getData() {
-    const context = super.getData();
-    return context;
-  }
   get getGoal1() {
     return this.getFlag("mouseguard", "goal1");
   }
@@ -5903,7 +5843,9 @@ var MouseCombat = class extends Combat {
     return this.setFlag("mouseguard", "ConflictCaptain2", value);
   }
   async _preCreate(data, options, user) {
-    await super._preCreate(data, options, user);
+    const allowed = await super._preCreate(data, options, user);
+    if (allowed === false)
+      return false;
     this.updateSource({
       flags: {
         mouseguard: {
@@ -5916,47 +5858,45 @@ var MouseCombat = class extends Combat {
         }
       }
     });
-  }
-  static _canUpdate(user, doc, data) {
-    if (user.isGM)
-      return true;
-    const updateKeys = new Set(Object.keys(data));
-    const allowedKeys = new Set(["_id", "initiative", "flags"]);
-    return updateKeys.isSubset(allowedKeys);
+    return allowed;
   }
   async startCombat() {
-    let goal = this.flags.mouseguard.goal1;
-    let goal2 = this.flags.mouseguard.goal2;
-    let CC = this.flags.mouseguard.ConflictCaptain;
-    let CC2 = this.flags.mouseguard.ConflictCaptain2;
+    const goal = this.getFlag("mouseguard", "goal1");
+    const goal2 = this.getFlag("mouseguard", "goal2");
+    const CC = this.getFlag("mouseguard", "ConflictCaptain");
+    const CC2 = this.getFlag("mouseguard", "ConflictCaptain2");
     if (!CC) {
       ui.notifications.error(game.i18n.localize("COMBAT.NeedCC"));
       return false;
     }
-    if (goal == null) {
+    if (!goal) {
       ui.notifications.error(game.i18n.localize("COMBAT.NeedGoal"));
-      this.askGoal();
+      await this.askGoal();
       return false;
     }
-    if (goal2 == null) {
+    if (!goal2) {
       ui.notifications.error(game.i18n.localize("COMBAT.NeedGoal"));
-      this.askGoal();
+      await this.askGoal();
       return false;
     }
-    if (!!goal != false && !!goal2 != false && CC && CC2) {
-      this.askMove();
+    if (goal && goal2 && CC && CC2) {
+      await this.askMove();
       return this.update({ round: 1, turn: 0 });
     }
     return false;
   }
   getCCPlayerByID(conflictCaptainID) {
-    let combatant = this.combatants.get(conflictCaptainID);
-    let actor = game.actors.get(combatant.actorId);
-    return game.users.filter((u) => !u.isGM && actor.testUserPermission(u, "OWNER"))?.[0] ?? game.users.activeGM;
+    const combatant = this.combatants.get(conflictCaptainID);
+    if (!combatant)
+      return game.users.activeGM;
+    const actor = combatant.actor ?? game.actors.get(combatant.actorId);
+    if (!actor)
+      return game.users.activeGM;
+    return game.users.filter((u) => !u.isGM && u.active && actor.testUserPermission(u, "OWNER"))?.[0] ?? game.users.activeGM;
   }
   async askGoal() {
-    let CC = this.flags.mouseguard.ConflictCaptain;
-    let CC2 = this.flags.mouseguard.ConflictCaptain2;
+    const CC = this.getFlag("mouseguard", "ConflictCaptain");
+    const CC2 = this.getFlag("mouseguard", "ConflictCaptain2");
     if (!CC) {
       ui.notifications.error("A Conflict Captain Must be set for team 1");
       return false;
@@ -5965,262 +5905,310 @@ var MouseCombat = class extends Combat {
       ui.notifications.error("A Conflict Captain Must be set for team 2");
       return false;
     }
-    let player = this.getCCPlayerByID(CC);
-    await game.socket.emit("system.mouseguard", { action: "askGoal", combat: this, team: "1" }, { recipients: [player._id] });
-    let player2 = this.getCCPlayerByID(CC2);
-    await game.socket.emit("system.mouseguard", { action: "askGoal", combat: this, team: "2" }, { recipients: [player2._id] });
+    const player = this.getCCPlayerByID(CC);
+    if (player) {
+      await game.socket.emit("system.mouseguard", { action: "askGoal", combat: this.id, team: "1" }, { recipients: [player.id] });
+    }
+    const player2 = this.getCCPlayerByID(CC2);
+    if (player2) {
+      await game.socket.emit("system.mouseguard", { action: "askGoal", combat: this.id, team: "2" }, { recipients: [player2.id] });
+    }
   }
   async setGoal(goal, team) {
-    this.setFlag("mouseguard", "goal" + team, goal).then((content) => {
-      this.startCombat();
-    });
+    await this.setFlag("mouseguard", "goal" + team, goal);
+    await this.startCombat();
     return true;
   }
   async askMove() {
-    let CC = this.flags.mouseguard.ConflictCaptain;
-    let CC2 = this.flags.mouseguard.ConflictCaptain2;
+    const CC = this.getFlag("mouseguard", "ConflictCaptain");
+    const CC2 = this.getFlag("mouseguard", "ConflictCaptain2");
     if (!CC) {
       ui.notifications.error(game.i18n.localize("COMBAT.NeedCC"));
       return false;
     }
-    let data = { combat: this };
-    let team1 = [];
-    let team2 = [];
-    let combatants = this.combatants.filter((comb) => comb.team == "1");
-    Object.keys(combatants).forEach((key) => {
+    const data = { combat: this.id };
+    const team1 = [];
+    const team2 = [];
+    const combatants = this.combatants.filter((comb) => comb.team === "1" || comb.team === 1);
+    for (const comb of combatants) {
       team1.push({
-        combatant: combatants[key].id,
-        name: combatants[key].token.name
+        combatant: comb.id,
+        name: comb.name ?? comb.token?.name
       });
-    });
+    }
     data.actors = team1;
     data.action = "askMoves";
-    let player = this.getCCPlayerByID(CC);
-    await game.socket.emit("system.mouseguard", data, {
-      recipients: [player._id]
-    });
-    let player2 = this.getCCPlayerByID(CC2);
-    if (player2 == "undefined") {
-      data.npc = true;
-    }
-    let team2combatants = this.combatants.filter((comb) => comb.team == "2");
-    Object.keys(team2combatants).forEach((key) => {
-      team2.push({
-        combatant: team2combatants[key].id,
-        name: team2combatants[key].token.name
+    const player = this.getCCPlayerByID(CC);
+    if (player) {
+      await game.socket.emit("system.mouseguard", data, {
+        recipients: [player.id]
       });
-    });
-    data.actors = team2;
-    await game.socket.emit("system.mouseguard", data, {
-      recipients: [player2._id]
-    });
+    }
+    const player2 = this.getCCPlayerByID(CC2);
+    const data2 = { ...data };
+    if (!player2 || player2.isGM) {
+      data2.npc = true;
+    }
+    const team2combatants = this.combatants.filter((comb) => comb.team === "2" || comb.team === 2);
+    for (const comb of team2combatants) {
+      team2.push({
+        combatant: comb.id,
+        name: comb.name ?? comb.token?.name
+      });
+    }
+    data2.actors = team2;
+    if (player2) {
+      await game.socket.emit("system.mouseguard", data2, {
+        recipients: [player2.id]
+      });
+    }
   }
   async askNPCMove(data) {
-    MouseSocket.askMoves(data);
+    await MouseSocket.askMoves(data);
   }
   async nextRound() {
-    this.askMove();
-    super.nextRound();
+    await this.askMove();
+    return super.nextRound();
   }
 };
 
 // module/mouse-combat-tracker.js
-var MouseCombatTracker = class extends CombatTracker {
-  constructor(options) {
-    super(options);
+var CombatTracker = foundry.applications.sidebar.tabs.CombatTracker;
+var _onDragStart, __create, _onDropTeam, __create, _onAskMove, __create, _onAskGoal, __create, _onDoMove, __create;
+var _MouseCombatTracker = class extends CombatTracker {
+  constructor() {
+    super(...arguments);
+    __privateAdd(this, _onDragStart);
+    __privateAdd(this, _onDropTeam);
   }
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      id: "combat",
-      template: "systems/mouseguard/templates/sidebar/combat-tracker.html",
-      title: "COMBAT.SidebarTitle",
-      scrollY: [".directory-list"],
-      dragDrop: [
-        {
-          dragSelector: "li.combatant.actor.directory-item.flexrow",
-          dropSelector: "li[data-team]"
-        }
-      ]
-    });
+  async _prepareTurnContext(combat, combatant, index) {
+    const turn = await super._prepareTurnContext(combat, combatant, index);
+    turn.team = combatant.team || "0";
+    turn.isConflictCaptain = !!combatant.ConflictCaptain;
+    turn.moves = combatant.getFlag("mouseguard", "Moves") || [];
+    turn.isFirstOwner = this.isFirstOwner(combatant.actor);
+    turn.hasPlayerOwner = this.hasPlayerOwner(combatant.actor);
+    return turn;
   }
-  _canDragStart(ev) {
-    if (game.user.isGM)
-      return true;
-    return false;
-  }
-  _canDragDrop(ev) {
-    if (game.user.isGM)
-      return true;
-    return false;
-  }
-  _onDragDrop(ev) {
-    super._onDrop(ev);
-  }
-  async _onDrop(ev) {
-    super._onDrop(ev);
-    if (JSON.parse(ev.dataTransfer?.getData("text/plain")).id == "0") {
-      return false;
-    }
-    let dropped_id = JSON.parse(ev.dataTransfer?.getData("text/plain")).id;
-    let target = ev.target.closest("li").dataset.team;
-    await this.viewed.combatants.get(dropped_id).setTeam(target);
-  }
-  _onDragStart(ev) {
-    let valid = this.viewed.combatants.get(ev.target.dataset.combatantId);
-    if (valid.flags.mouseguard.ConflictCaptain) {
-      ui.notifications.error(game.i18n.localize("COMBAT.CCERROR"));
-      ev.dataTransfer.setData("text/plain", JSON.stringify({
-        id: "0"
-      }));
-      return false;
-    } else {
-      ev.dataTransfer.setData("text/plain", JSON.stringify({ id: ev.target.dataset.combatantId }));
-    }
+  async _prepareTrackerContext(context, options) {
+    await super._prepareTrackerContext(context, options);
+    const combat = this.viewed;
+    const turns = context.turns || [];
+    context.teams = {
+      team1: {
+        id: "1",
+        label: game.i18n.localize("COMBAT.Team1"),
+        goal: combat?.getFlag("mouseguard", "goal1") || game.i18n.localize("COMBAT.NoGoal"),
+        turns: turns.filter((t) => t.team === "1" || t.team === 1)
+      },
+      team2: {
+        id: "2",
+        label: game.i18n.localize("COMBAT.Team2"),
+        goal: combat?.getFlag("mouseguard", "goal2") || game.i18n.localize("COMBAT.NoGoal"),
+        turns: turns.filter((t) => t.team === "2" || t.team === 2)
+      },
+      team0: {
+        id: "0",
+        label: game.i18n.localize("COMBAT.Team0"),
+        goal: null,
+        turns: turns.filter((t) => !t.team || t.team === "0" || t.team === 0)
+      }
+    };
   }
   _getEntryContextOptions() {
-    return [
-      {
-        name: "COMBAT.ConflictCaptain",
-        icon: '<i class="fas fa-crown"></i>',
-        callback: (li) => {
-          const combatant = this.viewed.combatants.get(li.data("combatant-id"));
-          let Team = "";
-          if (combatant.team == 2)
-            Team = "2";
-          if (combatant.team == 0)
-            return;
-          console.log(Team);
-          if (this.viewed.flags.mouseguard["ConflictCaptain" + Team] == combatant.id) {
-            this.viewed.setFlag("mouseguard", "ConflictCaptain" + Team, NaN);
-            return combatant.setFlag("mouseguard", "ConflictCaptain", false);
-          }
-          if (!!this.viewed.flags.mouseguard["ConflictCaptain" + Team] == false) {
-            if (combatant) {
-              this.viewed.setFlag("mouseguard", "ConflictCaptain" + Team, li.data("combatant-id"));
-              return combatant.setFlag("mouseguard", "ConflictCaptain", true);
-            }
-          } else {
-            ui.notifications.error(game.i18n.localize("COMBAT.CCSet"));
-            return false;
-          }
-          console.log(this);
+    const entries = super._getEntryContextOptions();
+    entries.unshift({
+      label: "COMBAT.ConflictCaptain",
+      icon: "fa-solid fa-crown",
+      visible: (li) => game.user.isGM,
+      onClick: async (event, li) => {
+        const combatantId = li.dataset.combatantId;
+        const combatant = this.viewed?.combatants.get(combatantId);
+        if (!combatant)
+          return;
+        const team = combatant.team;
+        if (!team || team === "0") {
+          ui.notifications.warn("Assign a team to the combatant before setting as Conflict Captain.");
+          return;
         }
-      },
-      {
-        name: "COMBAT.CombatantUpdate",
-        icon: '<i class="fas fa-edit"></i>',
-        callback: this._onConfigureCombatant.bind(this)
-      },
-      {
-        name: "Console.Log",
-        icon: '<i class="fas fa-edit"></i>',
-        callback: (li) => {
-          const combatant = this.viewed.combatants.get(li.data("combatant-id"));
-          if (combatant)
-            console.log(combatant);
-        }
-      },
-      {
-        name: "COMBAT.CombatantRemove",
-        icon: '<i class="fas fa-trash"></i>',
-        callback: (li) => {
-          const combatant = this.viewed.combatants.get(li.data("combatant-id"));
-          if (combatant)
-            return combatant.delete();
+        const flagKey = team === "2" || team === 2 ? "ConflictCaptain2" : "ConflictCaptain";
+        const currentCaptainId = this.viewed.getFlag("mouseguard", flagKey);
+        if (currentCaptainId === combatant.id) {
+          await this.viewed.setFlag("mouseguard", flagKey, null);
+          await combatant.setConflictCaptain(false);
+        } else if (!currentCaptainId) {
+          await this.viewed.setFlag("mouseguard", flagKey, combatant.id);
+          await combatant.setConflictCaptain(true);
+        } else {
+          ui.notifications.error(game.i18n.localize("COMBAT.CCSet"));
         }
       }
-    ];
+    });
+    return entries;
   }
-  async _onCombatantControl(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    const btn = event.currentTarget;
-    const li = btn.closest(".combatant");
-    const combat = this.viewed;
-    const c = combat.combatants.get(li.dataset.combatantId);
-    switch (btn.dataset.control) {
-      case "doMove":
-        return c.doMove(btn.dataset.move);
-      case "toggleHidden":
-        return c.update({ hidden: !c.hidden });
-      case "toggleDefeated":
-        return this._onToggleDefeatedStatus(c);
-      case "rollInitiative":
-        return combat.rollInitiative([c.id]);
-      case "pingCombatant":
-        return this._onPingCombatant(c);
+  _onRender(context, options) {
+    super._onRender(context, options);
+    if (game.user.isGM) {
+      this.element.querySelectorAll(".combatant[draggable='true']").forEach((li) => {
+        li.addEventListener("dragstart", __privateMethod(this, _onDragStart, __create).bind(this));
+      });
+      this.element.querySelectorAll("[data-team]").forEach((el) => {
+        el.addEventListener("dragover", (event) => {
+          event.preventDefault();
+          event.dataTransfer.dropEffect = "move";
+        });
+        el.addEventListener("drop", __privateMethod(this, _onDropTeam, __create).bind(this));
+      });
     }
-  }
-  async getData(options) {
-    let context = await super.getData(options);
-    if (context.combat) {
-      for (let [i, combatant] of context.combat.turns.entries()) {
-        context.turns[i].flags = combatant.flags;
-        context.turns[i].isFirstOwner = this.isFirstOwner(combatant.actor);
-        context.turns[i].hasPlayerOwner = this.hasPlayerOwner(combatant.actor);
-      }
-    }
-    return context;
   }
   firstOwner(doc) {
     if (!doc)
-      return false;
-    const gmOwners = Object.entries(doc.ownership).filter(([id, level]) => game.users.get(id)?.isGM && game.users.get(id)?.active && level === 3).map(([id, level]) => id);
-    const otherOwners = Object.entries(doc.ownership).filter(([id, level]) => !game.users.get(id)?.isGM && game.users.get(id)?.active && level === 3).map(([id, level]) => id);
-    if (otherOwners.length > 0)
-      return game.users.get(otherOwners[0]);
-    else
-      return game.users.get(gmOwners[0]);
+      return null;
+    const owners = Object.entries(doc.ownership || {}).filter(([id, level]) => level === CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER).map(([id]) => game.users.get(id)).filter((u) => u && u.active);
+    const playerOwner = owners.find((u) => !u.isGM);
+    return playerOwner ?? owners.find((u) => u.isGM) ?? null;
   }
   isFirstOwner(doc) {
-    return game.user.id === this.firstOwner(doc).id;
+    const owner = this.firstOwner(doc);
+    return owner?.id === game.user.id;
   }
   hasPlayerOwner(doc) {
     if (!doc)
       return false;
-    const gmOwners = Object.entries(doc.ownership).filter(([id, level]) => game.users.get(id)?.isGM && game.users.get(id)?.active && level === 3).map(([id, level]) => id);
-    const otherOwners = Object.entries(doc.ownership).filter(([id, level]) => !game.users.get(id)?.isGM && game.users.get(id)?.active && level === 3).map(([id, level]) => id);
-    if (otherOwners.length > 0)
-      return true;
-    else
-      return false;
-  }
-};
-
-// module/mouse-effects.js
-var EffectsPanel = class extends Application {
-  constructor(...args) {
-    super(...args);
-  }
-  refresh = foundry.utils.debounce(this.render, 100);
-  static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
-      ...super.defaultOptions,
-      id: "mouseguard-effects-panel",
-      popOut: false,
-      classes: ["mouseguard"],
-      template: "systems/mouseguard/templates/effects/effects-panel.hbs"
+    return Object.entries(doc.ownership || {}).some(([id, level]) => {
+      const u = game.users.get(id);
+      return u && !u.isGM && u.active && level === CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER;
     });
   }
+};
+var MouseCombatTracker = _MouseCombatTracker;
+_onDragStart = new WeakSet();
+__create = function(event) {
+  const li = event.currentTarget.closest(".combatant");
+  if (!li)
+    return;
+  const combatant = this.viewed?.combatants.get(li.dataset.combatantId);
+  if (!combatant)
+    return;
+  if (combatant.ConflictCaptain) {
+    ui.notifications.error(game.i18n.localize("COMBAT.CCERROR"));
+    event.preventDefault();
+    return;
+  }
+  event.dataTransfer.setData("text/plain", JSON.stringify({ id: combatant.id }));
+};
+_onDropTeam = new WeakSet();
+__create = async function(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  const raw = event.dataTransfer?.getData("text/plain");
+  if (!raw)
+    return;
+  try {
+    const data = JSON.parse(raw);
+    if (!data.id)
+      return;
+    const targetEl = event.target.closest("[data-team]");
+    const targetTeam = targetEl?.dataset.team;
+    if (targetTeam === void 0)
+      return;
+    const combatant = this.viewed?.combatants.get(data.id);
+    if (combatant) {
+      await combatant.setTeam(targetTeam);
+    }
+  } catch (err) {
+    console.error("MouseGuard | Error during team drop", err);
+  }
+};
+_onAskMove = new WeakSet();
+__create = async function(event, target) {
+  await this.viewed?.askMove();
+};
+_onAskGoal = new WeakSet();
+__create = async function(event, target) {
+  await this.viewed?.askGoal();
+};
+_onDoMove = new WeakSet();
+__create = async function(event, target) {
+  const combatantId = target.dataset.combatantId;
+  const moveId = target.dataset.moveId;
+  const combatant = this.viewed?.combatants.get(combatantId);
+  if (combatant) {
+    await combatant.doMove(moveId);
+  }
+};
+__privateAdd(MouseCombatTracker, _onAskMove);
+__privateAdd(MouseCombatTracker, _onAskGoal);
+__privateAdd(MouseCombatTracker, _onDoMove);
+__publicField(MouseCombatTracker, "DEFAULT_OPTIONS", {
+  actions: {
+    askMove: __privateMethod(_MouseCombatTracker, _onAskMove, __create),
+    askGoal: __privateMethod(_MouseCombatTracker, _onAskGoal, __create),
+    doMove: __privateMethod(_MouseCombatTracker, _onDoMove, __create)
+  }
+});
+__publicField(MouseCombatTracker, "PARTS", {
+  header: {
+    template: "systems/mouseguard/templates/sidebar/tabs/combat/header.hbs"
+  },
+  tracker: {
+    template: "systems/mouseguard/templates/sidebar/tabs/combat/tracker.hbs",
+    scrollable: [""]
+  },
+  footer: {
+    template: "templates/sidebar/tabs/combat/footer.hbs"
+  }
+});
+
+// module/mouse-effects.js
+var { ApplicationV2: ApplicationV22, HandlebarsApplicationMixin: HandlebarsApplicationMixin2 } = foundry.applications.api;
+var EffectsPanel = class extends HandlebarsApplicationMixin2(ApplicationV22) {
+  refresh = foundry.utils.debounce(() => {
+    if (this.rendered)
+      this.render(false);
+  }, 100);
   get token() {
-    return canvas.tokens.controlled.at(0)?.document ?? null;
+    return canvas.tokens?.controlled?.at(0)?.document ?? null;
   }
   get actor() {
     return this.token?.actor ?? game.user?.character ?? null;
   }
-  async getData() {
+  async _prepareContext(options) {
     let currentStatus = [];
     const { actor } = this;
-    if (actor == null)
-      return;
-    const { token } = this;
-    currentStatus = Array.from(actor.statuses);
+    if (actor) {
+      currentStatus = Array.from(actor.statuses ?? []);
+    }
     return { currentStatus };
   }
-  async refresh(force) {
-    return foundry.utils.debounce(this.render.bind(this, force), 100)();
+  _onRender(context, options) {
+    super._onRender(context, options);
+    this.element.querySelectorAll(".effect-item").forEach((el) => {
+      el.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const effectId = el.dataset.effectId;
+        if (this.actor && effectId) {
+          await this.actor.toggleStatusEffect(effectId);
+        }
+      });
+    });
   }
 };
+__publicField(EffectsPanel, "DEFAULT_OPTIONS", {
+  id: "mouseguard-effects-panel",
+  classes: ["mouseguard", "effects-panel"],
+  tag: "aside",
+  window: {
+    frame: false,
+    positioned: false
+  }
+});
+__publicField(EffectsPanel, "PARTS", {
+  panel: {
+    root: true,
+    template: "systems/mouseguard/templates/effects/effects-panel.hbs"
+  }
+});
 
 // module/svelte/MouseGuardConflictManager.svelte
 var MouseGuardConflictManager = class extends SvelteComponent {
@@ -6232,104 +6220,106 @@ var MouseGuardConflictManager = class extends SvelteComponent {
 var MouseGuardConflictManager_default = MouseGuardConflictManager;
 
 // module/mouse-conflict-manager.js
-var MouseConflictManager = class extends Application {
-  constructor(...args) {
-    super(...args);
-  }
+var { ApplicationV2: ApplicationV23 } = foundry.applications.api;
+var MouseConflictManager = class extends ApplicationV23 {
   app = null;
   dataStore = null;
-  refresh = foundry.utils.debounce(this.render, 100);
-  static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
-      ...super.defaultOptions,
-      id: "mouseguard-conflict-panel",
-      classes: ["mouseguard"],
-      template: "systems/mouseguard/templates/actor-sheetv2.html",
-      width: 850,
-      height: 600
-    });
+  refresh = foundry.utils.debounce(() => {
+    if (this.rendered)
+      this.render(false);
+  }, 100);
+  async _prepareContext(options) {
+    return {};
   }
-  render(force = false, options = {}) {
-    let sheetData = this.getData();
-    if (this.app !== null) {
-      let states = Application.RENDER_STATES;
-      if (this._state == states.RENDERING || this._state == states.RENDERED) {
-        this.dataStore?.set(sheetData);
-        return;
-      }
-    }
-    this._render(force, options).catch((err) => {
-      err.message = `An error occurred while rendering ${this.constructor.name} ${this.appId}: ${err.message}`;
-      console.error(err);
-      this._state = Application.RENDER_STATES.ERROR;
-    }).then((rendered) => {
-      this.dataStore = writable(sheetData);
+  async _renderHTML(context, options) {
+    return "";
+  }
+  _replaceHTML(result, content, options) {
+  }
+  _onRender(context, options) {
+    super._onRender(context, options);
+    if (!this.app) {
+      this.dataStore = writable(context);
       this.app = new MouseGuardConflictManager_default({
-        target: this.element.find("form").get(0),
+        target: this.element,
         props: {
           dataStore: this.dataStore
         }
       });
-    });
-    return this;
+    } else {
+      this.dataStore?.set(context);
+    }
   }
-  close(options = {}) {
-    if (this.app != null) {
+  _onClose(options) {
+    if (this.app) {
       this.app.$destroy();
       this.app = null;
       this.dataStore = null;
     }
-    return super.close(options);
+    super._onClose(options);
   }
 };
+__publicField(MouseConflictManager, "DEFAULT_OPTIONS", {
+  id: "mouseguard-conflict-panel",
+  classes: ["mouseguard"],
+  window: {
+    title: "Conflict Manager"
+  },
+  position: {
+    width: 850,
+    height: 600
+  }
+});
 
 // module/status-effects.js
 var statusEffects = [
   {
     id: "sick",
-    label: "MOUSEGUARD.sick",
-    icon: "systems/mouseguard/assets/icons/sick.svg"
+    name: "MOUSEGUARD.sick",
+    img: "systems/mouseguard/assets/icons/sick.svg"
   },
   {
     id: "tired",
-    label: "MOUSEGUARD.tired",
-    icon: "systems/mouseguard/assets/icons/tired.svg"
+    name: "MOUSEGUARD.tired",
+    img: "systems/mouseguard/assets/icons/tired.svg"
   },
   {
     id: "hungthurst",
-    label: "MOUSEGUARD.hungthurst",
-    icon: "systems/mouseguard/assets/icons/hungthurst.svg"
+    name: "MOUSEGUARD.hungthurst",
+    img: "systems/mouseguard/assets/icons/hungthurst.svg"
   },
   {
     id: "injured",
-    label: "MOUSEGUARD.injured",
-    icon: "systems/mouseguard/assets/icons/injured.svg"
+    name: "MOUSEGUARD.injured",
+    img: "systems/mouseguard/assets/icons/injured.svg"
   },
   {
     id: "angry",
-    label: "MOUSEGUARD.angry",
-    icon: "systems/mouseguard/assets/icons/angry.svg"
+    name: "MOUSEGUARD.angry",
+    img: "systems/mouseguard/assets/icons/angry.svg"
   }
 ];
 
 // module/mouseguard.js
 Hooks.once("init", async function() {
-  console.log(`Initializing MouseGuard MouseGuard System`);
+  console.log("Mouse Guard | Initializing Mouse Guard System");
   let RollCount = 0;
   let RollMessage = "";
   game.mouseguard = {
     MouseGuardActor,
+    MouseGuardItem,
     createMouseGuardMacro,
     RollCount,
     RollMessage,
     updateDisplay,
     MouseDie,
     MouseRoll,
+    ConflictTracker,
+    MouseConflictManager,
     effectPanel: new EffectsPanel()
   };
   CONFIG.Actor.documentClass = MouseGuardActor;
   CONFIG.Item.documentClass = MouseGuardItem;
-  CONFIG.Dice.rolls.push(MouseRoll);
   CONFIG.Combatant.documentClass = MouseCombatant;
   CONFIG.Combat.documentClass = MouseCombat;
   CONFIG.ui.combat = MouseCombatTracker;
@@ -6337,17 +6327,18 @@ Hooks.once("init", async function() {
     formula: "1d20",
     decimals: 2
   };
-  Actors.unregisterSheet("core", ActorSheet);
+  CONFIG.Dice.terms["m"] = MouseDie;
+  CONFIG.Dice.terms["6"] = MouseDie;
+  CONFIG.Dice.types.push(MouseDie);
+  CONFIG.Dice.rolls.push(MouseRoll);
   Actors.registerSheet("mouseguard", MouseGuardNPCActorSheet, {
     types: ["mouse", "weasel", "animal"],
     makeDefault: true
   });
-  console.log("Setting actor Sheet");
   Actors.registerSheet("mouseguard", MouseGuardActorSheet, {
     types: ["character"],
     makeDefault: true
   });
-  Items.unregisterSheet("core", ItemSheet);
   Items.registerSheet("mouseguard", MouseGuardItemSheet, {
     makeDefault: true
   });
@@ -6373,20 +6364,13 @@ Hooks.once("init", async function() {
   function _simpleUpdateInit(formula, notify = false) {
     const isValid = Roll.validate(formula);
     if (!isValid) {
-      if (notify)
+      if (notify) {
         ui.notifications.error(`${game.i18n.localize("MOUSEGUARD.NotifyInitFormulaInvalid")}: ${formula}`);
+      }
       return;
     }
     CONFIG.Combat.initiative.formula = formula;
   }
-  Handlebars.registerHelper("slugify", function(value) {
-    return value.slugify({ strict: true });
-  });
-  await preloadHandlebarsTemplates();
-});
-Hooks.once("init", async function() {
-  CONFIG.Dice.terms["m"] = MouseDie;
-  CONFIG.Dice.terms["6"] = MouseDie;
   game.socket.on("system.mouseguard", (data) => {
     if (data.action === "askGoal")
       MouseSocket.askGoal(data);
@@ -6397,26 +6381,57 @@ Hooks.once("init", async function() {
     if (data.action === "setMoves")
       MouseSocket.setMoves(data);
   });
+  Handlebars.registerHelper("slugify", function(value) {
+    return typeof value === "string" ? value.slugify({ strict: true }) : "";
+  });
+  Handlebars.registerHelper("times", function(n, block) {
+    let accum = "";
+    for (let i = 0; i < n; ++i)
+      accum += block.fn(i);
+    return accum;
+  });
+  Handlebars.registerHelper("concat", function(...args) {
+    args.pop();
+    return args.join("");
+  });
+  Handlebars.registerHelper("ifEquals", function(arg1, arg2, options) {
+    return arg1 == arg2 ? options.fn(this) : options.inverse(this);
+  });
+  if (!Handlebars.helpers.or) {
+    Handlebars.registerHelper("or", function(...args) {
+      args.pop();
+      return args.some(Boolean);
+    });
+  }
+  if (!Handlebars.helpers.and) {
+    Handlebars.registerHelper("and", function(...args) {
+      args.pop();
+      return args.every(Boolean);
+    });
+  }
+  if (!Handlebars.helpers.not) {
+    Handlebars.registerHelper("not", function(arg) {
+      return !arg;
+    });
+  }
+  await preloadHandlebarsTemplates();
   await registerTours();
 });
 Hooks.once("diceSoNiceReady", (dice3d) => {
-  let dicetheme = "mouseguard";
-  if (!dicetheme || dicetheme == "mouseguard") {
-    dice3d.addSystem({ id: "mouseguard", name: "Mouse Guard" }, true);
-    dice3d.addDicePreset({
-      type: "dm",
-      labels: [
-        "systems/mouseguard/assets/dice/snake.png",
-        "systems/mouseguard/assets/dice/snake.png",
-        "systems/mouseguard/assets/dice/snake.png",
-        "systems/mouseguard/assets/dice/sword.png",
-        "systems/mouseguard/assets/dice/sword.png",
-        "systems/mouseguard/assets/dice/axe.png"
-      ],
-      colorset: "white",
-      system: "mouseguard"
-    }, "d6");
-  }
+  dice3d.addSystem({ id: "mouseguard", name: "Mouse Guard" }, true);
+  dice3d.addDicePreset({
+    type: "dm",
+    labels: [
+      "systems/mouseguard/assets/dice/snake.png",
+      "systems/mouseguard/assets/dice/snake.png",
+      "systems/mouseguard/assets/dice/snake.png",
+      "systems/mouseguard/assets/dice/sword.png",
+      "systems/mouseguard/assets/dice/sword.png",
+      "systems/mouseguard/assets/dice/axe.png"
+    ],
+    colorset: "white",
+    system: "mouseguard"
+  }, "d6");
   dice3d.addColorset({
     name: "white-mg",
     description: "Mouse Guard white",
@@ -6428,116 +6443,122 @@ Hooks.once("diceSoNiceReady", (dice3d) => {
     material: "plastic"
   });
 });
-Hooks.on("renderSidebarTab", (app, html, data) => {
-  const template = "./systems/mouseguard/templates/mousetray.html";
-  let $chat_form = html.find("#chat-form");
-  renderTemplate(template).then((c) => {
-    let $content = $(c);
-    $chat_form.after($content);
-    $content.find(".mouse_dice_button").on("click", (event) => {
-      event.preventDefault();
-      if (event.currentTarget.classList.contains("add")) {
-        game.mouseguard.RollCount++;
-      } else {
-        game.mouseguard.RollCount--;
-      }
-      if (game.mouseguard.RollCount < 1)
-        game.mouseguard.RollCount = 0;
-      updateDisplay(game.mouseguard.RollCount);
-    });
-    $content.find(".mouse_roll_button").on("click", (event) => {
-      event.preventDefault();
-      let $self = $(event.currentTarget);
-      let dataset = event.currentTarget.dataset;
-      if (game.mouseguard.RollCount > 0) {
-        let actor = game.user.character ?? canvas.tokens.controlled[0]?.actor;
-        var roll = new MouseRoll(game.mouseguard.RollCount + "dmcs>3");
-        roll.evaluate({ async: true });
-        roll.toMessage({
-          user: game.user.id,
-          flavor: game.mouseguard.RollMessage,
-          speaker: ChatMessage.getSpeaker({ actor })
-        });
-        game.mouseguard.RollCount = 0;
-        game.mouseguard.RollMessage = "";
-        updateDisplay(0);
-      }
-    });
+Hooks.on("renderChatLog", async (app, html) => {
+  const root = html instanceof HTMLElement ? html : html[0] ?? html;
+  if (!root || root.querySelector(".mouse-tray"))
+    return;
+  const chatForm = root.querySelector("#chat-form") ?? root.querySelector("form");
+  if (!chatForm)
+    return;
+  const template = "systems/mouseguard/templates/mousetray.html";
+  const rendered = await renderTemplate(template, {});
+  const tempDiv = document.createElement("div");
+  tempDiv.innerHTML = rendered.trim();
+  const tray = tempDiv.firstElementChild;
+  if (!tray)
+    return;
+  chatForm.insertAdjacentElement("afterend", tray);
+  tray.querySelector(".mouse_dice_button.add")?.addEventListener("click", (event) => {
+    event.preventDefault();
+    game.mouseguard.RollCount++;
     updateDisplay(game.mouseguard.RollCount);
   });
+  tray.querySelector(".mouse_dice_button.subtract")?.addEventListener("click", (event) => {
+    event.preventDefault();
+    if (game.mouseguard.RollCount > 0)
+      game.mouseguard.RollCount--;
+    updateDisplay(game.mouseguard.RollCount);
+  });
+  tray.querySelector(".mouse_roll_button")?.addEventListener("click", async (event) => {
+    event.preventDefault();
+    if (game.mouseguard.RollCount > 0) {
+      const actor = game.user.character ?? canvas.tokens?.controlled?.[0]?.actor;
+      const roll = new MouseRoll(`${game.mouseguard.RollCount}dmcs>3`);
+      await roll.evaluate();
+      await roll.toMessage({
+        author: game.user.id,
+        flavor: game.mouseguard.RollMessage,
+        speaker: ChatMessage.getSpeaker({ actor })
+      });
+      game.mouseguard.RollCount = 0;
+      game.mouseguard.RollMessage = "";
+      updateDisplay(0);
+    }
+  });
+  updateDisplay(game.mouseguard.RollCount);
+});
+Hooks.on("renderChatMessageHTML", (message, html) => {
+  if (message.flags?.mouseguard?.unflipped) {
+    const img = html.querySelector("img");
+    if (img)
+      img.src = "systems/mouseguard/assets/deck/CardBack.webp";
+    if (game.user.isGM) {
+      const actionMove = html.querySelector(".action-move");
+      if (actionMove && !actionMove.querySelector(".reveal-button")) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "reveal-button";
+        btn.textContent = "Reveal Card";
+        btn.addEventListener("click", async () => {
+          await message.setFlag("mouseguard", "unflipped", false);
+        });
+        actionMove.appendChild(btn);
+      }
+    }
+  }
+});
+Hooks.once("setup", () => {
+  CONFIG.statusEffects = statusEffects;
 });
 Hooks.once("ready", async () => {
-  let tourRolls = game.user.getFlag("mouseguard", "tourRolls");
-  if (tourRolls == void 0) {
+  const tourRolls = game.user.getFlag("mouseguard", "tourRolls");
+  if (tourRolls === void 0) {
     const tour = game.tours.get("mouseguard.welcome");
-    tour.start();
-    game.user.setFlag("mouseguard", "tourRolls", 1);
-  }
-  Hooks.on("controlToken", game.mouseguard.effectPanel.refresh.bind(game.mouseguard.effectPanel, true));
-  for (const hook of [
-    "createActiveEffect",
-    "updateActiveEffect",
-    "deleteActiveEffect"
-  ]) {
-    Hooks.on(hook, function(effect) {
-      if (effect.parent === game.mouseguard.effectPanel.actor)
-        game.mouseguard.effectPanel.refresh(true);
-    });
-  }
-});
-Hooks.on("renderChatMessage", (chatMessage, [html], messageData) => {
-  if (messageData.message.flags?.mouseguard?.unflipped) {
-    html.querySelector("img").src = "systems/mouseguard/assets/deck/CardBack.webp";
-    if (game.user.isGM) {
-      html.querySelector(".action-move").insertAdjacentHTML("beforeend", ' <button id="reveal-button" type="button">Reveal Card</button> ');
-      html.querySelector("#reveal-button").addEventListener("click", (event) => {
-        let message = game.messages.get(event.target.closest("li").dataset.messageId);
-        message.setFlag("mouseguard", "unflipped", false);
-      });
+    if (tour) {
+      tour.start();
+      await game.user.setFlag("mouseguard", "tourRolls", 1);
     }
+  }
+  Hooks.on("controlToken", () => {
+    game.mouseguard.effectPanel.refresh();
+  });
+  for (const hook of ["createActiveEffect", "updateActiveEffect", "deleteActiveEffect"]) {
+    Hooks.on(hook, (effect) => {
+      if (effect.parent === game.mouseguard.effectPanel.actor) {
+        game.mouseguard.effectPanel.refresh();
+      }
+    });
   }
 });
 Hooks.on("canvasReady", () => {
   game.mouseguard.effectPanel.render(true);
 });
-Hooks.once("setup", () => {
-  CONFIG.statusEffects = statusEffects;
-});
 async function registerTours() {
   try {
-    game.tours.register("mouseguard", "welcome", await SidebarTour.fromJSON("/systems/mouseguard/tours/welcome.json"));
+    const TourClass = foundry.nue?.tours?.SidebarTour ?? SidebarTour;
+    if (TourClass) {
+      game.tours.register("mouseguard", "welcome", await TourClass.fromJSON("/systems/mouseguard/tours/welcome.json"));
+    }
   } catch (err) {
-    console.error(err);
+    console.error("Mouse Guard | Error registering tours:", err);
   }
 }
 function updateDisplay(count) {
-  let diceHTML = '<li class="roll mousedie d6"><img src="systems/mouseguard/assets/dice/sword.png" height="24" width="24"></li>';
+  const diceHTML = '<li class="roll mousedie d6"><img src="systems/mouseguard/assets/dice/sword.png" height="24" width="24" alt="die"></li>';
   let theHTML = "";
   for (let i = 0; i < count; i++) {
     theHTML += diceHTML;
   }
-  $(".mouse-dice-roll").html(theHTML);
-  $(".mouse_dice_button.subtract").prop("disabled", !count);
-  $(".mouse_roll_button").prop("disabled", !count);
+  document.querySelectorAll(".mouse-dice-roll").forEach((el) => {
+    el.innerHTML = theHTML;
+  });
+  document.querySelectorAll(".mouse_dice_button.subtract").forEach((btn) => {
+    btn.disabled = !count;
+  });
+  document.querySelectorAll(".mouse_roll_button").forEach((btn) => {
+    btn.disabled = !count;
+  });
   if (!count)
     game.mouseguard.RollMessage = "";
 }
-Handlebars.registerHelper("times", function(n, block) {
-  var accum = "";
-  for (var i = 0; i < n; ++i)
-    accum += block.fn(i);
-  return accum;
-});
-Handlebars.registerHelper("concat", function() {
-  var outStr = "";
-  for (var arg in arguments) {
-    if (typeof arguments[arg] != "object") {
-      outStr += arguments[arg];
-    }
-  }
-  return outStr;
-});
-Handlebars.registerHelper("ifEquals", function(arg1, arg2, options) {
-  return arg1 == arg2 ? options.fn(this) : options.inverse(this);
-});
 //# sourceMappingURL=mouseguard.js.map

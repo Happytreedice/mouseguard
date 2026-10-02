@@ -305,3 +305,224 @@
 .dice {
     min-height: 40px;
 }
+
+/* Effects Panel ApplicationV2 */
+#mouseguard-effects-panel {
+    position: fixed;
+    top: 10px;
+    right: 320px;
+    z-index: 60;
+    pointer-events: none;
+
+    .panel.mouseguard-effects {
+        display: flex;
+        flex-direction: row;
+        gap: 6px;
+        pointer-events: auto;
+
+        .effect-item {
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.65);
+            border: 2px solid #b89358;
+            border-radius: 6px;
+            box-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.15s ease, border-color 0.15s ease;
+
+            &:hover {
+                transform: scale(1.1);
+                border-color: #f7d488;
+            }
+
+            .effect-icon {
+                width: 32px;
+                height: 32px;
+                background-size: contain;
+                background-repeat: no-repeat;
+                background-position: center;
+            }
+        }
+    }
+}
+
+/* Mouse Guard Combat Tracker ApplicationV2 */
+.mouse-combat-tracker {
+    .combat-team-block {
+        margin-bottom: 10px;
+        border: 1px solid #7a7971;
+        border-radius: 4px;
+        background: rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+
+        .combat-team-header {
+            padding: 4px 8px;
+            background: #2b2b2b;
+            color: #f0f0e0;
+            border-bottom: 1px solid #444;
+            align-items: center;
+            justify-content: space-between;
+
+            .team-title {
+                margin: 0;
+                font-size: 13px;
+                font-weight: bold;
+                color: #e0d1b3;
+            }
+
+            .team-goal-text {
+                font-size: 11px;
+                font-style: italic;
+                color: #b8b8b8;
+                max-width: 50%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+        }
+
+        .team-combatant-list {
+            list-style: none;
+            margin: 0;
+            padding: 2px 0;
+            min-height: 36px;
+
+            .combatant {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                padding: 4px 6px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+                &:hover {
+                    background: rgba(255, 255, 255, 0.06);
+                }
+
+                .token-image {
+                    flex: 0 0 32px;
+                    width: 32px;
+                    height: 32px;
+                    border-radius: 4px;
+                    margin-right: 6px;
+                    cursor: pointer;
+                }
+
+                .token-name {
+                    flex: 1;
+                    min-width: 0;
+
+                    .combatant-name-row {
+                        align-items: center;
+                        gap: 4px;
+
+                        .name {
+                            font-size: 12px;
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                        }
+
+                        .conflict-captain-icon {
+                            font-size: 11px;
+                        }
+                    }
+
+                    .combatant-controls {
+                        align-items: center;
+                        gap: 4px;
+                        margin-top: 2px;
+
+                        .combatant-control {
+                            font-size: 10px;
+                            cursor: pointer;
+                            opacity: 0.7;
+
+                            &:hover, &.active {
+                                opacity: 1;
+                            }
+                        }
+                    }
+                }
+
+                .combatant-moves-container {
+                    display: flex;
+                    flex-direction: row;
+                    gap: 3px;
+                    align-items: center;
+
+                    .combatant-move-btn {
+                        padding: 2px 5px;
+                        font-size: 10px;
+                        line-height: 14px;
+                        border-radius: 3px;
+                        background: #4a2810;
+                        color: #fff;
+                        border: 1px solid #784824;
+                        cursor: pointer;
+
+                        &:hover {
+                            background: #6a3818;
+                            border-color: #ffd700;
+                        }
+                    }
+
+                    .card-icon {
+                        opacity: 0.8;
+                    }
+                }
+            }
+
+            .team-empty-placeholder {
+                padding: 8px;
+                text-align: center;
+                font-size: 11px;
+                color: #888;
+                font-style: italic;
+            }
+        }
+    }
+}
+
+/* Mouse Tray */
+.mouse-tray {
+    margin: 6px 0;
+    padding: 6px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid #7a7971;
+    border-radius: 4px;
+
+    #mouse-pool {
+        margin-bottom: 6px;
+        min-height: 30px;
+
+        .mouse-dice-roll {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+
+            .roll.mousedie {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 2px;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 3px;
+            }
+        }
+    }
+
+    button.mouse_dice_button,
+    button.mouse_roll_button {
+        font-size: 11px;
+        padding: 2px 6px;
+        margin: 0 2px;
+        border-radius: 3px;
+    }
+}
+

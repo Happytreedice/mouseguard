@@ -1,46 +1,44 @@
-import { EntitySheetHelper } from "./helper.js";
-import { ATTRIBUTE_TYPES } from "./constants.js";
-
 /**
- * Extend the basic ItemSheet with some very simple modifications
- * @extends {ItemSheet}
+ * Modern ApplicationV2 Item Sheet for Mouse Guard items.
+ * @extends {foundry.applications.sheets.ItemSheetV2}
+ * @mixes foundry.applications.api.HandlebarsApplication
  */
-export class MouseGuardItemSheet extends ItemSheet {
-    /** @inheritdoc */
-    static get defaultOptions() {
-        return foundry.utils.mergeObject(super.defaultOptions, {
-            classes: ["mouseguard", "sheet", "item"],
-            template: "systems/mouseguard/templates/item-sheet.html",
+export class MouseGuardItemSheet extends foundry.applications.api.HandlebarsApplicationMixin(
+    foundry.applications.sheets.ItemSheetV2
+) {
+    /** @inheritDoc */
+    static DEFAULT_OPTIONS = {
+        classes: ["mouseguard", "sheet", "item"],
+        position: {
             width: 520,
-            height: 480,
-            tabs: [
-                {
-                    navSelector: ".sheet-tabs",
-                    contentSelector: ".sheet-body",
-                    initial: "description"
-                }
-            ],
-            scrollY: [".attributes"]
-        });
+            height: 480
+        },
+        form: {
+            submitOnChange: true,
+            closeOnSubmit: false
+        }
+    };
+
+    /** @override */
+    static PARTS = {
+        sheet: {
+            template: "systems/mouseguard/templates/item-sheet.html",
+            root: true
+        }
+    };
+
+    /** @inheritDoc */
+    async _prepareContext(options) {
+        const item = this.item;
+        return {
+            document: item,
+            item: item,
+            data: item.toObject(false),
+            system: item.system,
+            systemData: item.system,
+            rollData: item.getRollData(),
+            editable: this.isEditable,
+            owner: item.isOwner
+        };
     }
-
-    /* -------------------------------------------- */
-
-    /** @inheritdoc */
-    getData() {
-        const context = super.getData();
-        //EntitySheetHelper.getAttributeData(context.data);
-        context.systemData = context.item.system;
-        //console.log(context);
-        return context;
-    }
-
-    /* -------------------------------------------- */
-
-    /** @inheritdoc */
-    async activateListeners(html) {
-        super.activateListeners(html);
-    }
-
-    /* -------------------------------------------- */
 }

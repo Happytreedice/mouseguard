@@ -1,211 +1,128 @@
-import MouseGuardNPCActorSheetBase from "./svelte/MouseGuardNPCActorSheetBase.svelte"; // import Svelte App
+import MouseGuardNPCActorSheetBase from "./svelte/MouseGuardNPCActorSheetBase.svelte";
 import { writable } from "svelte/store";
 
 /**
- * Extend the basic ActorSheet with some very simple modifications
- * @extends {ActorSheet}
+ * Modern ApplicationV2 NPC Actor Sheet for Mouse Guard using Svelte.
+ * @extends {foundry.applications.sheets.ActorSheetV2}
  */
-export class MouseGuardNPCActorSheet extends ActorSheet {
+export class MouseGuardNPCActorSheet extends foundry.applications.sheets.ActorSheetV2 {
     app = null;
     dataStore = null;
 
-    /** @inheritdoc */
-    static get defaultOptions() {
-        return foundry.utils.mergeObject(super.defaultOptions, {
-            classes: ["mouseguard", "sheet", "actor"],
-            template: "systems/mouseguard/templates/actor-sheetv2.html",
+    /** @inheritDoc */
+    static DEFAULT_OPTIONS = {
+        classes: ["mouseguard", "sheet", "actor"],
+        position: {
             width: 550,
-            height: 600,
-            tabs: []
-        });
+            height: 600
+        },
+        window: {
+            resizable: true
+        }
+    };
+
+    /** @inheritDoc */
+    async _prepareContext(options) {
+        const actorData = this.actor.toObject(false);
+        actorData.system.itemTypes = this.actor.itemTypes;
+        return {
+            actor: this.actor,
+            document: this.actor,
+            data: actorData,
+            system: this.actor.system,
+            systemData: this.actor.system,
+            sheet: this,
+            editable: this.isEditable,
+            owner: this.actor.isOwner
+        };
     }
 
-    /* -------------------------------------------- */
-
-    /** @inheritdoc */
-    getData() {
-        const context = super.getData();
-        context.systemData = context.system;
-        context.sheet = this;
-
-        return context;
+    /** @override */
+    async _renderHTML(context, options) {
+        return "";
     }
 
-    /* -------------------------------------------- */
+    /** @override */
+    _replaceHTML(result, content, options) {}
 
-    /** @inheritdoc */
-    activateListeners(html) {
-        super.activateListeners(html);
+    /** @inheritDoc */
+    _onRender(context, options) {
+        super._onRender(context, options);
 
-        // Everything below here is only needed if the sheet is editable
-        if (!this.isEditable) return;
-
-        // Item Controls
-        html.find(".item-control").click(this._onItemControl.bind(this));
-        html.find(".items .rollable").on("click", this._onItemRoll.bind(this));
-    }
-
-    /* -------------------------------------------- */
-
-    /**
-     * Handle click events for Item control buttons within the Actor Sheet
-     * @param event
-     * @private
-     */
-    _onItemControl(event) {
-        event.preventDefault();
-
-        // Obtain event data
-        const button = event.currentTarget;
-        const li = button.closest(".item");
-        const item = this.actor.items.get(li?.dataset.itemId);
-
-        // Handle different actions
-        switch (button.dataset.action) {
-            case "create":
-                const cls = getDocumentClass("Item");
-                return cls.create(
-                    {
-                        name: game.i18n.localize("MOUSEGUARD.ItemNew"),
-                        type: "item"
-                    },
-                    { parent: this.actor }
-                );
-            case "edit":
-                return item.sheet.render(true);
-            case "delete":
-                return item.delete();
+        if (!this.app) {
+            this.dataStore = writable(context);
+            this.app = new MouseGuardNPCActorSheetBase({
+                target: this.element,
+                props: {
+                    dataStore: this.dataStore
+                }
+            });
+        } else {
+            this.dataStore?.set(context);
         }
     }
 
-    /* -------------------------------------------- */
-
-    /**
-     * Listen for roll buttons on items.
-     * @param {MouseEvent} event    The originating left click event
-     */
-    _onItemRoll(event) {
-        let button = $(event.currentTarget);
-        const li = button.parents(".item");
-        const item = this.actor.items.get(li.data("itemId"));
-        let r = new Roll(button.data("roll"), this.actor.getRollData());
-        return r.toMessage({
-            user: game.user.id,
-            speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-            flavor: `<h2>${item.name}</h2><h3>${button.text()}</h3>`
-        });
+    /** @inheritDoc */
+    _onClose(options) {
+        if (this.app) {
+            this.app.$destroy();
+            this.app = null;
+            this.dataStore = null;
+        }
+        super._onClose(options);
     }
 
-    /* -------------------------------------------- */
-
-    /** @inheritdoc */
-    _getSubmitData(updateData) {
-        let formData = super._getSubmitData(updateData);
-        return formData;
-    }
-
-    _setMouseDice(count) {
+    _setMouseDice(count, message = "") {
         game.mouseguard.RollCount = count;
+        game.mouseguard.RollMessage = message;
         game.mouseguard.updateDisplay(count);
     }
 
     async _updateActorAbility(id, type, value) {
         await this.actor.updateEmbeddedDocuments("Item", [
-            { _id: id, data: { [type]: value } }
+            { _id: id, system: { [type]: value } }
         ]);
     }
 
     async _updateEmbededItem(id, _data) {
         await this.actor.updateEmbeddedDocuments("Item", [
-            { _id: id, data: _data }
+            { _id: id, system: _data }
         ]);
-        //console.log(this.actor)
     }
 
     async _onItemDelete(itemId) {
         const item = this.actor.items.get(itemId);
-        item.delete();
-        this.render();
+        if (item) await item.delete();
     }
 
     async _onItemCreate(event) {
         event.preventDefault();
         const header = event.currentTarget;
-        // Get the type of item to create.
         const type = header.dataset.type;
-        // Grab any data associated with this control.
-        const data = duplicate(header.dataset);
-        // Initialize a default name.
         const name = `New ${type.capitalize()}`;
-        // Prepare the item object.
         const itemData = {
             name: name,
             type: type,
-            data: data
+            system: { rank: 1 }
         };
-        itemData.data = { rank: 1 };
-        // Remove the type from the dataset since it's in the itemData.type prop.
-        delete itemData.data["type"];
-        // Finally, create the item!
-        //console.log(itemData);
-        return await Item.create(itemData, { parent: this.actor }).then(
-            (item) => {
-                item.sheet.render(true);
-            }
-        );
+        const [item] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
+        item?.sheet?.render(true);
+        return item;
     }
 
-    render(force = false, options = {}) {
-        // Grab the sheetdata for both updates and new apps.
-        let sheetData = this.getData();
-        //console.log(sheetData)
-        // Exit if Vue has already rendered.
-        if (this.app !== null) {
-            let states = Application.RENDER_STATES;
-            if (
-                this._state == states.RENDERING ||
-                this._state == states.RENDERED
-            ) {
-                // Update the Datastore.
-                this.dataStore?.set(sheetData);
-                return;
-            }
-        }
-        // Run the normal Foundry render once.
-        this._render(force, options)
-            .catch((err) => {
-                err.message = `An error occurred while rendering ${this.constructor.name} ${this.appId}: ${err.message}`;
-                console.error(err);
-                this._state = Application.RENDER_STATES.ERROR;
-            })
-            // Run Svelte's render, assign it to our prop for tracking.
-            .then((rendered) => {
-                // Prepare the actor data.
-                this.dataStore = writable(sheetData);
-                //console.log(sheetData);
-                this.app = new MouseGuardNPCActorSheetBase({
-                    target: this.element.find("form").get(0),
-                    props: {
-                        dataStore: this.dataStore
-                        //name: 'world',
-                    }
-                });
-            });
-        // Update editable permission
-        options.editable = options.editable ?? this.object.isOwner;
-
-        // Register the active Application with the referenced Documents
-        this.object.apps[this.appId] = this;
-        // Return per the overridden method.
-        return this;
-    }
-
-    close(options = {}) {
-        if (this.app != null) {
-            this.app.$destroy();
-            this.app = null;
-            this.dataStore = null;
-        }
-        return super.close(options);
+    async _onItemRoll(event) {
+        const button = event.currentTarget;
+        const li = button.closest(".item");
+        const itemId = li?.dataset.itemId;
+        const item = this.actor.items.get(itemId);
+        const formula = button.dataset.roll;
+        if (!formula) return;
+        const r = new Roll(formula, this.actor.getRollData());
+        await r.evaluate();
+        return r.toMessage({
+            author: game.user.id,
+            speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+            flavor: `<h2>${item?.name ?? ""}</h2><h3>${button.textContent}</h3>`
+        });
     }
 }

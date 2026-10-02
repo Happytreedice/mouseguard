@@ -79,7 +79,7 @@
                     </div>
                     <div class="item-controls">
                         <a
-                            on:click={sheet?._onItemDelete(skill._id)}
+                            on:click={() => sheet?._onItemDelete(skill.id ?? skill._id)}
                             class="item-control item-delete"
                             title="Delete Item"><i class="fas fa-trash" /></a
                         >
@@ -122,7 +122,7 @@
                     </div>
                     <div class="item-controls">
                         <a
-                            on:click={sheet?._onItemDelete(trait._id)}
+                            on:click={() => sheet?._onItemDelete(trait.id ?? trait._id)}
                             class="item-control item-delete"
                             title="Delete Item"><i class="fas fa-trash" /></a
                         >
@@ -163,7 +163,7 @@
             </div>
             <div class="item-controls">
                 <a
-                    on:click={sheet?._onItemDelete(wise._id)}
+                    on:click={() => sheet?._onItemDelete(wise.id ?? wise._id)}
                     class="item-control item-delete"
                     title="Delete Item"><i class="fas fa-trash" /></a
                 >

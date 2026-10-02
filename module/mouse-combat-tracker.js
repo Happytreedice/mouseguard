@@ -1,282 +1,225 @@
 /**
- * A specialized form used to pop out the editor.
- * @extends {CombatTracker}
- *
- * OPTIONS:
- *
- *
+ * Modern ApplicationV2 Combat Tracker for Mouse Guard conflicts.
+ * Supports teams (Team 1, Team 2, Unassigned), Conflict Captains, and Combat Moves.
+ * @extends {foundry.applications.sidebar.tabs.CombatTracker}
  */
-
-//import { compute_rest_props } from "svelte/internal";
+const CombatTracker = foundry.applications.sidebar.tabs.CombatTracker;
 
 export default class MouseCombatTracker extends CombatTracker {
-    constructor(options) {
-        super(options);
-    }
-
-    static get defaultOptions() {
-        return foundry.utils.mergeObject(super.defaultOptions, {
-            id: "combat",
-            template:
-                "systems/mouseguard/templates/sidebar/combat-tracker.html",
-            title: "COMBAT.SidebarTitle",
-            scrollY: [".directory-list"],
-            dragDrop: [
-                {
-                    dragSelector: "li.combatant.actor.directory-item.flexrow",
-                    dropSelector: "li[data-team]"
-                }
-            ]
-        });
-    }
-
-    _canDragStart(ev) {
-        //console.log(ev);
-        if (game.user.isGM) return true;
-        return false;
-    }
-
-    _canDragDrop(ev) {
-        //console.log(ev);
-        if (game.user.isGM) return true;
-        return false;
-    }
-
-    _onDragDrop(ev) {
-        super._onDrop(ev);
-        // console.log(ev);
-    }
-
-    async _onDrop(ev) {
-        super._onDrop(ev);
-        if (JSON.parse(ev.dataTransfer?.getData("text/plain")).id == "0") {
-            return false;
+    /** @inheritDoc */
+    static DEFAULT_OPTIONS = {
+        actions: {
+            askMove: MouseCombatTracker.#onAskMove,
+            askGoal: MouseCombatTracker.#onAskGoal,
+            doMove: MouseCombatTracker.#onDoMove
         }
-        let dropped_id = JSON.parse(ev.dataTransfer?.getData("text/plain")).id;
-        let target = ev.target.closest("li").dataset.team;
-        // console.log(target);
-        await this.viewed.combatants.get(dropped_id).setTeam(target);
-    }
+    };
 
-    _onDragStart(ev) {
-        //super._onDragStart(ev);
-        //console.log(ev);
-        let valid = this.viewed.combatants.get(ev.target.dataset.combatantId);
-        if (valid.flags.mouseguard.ConflictCaptain) {
-            ui.notifications.error(game.i18n.localize("COMBAT.CCERROR"));
-            ev.dataTransfer.setData(
-                "text/plain",
-                JSON.stringify({
-                    id: "0"
-                })
-            );
-            return false;
-        } else {
-            ev.dataTransfer.setData(
-                "text/plain",
-                JSON.stringify({ id: ev.target.dataset.combatantId })
-            );
+    /** @override */
+    static PARTS = {
+        header: {
+            template: "systems/mouseguard/templates/sidebar/tabs/combat/header.hbs"
+        },
+        tracker: {
+            template: "systems/mouseguard/templates/sidebar/tabs/combat/tracker.hbs",
+            scrollable: [""]
+        },
+        footer: {
+            template: "templates/sidebar/tabs/combat/footer.hbs"
         }
-        //console.log(ev);
+    };
+
+    /* -------------------------------------------- */
+    /*  Context Preparation                         */
+    /* -------------------------------------------- */
+
+    /** @inheritDoc */
+    async _prepareTurnContext(combat, combatant, index) {
+        const turn = await super._prepareTurnContext(combat, combatant, index);
+        turn.team = combatant.team || "0";
+        turn.isConflictCaptain = !!combatant.ConflictCaptain;
+        turn.moves = combatant.getFlag("mouseguard", "Moves") || [];
+        turn.isFirstOwner = this.isFirstOwner(combatant.actor);
+        turn.hasPlayerOwner = this.hasPlayerOwner(combatant.actor);
+        return turn;
     }
 
+    /** @inheritDoc */
+    async _prepareTrackerContext(context, options) {
+        await super._prepareTrackerContext(context, options);
+        const combat = this.viewed;
+        const turns = context.turns || [];
+
+        context.teams = {
+            team1: {
+                id: "1",
+                label: game.i18n.localize("COMBAT.Team1"),
+                goal: combat?.getFlag("mouseguard", "goal1") || game.i18n.localize("COMBAT.NoGoal"),
+                turns: turns.filter((t) => t.team === "1" || t.team === 1)
+            },
+            team2: {
+                id: "2",
+                label: game.i18n.localize("COMBAT.Team2"),
+                goal: combat?.getFlag("mouseguard", "goal2") || game.i18n.localize("COMBAT.NoGoal"),
+                turns: turns.filter((t) => t.team === "2" || t.team === 2)
+            },
+            team0: {
+                id: "0",
+                label: game.i18n.localize("COMBAT.Team0"),
+                goal: null,
+                turns: turns.filter((t) => !t.team || t.team === "0" || t.team === 0)
+            }
+        };
+    }
+
+    /* -------------------------------------------- */
+    /*  Context Menu                                */
+    /* -------------------------------------------- */
+
+    /** @inheritDoc */
     _getEntryContextOptions() {
-        return [
-            {
-                name: "COMBAT.ConflictCaptain",
-                icon: '<i class="fas fa-crown"></i>',
-                callback: (li) => {
-                    const combatant = this.viewed.combatants.get(
-                        li.data("combatant-id")
-                    );
+        const entries = super._getEntryContextOptions();
 
-                    // Each team needs a Captain
-                    //combatant.team
-                    // This entire function should be refactored to be a single statement
-                    let Team = "";
-                    if (combatant.team == 2) Team = "2";
-                    if (combatant.team == 0) return;
-                    console.log(Team);
-                    if (
-                        this.viewed.flags.mouseguard[
-                            "ConflictCaptain" + Team
-                        ] == combatant.id
-                    ) {
-                        //Unset if self
-                        this.viewed.setFlag(
-                            "mouseguard",
-                            "ConflictCaptain" + Team,
-                            NaN
-                        );
-                        return combatant.setFlag(
-                            "mouseguard",
-                            "ConflictCaptain",
-                            false
-                        );
-                    }
+        entries.unshift({
+            label: "COMBAT.ConflictCaptain",
+            icon: "fa-solid fa-crown",
+            visible: (li) => game.user.isGM,
+            onClick: async (event, li) => {
+                const combatantId = li.dataset.combatantId;
+                const combatant = this.viewed?.combatants.get(combatantId);
+                if (!combatant) return;
 
-                    if (
-                        !!this.viewed.flags.mouseguard[
-                            "ConflictCaptain" + Team
-                        ] == false
-                    ) {
-                        // New Captain Never had an old one
-                        if (combatant) {
-                            //Set Flag on New Captain
-                            this.viewed.setFlag(
-                                "mouseguard",
-                                "ConflictCaptain" + Team,
-                                li.data("combatant-id")
-                            );
-                            return combatant.setFlag(
-                                "mouseguard",
-                                "ConflictCaptain",
-                                true
-                            );
-                        }
-                    } else {
-                        ui.notifications.error(
-                            game.i18n.localize("COMBAT.CCSet")
-                        );
-                        return false;
-                    }
-
-                    //Should never get here
-                    console.log(this);
+                const team = combatant.team;
+                if (!team || team === "0") {
+                    ui.notifications.warn("Assign a team to the combatant before setting as Conflict Captain.");
+                    return;
                 }
-            },
-            {
-                name: "COMBAT.CombatantUpdate",
-                icon: '<i class="fas fa-edit"></i>',
-                callback: this._onConfigureCombatant.bind(this)
-            },
-            {
-                name: "Console.Log",
-                icon: '<i class="fas fa-edit"></i>',
-                callback: (li) => {
-                    const combatant = this.viewed.combatants.get(
-                        li.data("combatant-id")
-                    );
-                    if (combatant) console.log(combatant);
-                }
-            },
-            {
-                name: "COMBAT.CombatantRemove",
-                icon: '<i class="fas fa-trash"></i>',
-                callback: (li) => {
-                    const combatant = this.viewed.combatants.get(
-                        li.data("combatant-id")
-                    );
-                    if (combatant) return combatant.delete();
+
+                const flagKey = (team === "2" || team === 2) ? "ConflictCaptain2" : "ConflictCaptain";
+                const currentCaptainId = this.viewed.getFlag("mouseguard", flagKey);
+
+                if (currentCaptainId === combatant.id) {
+                    await this.viewed.setFlag("mouseguard", flagKey, null);
+                    await combatant.setConflictCaptain(false);
+                } else if (!currentCaptainId) {
+                    await this.viewed.setFlag("mouseguard", flagKey, combatant.id);
+                    await combatant.setConflictCaptain(true);
+                } else {
+                    ui.notifications.error(game.i18n.localize("COMBAT.CCSet"));
                 }
             }
-        ];
+        });
+
+        return entries;
     }
 
-    /**
-     * Handle a Combatant control toggle
-     * @private
-     * @param {Event} event   The originating mousedown event
-     */
-    async _onCombatantControl(event) {
+    /* -------------------------------------------- */
+    /*  Drag and Drop                               */
+    /* -------------------------------------------- */
+
+    /** @inheritDoc */
+    _onRender(context, options) {
+        super._onRender(context, options);
+
+        if (game.user.isGM) {
+            this.element.querySelectorAll(".combatant[draggable='true']").forEach((li) => {
+                li.addEventListener("dragstart", this.#onDragStart.bind(this));
+            });
+
+            this.element.querySelectorAll("[data-team]").forEach((el) => {
+                el.addEventListener("dragover", (event) => {
+                    event.preventDefault();
+                    event.dataTransfer.dropEffect = "move";
+                });
+                el.addEventListener("drop", this.#onDropTeam.bind(this));
+            });
+        }
+    }
+
+    #onDragStart(event) {
+        const li = event.currentTarget.closest(".combatant");
+        if (!li) return;
+        const combatant = this.viewed?.combatants.get(li.dataset.combatantId);
+        if (!combatant) return;
+
+        if (combatant.ConflictCaptain) {
+            ui.notifications.error(game.i18n.localize("COMBAT.CCERROR"));
+            event.preventDefault();
+            return;
+        }
+
+        event.dataTransfer.setData("text/plain", JSON.stringify({ id: combatant.id }));
+    }
+
+    async #onDropTeam(event) {
         event.preventDefault();
         event.stopPropagation();
-        const btn = event.currentTarget;
-        const li = btn.closest(".combatant");
-        const combat = this.viewed;
-        const c = combat.combatants.get(li.dataset.combatantId);
 
-        // Switch control action
-        switch (btn.dataset.control) {
-            case "doMove":
-                return c.doMove(btn.dataset.move);
-            // Toggle combatant visibility
-            case "toggleHidden":
-                return c.update({ hidden: !c.hidden });
+        const raw = event.dataTransfer?.getData("text/plain");
+        if (!raw) return;
 
-            // Toggle combatant defeated flag
-            case "toggleDefeated":
-                return this._onToggleDefeatedStatus(c);
+        try {
+            const data = JSON.parse(raw);
+            if (!data.id) return;
+            const targetEl = event.target.closest("[data-team]");
+            const targetTeam = targetEl?.dataset.team;
+            if (targetTeam === undefined) return;
 
-            // Roll combatant initiative
-            case "rollInitiative":
-                return combat.rollInitiative([c.id]);
-
-            // Actively ping the Combatant
-            case "pingCombatant":
-                return this._onPingCombatant(c);
-        }
-    }
-
-    async getData(options) {
-        let context = await super.getData(options);
-        if (context.combat) {
-            for (let [i, combatant] of context.combat.turns.entries()) {
-                context.turns[i].flags = combatant.flags;
-                context.turns[i].isFirstOwner = this.isFirstOwner(
-                    combatant.actor
-                );
-                context.turns[i].hasPlayerOwner = this.hasPlayerOwner(
-                    combatant.actor
-                );
+            const combatant = this.viewed?.combatants.get(data.id);
+            if (combatant) {
+                await combatant.setTeam(targetTeam);
             }
+        } catch (err) {
+            console.error("MouseGuard | Error during team drop", err);
         }
-
-        //console.log(context);
-        return context;
     }
+
+    /* -------------------------------------------- */
+    /*  Action Handlers                             */
+    /* -------------------------------------------- */
+
+    static async #onAskMove(event, target) {
+        await this.viewed?.askMove();
+    }
+
+    static async #onAskGoal(event, target) {
+        await this.viewed?.askGoal();
+    }
+
+    static async #onDoMove(event, target) {
+        const combatantId = target.dataset.combatantId;
+        const moveId = target.dataset.moveId;
+        const combatant = this.viewed?.combatants.get(combatantId);
+        if (combatant) {
+            await combatant.doMove(moveId);
+        }
+    }
+
+    /* -------------------------------------------- */
+    /*  Helper Methods                              */
+    /* -------------------------------------------- */
 
     firstOwner(doc) {
-        /* null docs could mean an empty lookup, null docs are not owned by anyone */
-        if (!doc) return false;
+        if (!doc) return null;
+        const owners = Object.entries(doc.ownership || {})
+            .filter(([id, level]) => level === CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER)
+            .map(([id]) => game.users.get(id))
+            .filter((u) => u && u.active);
 
-        const gmOwners = Object.entries(doc.ownership)
-            .filter(
-                ([id, level]) =>
-                    game.users.get(id)?.isGM &&
-                    game.users.get(id)?.active &&
-                    level === 3
-            )
-            .map(([id, level]) => id);
-        const otherOwners = Object.entries(doc.ownership)
-            .filter(
-                ([id, level]) =>
-                    !game.users.get(id)?.isGM &&
-                    game.users.get(id)?.active &&
-                    level === 3
-            )
-            .map(([id, level]) => id);
-
-        if (otherOwners.length > 0) return game.users.get(otherOwners[0]);
-        else return game.users.get(gmOwners[0]);
+        const playerOwner = owners.find((u) => !u.isGM);
+        return playerOwner ?? owners.find((u) => u.isGM) ?? null;
     }
 
     isFirstOwner(doc) {
-        //console.log(this.firstOwner(doc).id)
-        return game.user.id === this.firstOwner(doc).id;
+        const owner = this.firstOwner(doc);
+        return owner?.id === game.user.id;
     }
 
     hasPlayerOwner(doc) {
         if (!doc) return false;
-
-        const gmOwners = Object.entries(doc.ownership)
-            .filter(
-                ([id, level]) =>
-                    game.users.get(id)?.isGM &&
-                    game.users.get(id)?.active &&
-                    level === 3
-            )
-            .map(([id, level]) => id);
-        const otherOwners = Object.entries(doc.ownership)
-            .filter(
-                ([id, level]) =>
-                    !game.users.get(id)?.isGM &&
-                    game.users.get(id)?.active &&
-                    level === 3
-            )
-            .map(([id, level]) => id);
-
-        if (otherOwners.length > 0) return true;
-        else return false;
+        return Object.entries(doc.ownership || {}).some(([id, level]) => {
+            const u = game.users.get(id);
+            return u && !u.isGM && u.active && level === CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER;
+        });
     }
 }

@@ -2,11 +2,11 @@
     "id": "mouseguard",
     "title": "Mouse Guard",
     "description": "A system for playing the Mouse Guard RPG in Foundry VTT.",
-    "version": "0.2.4",
+    "version": "0.3.0",
     "compatibility": {
-        "minimum": 11,
-        "verified": 11,
-        "maximum": 11
+        "minimum": "12",
+        "verified": "14",
+        "maximum": "14"
     },
     "authors": [
         {
@@ -16,21 +16,19 @@
     ],
     "esmodules": ["dist/mouseguard.js"],
     "socket": true,
-    "styles": ["styles/mouseguard.css", "dist/mouseguard.css"],
+    "styles": ["styles/mouseguard.css"],
     "packs": [
         {
             "name": "skills",
             "label": "Skills",
-            "path": "packs/skills.db",
-            "entity": "Item",
+            "path": "packs/skills",
             "type": "Item",
             "system": "mouseguard"
         },
         {
             "name": "traits",
             "label": "Traits",
-            "path": "packs/traits.db",
-            "entity": "Item",
+            "path": "packs/traits",
             "type": "Item",
             "system": "mouseguard"
         }
@@ -40,14 +38,20 @@
             "lang": "en",
             "name": "English",
             "path": "lang/en.json"
+        },
+        {
+            "lang": "ru",
+            "name": "Русский",
+            "path": "lang/ru.json"
         }
     ],
-    "gridDistance": 5,
-    "gridUnits": "ft",
+    "grid": {
+        "distance": 5,
+        "units": "ft"
+    },
+    "initiative": "1d20",
     "primaryTokenAttribute": "health",
     "secondaryTokenAttribute": "power",
-    "url": "https://github.com/jsavko/mouseguard",
-    "manifest": "https://raw.githubusercontent.com/jsavko/mouseguard/main/system.json",
-    "download": "https://github.com/jsavko/mouseguard/archive/refs/heads/main.zip",
+    "url": "https://github.com/Happytreedice/mouseguard",
     "license": "LICENSE.txt"
 }

@@ -1,6 +1,5 @@
 /**
- * A simple and flexible system for world-building using an arbitrary collection of character and item attributes
- * Author: Atropos
+ * Mouse Guard RPG System for Foundry Virtual Tabletop
  */
 
 // Import Modules
@@ -17,7 +16,6 @@ import MouseCombatant from "./mouse-combantant.js";
 import MouseCombat from "./mouse-combat.js";
 import MouseCombatTracker from "./mouse-combat-tracker.js";
 import MouseSocket from "./socket.js";
-//import MouseCombatModal from "./mouse-combat-modal.js";
 import { EffectsPanel } from "./mouse-effects.js";
 import { MouseConflictManager } from "./mouse-conflict-manager.js";
 import { statusEffects } from "./status-effects.js";
@@ -26,36 +24,31 @@ import { statusEffects } from "./status-effects.js";
 /*  Foundry VTT Initialization                  */
 /* -------------------------------------------- */
 
-/**
- * Init hook.
- */
 Hooks.once("init", async function () {
-    console.log(`Initializing MouseGuard MouseGuard System`);
-
-    /**
-     * Set an initiative formula for the system. This will be updated later.
-     * @type {String}
-     */
+    console.log("Mouse Guard | Initializing Mouse Guard System");
 
     let RollCount = 0;
     let RollMessage = "";
 
     game.mouseguard = {
         MouseGuardActor,
+        MouseGuardItem,
         createMouseGuardMacro,
         RollCount,
         RollMessage,
         updateDisplay,
         MouseDie,
         MouseRoll,
+        ConflictTracker,
+        MouseConflictManager,
         effectPanel: new EffectsPanel()
     };
 
-    // Define custom Entity classes
+    // Define custom Document classes
     CONFIG.Actor.documentClass = MouseGuardActor;
     CONFIG.Item.documentClass = MouseGuardItem;
-    CONFIG.Dice.rolls.push(MouseRoll);
 
+    // Define custom Combat classes
     CONFIG.Combatant.documentClass = MouseCombatant;
     CONFIG.Combat.documentClass = MouseCombat;
     CONFIG.ui.combat = MouseCombatTracker;
@@ -65,18 +58,21 @@ Hooks.once("init", async function () {
         decimals: 2
     };
 
-    // Register sheet application classes
-    Actors.unregisterSheet("core", ActorSheet);
+    // Register Dice terms and rolls
+    CONFIG.Dice.terms["m"] = MouseDie;
+    CONFIG.Dice.terms["6"] = MouseDie;
+    CONFIG.Dice.types.push(MouseDie);
+    CONFIG.Dice.rolls.push(MouseRoll);
+
+    // Register sheet application classes (No unregisterSheet for core to avoid v14 deprecation warnings)
     Actors.registerSheet("mouseguard", MouseGuardNPCActorSheet, {
         types: ["mouse", "weasel", "animal"],
         makeDefault: true
     });
-    console.log("Setting actor Sheet");
     Actors.registerSheet("mouseguard", MouseGuardActorSheet, {
         types: ["character"],
         makeDefault: true
     });
-    Items.unregisterSheet("core", ItemSheet);
     Items.registerSheet("mouseguard", MouseGuardItemSheet, {
         makeDefault: true
     });
@@ -91,7 +87,6 @@ Hooks.once("init", async function () {
         config: true
     });
 
-    // Register initiative setting.
     game.settings.register("mouseguard", "initFormula", {
         name: "SETTINGS.MouseGuardInitFormulaN",
         hint: "SETTINGS.MouseGuardInitFormulaL",
@@ -102,49 +97,23 @@ Hooks.once("init", async function () {
         onChange: (formula) => _simpleUpdateInit(formula, true)
     });
 
-    // Retrieve and assign the initiative formula setting.
     const initFormula = game.settings.get("mouseguard", "initFormula");
     _simpleUpdateInit(initFormula);
 
-    /**
-     * Update the initiative formula.
-     * @param {string} formula - Dice formula to evaluate.
-     * @param {boolean} notify - Whether or not to post nofications.
-     */
     function _simpleUpdateInit(formula, notify = false) {
         const isValid = Roll.validate(formula);
         if (!isValid) {
-            if (notify)
+            if (notify) {
                 ui.notifications.error(
-                    `${game.i18n.localize(
-                        "MOUSEGUARD.NotifyInitFormulaInvalid"
-                    )}: ${formula}`
+                    `${game.i18n.localize("MOUSEGUARD.NotifyInitFormulaInvalid")}: ${formula}`
                 );
+            }
             return;
         }
         CONFIG.Combat.initiative.formula = formula;
     }
 
-    /**
-     * Slugify a string.
-     */
-    Handlebars.registerHelper("slugify", function (value) {
-        return value.slugify({ strict: true });
-    });
-
-    // Preload template partials
-    await preloadHandlebarsTemplates();
-});
-
-/**
- * Macrobar hook.
- */
-//Hooks.on("hotbarDrop", (bar, data, slot) => createMouseGuardMacro(data, slot));
-
-Hooks.once("init", async function () {
-    CONFIG.Dice.terms["m"] = MouseDie;
-    CONFIG.Dice.terms["6"] = MouseDie;
-
+    // Register Socket listeners
     game.socket.on("system.mouseguard", (data) => {
         if (data.action === "askGoal") MouseSocket.askGoal(data);
         if (data.action === "setGoal") MouseSocket.setGoal(data);
@@ -152,41 +121,74 @@ Hooks.once("init", async function () {
         if (data.action === "setMoves") MouseSocket.setMoves(data);
     });
 
+    // Register Handlebars Helpers
+    Handlebars.registerHelper("slugify", function (value) {
+        return typeof value === "string" ? value.slugify({ strict: true }) : "";
+    });
+
+    Handlebars.registerHelper("times", function (n, block) {
+        let accum = "";
+        for (let i = 0; i < n; ++i) accum += block.fn(i);
+        return accum;
+    });
+
+    Handlebars.registerHelper("concat", function (...args) {
+        args.pop();
+        return args.join("");
+    });
+
+    Handlebars.registerHelper("ifEquals", function (arg1, arg2, options) {
+        return arg1 == arg2 ? options.fn(this) : options.inverse(this);
+    });
+
+    if (!Handlebars.helpers.or) {
+        Handlebars.registerHelper("or", function (...args) {
+            args.pop();
+            return args.some(Boolean);
+        });
+    }
+
+    if (!Handlebars.helpers.and) {
+        Handlebars.registerHelper("and", function (...args) {
+            args.pop();
+            return args.every(Boolean);
+        });
+    }
+
+    if (!Handlebars.helpers.not) {
+        Handlebars.registerHelper("not", function (arg) {
+            return !arg;
+        });
+    }
+
+    // Preload template partials
+    await preloadHandlebarsTemplates();
     await registerTours();
 });
 
-//                labels: [
-//    "systems/mouseguard/assets/dice/snake.png",
-//    "systems/mouseguard/assets/dice/snake.png",
-//    "systems/mouseguard/assets/dice/snake.png",
-//    "systems/mouseguard/assets/dice/sword.png",
-//    "systems/mouseguard/assets/dice/sword.png",
-//    "systems/mouseguard/assets/dice/axe.png"
-//],
+/* -------------------------------------------- */
+/*  Dice So Nice Integration                    */
+/* -------------------------------------------- */
+
 Hooks.once("diceSoNiceReady", (dice3d) => {
-    let dicetheme = "mouseguard";
-    if (!dicetheme || dicetheme == "mouseguard") {
-        dice3d.addSystem({ id: "mouseguard", name: "Mouse Guard" }, true);
+    dice3d.addSystem({ id: "mouseguard", name: "Mouse Guard" }, true);
 
-        dice3d.addDicePreset(
-            {
-                type: "dm",
-                labels: [
-                    "systems/mouseguard/assets/dice/snake.png",
-                    "systems/mouseguard/assets/dice/snake.png",
-                    "systems/mouseguard/assets/dice/snake.png",
-                    "systems/mouseguard/assets/dice/sword.png",
-                    "systems/mouseguard/assets/dice/sword.png",
-                    "systems/mouseguard/assets/dice/axe.png"
-                ],
-                colorset: "white",
-                system: "mouseguard"
-            },
-            "d6"
-        );
-    }
-
-    //sw dice colors
+    dice3d.addDicePreset(
+        {
+            type: "dm",
+            labels: [
+                "systems/mouseguard/assets/dice/snake.png",
+                "systems/mouseguard/assets/dice/snake.png",
+                "systems/mouseguard/assets/dice/snake.png",
+                "systems/mouseguard/assets/dice/sword.png",
+                "systems/mouseguard/assets/dice/sword.png",
+                "systems/mouseguard/assets/dice/axe.png"
+            ],
+            colorset: "white",
+            system: "mouseguard"
+        },
+        "d6"
+    );
 
     dice3d.addColorset({
         name: "white-mg",
@@ -200,163 +202,158 @@ Hooks.once("diceSoNiceReady", (dice3d) => {
     });
 });
 
-Hooks.on("renderSidebarTab", (app, html, data) => {
-    const template = "./systems/mouseguard/templates/mousetray.html";
+/* -------------------------------------------- */
+/*  ChatLog & Mouse Tray Hook                   */
+/* -------------------------------------------- */
 
-    let $chat_form = html.find("#chat-form");
-    renderTemplate(template).then((c) => {
-        let $content = $(c);
-        $chat_form.after($content);
-        $content.find(".mouse_dice_button").on("click", (event) => {
-            event.preventDefault();
-            if (event.currentTarget.classList.contains("add")) {
-                game.mouseguard.RollCount++;
-            } else {
-                game.mouseguard.RollCount--;
-            }
+Hooks.on("renderChatLog", async (app, html) => {
+    const root = html instanceof HTMLElement ? html : (html[0] ?? html);
+    if (!root || root.querySelector(".mouse-tray")) return;
 
-            if (game.mouseguard.RollCount < 1) game.mouseguard.RollCount = 0;
+    const chatForm = root.querySelector("#chat-form") ?? root.querySelector("form");
+    if (!chatForm) return;
 
-            // Render Dice in Dice Pool Area
-            updateDisplay(game.mouseguard.RollCount);
-        });
+    const template = "systems/mouseguard/templates/mousetray.html";
+    const rendered = await renderTemplate(template, {});
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = rendered.trim();
+    const tray = tempDiv.firstElementChild;
+    if (!tray) return;
 
-        $content.find(".mouse_roll_button").on("click", (event) => {
-            event.preventDefault();
-            let $self = $(event.currentTarget);
-            let dataset = event.currentTarget.dataset;
+    chatForm.insertAdjacentElement("afterend", tray);
 
-            if (game.mouseguard.RollCount > 0) {
-                let actor =
-                    game.user.character ?? canvas.tokens.controlled[0]?.actor;
-                var roll = new MouseRoll(game.mouseguard.RollCount + "dmcs>3");
-                roll.evaluate({ async: true });
-                roll.toMessage({
-                    user: game.user.id,
-                    flavor: game.mouseguard.RollMessage,
-                    speaker: ChatMessage.getSpeaker({ actor: actor })
-                });
-
-                game.mouseguard.RollCount = 0;
-                game.mouseguard.RollMessage = "";
-                updateDisplay(0);
-            }
-        });
-
+    tray.querySelector(".mouse_dice_button.add")?.addEventListener("click", (event) => {
+        event.preventDefault();
+        game.mouseguard.RollCount++;
         updateDisplay(game.mouseguard.RollCount);
     });
+
+    tray.querySelector(".mouse_dice_button.subtract")?.addEventListener("click", (event) => {
+        event.preventDefault();
+        if (game.mouseguard.RollCount > 0) game.mouseguard.RollCount--;
+        updateDisplay(game.mouseguard.RollCount);
+    });
+
+    tray.querySelector(".mouse_roll_button")?.addEventListener("click", async (event) => {
+        event.preventDefault();
+        if (game.mouseguard.RollCount > 0) {
+            const actor = game.user.character ?? canvas.tokens?.controlled?.[0]?.actor;
+            const roll = new MouseRoll(`${game.mouseguard.RollCount}dmcs>3`);
+            await roll.evaluate();
+            await roll.toMessage({
+                author: game.user.id,
+                flavor: game.mouseguard.RollMessage,
+                speaker: ChatMessage.getSpeaker({ actor: actor })
+            });
+
+            game.mouseguard.RollCount = 0;
+            game.mouseguard.RollMessage = "";
+            updateDisplay(0);
+        }
+    });
+
+    updateDisplay(game.mouseguard.RollCount);
 });
 
-Hooks.once("ready", async () => {
-    //const cTracker = new ConflictTracker(undefined, {  });
-    //cTracker.render(true);
-    // If First time launching the system Start the roll Tour
-    let tourRolls = game.user.getFlag("mouseguard", "tourRolls");
-    if (tourRolls == undefined) {
-        const tour = game.tours.get("mouseguard.welcome");
-        tour.start();
-        game.user.setFlag("mouseguard", "tourRolls", 1);
-    }
+/* -------------------------------------------- */
+/*  Chat Message Rendering Hook                 */
+/* -------------------------------------------- */
 
-    Hooks.on(
-        "controlToken",
-        game.mouseguard.effectPanel.refresh.bind(
-            game.mouseguard.effectPanel,
-            true
-        )
-    );
-
-    for (const hook of [
-        "createActiveEffect",
-        "updateActiveEffect",
-        "deleteActiveEffect"
-    ]) {
-        Hooks.on(hook, function (effect) {
-            if (effect.parent === game.mouseguard.effectPanel.actor)
-                game.mouseguard.effectPanel.refresh(true);
-        });
-    }
-});
-
-Hooks.on("renderChatMessage", (chatMessage, [html], messageData) => {
-    if (messageData.message.flags?.mouseguard?.unflipped) {
-        html.querySelector("img").src =
-            "systems/mouseguard/assets/deck/CardBack.webp";
+Hooks.on("renderChatMessageHTML", (message, html) => {
+    if (message.flags?.mouseguard?.unflipped) {
+        const img = html.querySelector("img");
+        if (img) img.src = "systems/mouseguard/assets/deck/CardBack.webp";
 
         if (game.user.isGM) {
-            html.querySelector(".action-move").insertAdjacentHTML(
-                "beforeend",
-                ' <button id="reveal-button" type="button">Reveal Card</button> '
-            );
-
-            html.querySelector("#reveal-button").addEventListener(
-                "click",
-                (event) => {
-                    let message = game.messages.get(
-                        event.target.closest("li").dataset.messageId
-                    );
-                    message.setFlag("mouseguard", "unflipped", false);
-                }
-            );
+            const actionMove = html.querySelector(".action-move");
+            if (actionMove && !actionMove.querySelector(".reveal-button")) {
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = "reveal-button";
+                btn.textContent = "Reveal Card";
+                btn.addEventListener("click", async () => {
+                    await message.setFlag("mouseguard", "unflipped", false);
+                });
+                actionMove.appendChild(btn);
+            }
         }
     }
 });
 
-Hooks.on("canvasReady", () => {
-    // Effect Panel singleton application
-    game.mouseguard.effectPanel.render(true);
-});
+/* -------------------------------------------- */
+/*  System Ready & Status Effects               */
+/* -------------------------------------------- */
 
 Hooks.once("setup", () => {
     CONFIG.statusEffects = statusEffects;
 });
 
+Hooks.once("ready", async () => {
+    // Start welcome tour if first time
+    const tourRolls = game.user.getFlag("mouseguard", "tourRolls");
+    if (tourRolls === undefined) {
+        const tour = game.tours.get("mouseguard.welcome");
+        if (tour) {
+            tour.start();
+            await game.user.setFlag("mouseguard", "tourRolls", 1);
+        }
+    }
+
+    // Effect Panel listeners
+    Hooks.on("controlToken", () => {
+        game.mouseguard.effectPanel.refresh();
+    });
+
+    for (const hook of ["createActiveEffect", "updateActiveEffect", "deleteActiveEffect"]) {
+        Hooks.on(hook, (effect) => {
+            if (effect.parent === game.mouseguard.effectPanel.actor) {
+                game.mouseguard.effectPanel.refresh();
+            }
+        });
+    }
+});
+
+Hooks.on("canvasReady", () => {
+    game.mouseguard.effectPanel.render(true);
+});
+
+/* -------------------------------------------- */
+/*  Helper Functions                            */
+/* -------------------------------------------- */
+
 async function registerTours() {
     try {
-        game.tours.register(
-            "mouseguard",
-            "welcome",
-            await SidebarTour.fromJSON("/systems/mouseguard/tours/welcome.json")
-        );
+        const TourClass = foundry.nue?.tours?.SidebarTour ?? SidebarTour;
+        if (TourClass) {
+            game.tours.register(
+                "mouseguard",
+                "welcome",
+                await TourClass.fromJSON("/systems/mouseguard/tours/welcome.json")
+            );
+        }
     } catch (err) {
-        console.error(err);
+        console.error("Mouse Guard | Error registering tours:", err);
     }
 }
 
 function updateDisplay(count) {
-    //let $mouse_rolls = html.find('.mouse-dice-roll');
-
-    let diceHTML =
-        '<li class="roll mousedie d6"><img src="systems/mouseguard/assets/dice/sword.png" height="24" width="24"></li>';
+    const diceHTML =
+        '<li class="roll mousedie d6"><img src="systems/mouseguard/assets/dice/sword.png" height="24" width="24" alt="die"></li>';
     let theHTML = "";
-
     for (let i = 0; i < count; i++) {
         theHTML += diceHTML;
     }
 
-    $(".mouse-dice-roll").html(theHTML);
+    document.querySelectorAll(".mouse-dice-roll").forEach((el) => {
+        el.innerHTML = theHTML;
+    });
 
-    $(".mouse_dice_button.subtract").prop("disabled", !count);
-    $(".mouse_roll_button").prop("disabled", !count);
+    document.querySelectorAll(".mouse_dice_button.subtract").forEach((btn) => {
+        btn.disabled = !count;
+    });
+    document.querySelectorAll(".mouse_roll_button").forEach((btn) => {
+        btn.disabled = !count;
+    });
+
     if (!count) game.mouseguard.RollMessage = "";
 }
-
-Handlebars.registerHelper("times", function (n, block) {
-    var accum = "";
-    for (var i = 0; i < n; ++i) accum += block.fn(i);
-    return accum;
-});
-
-Handlebars.registerHelper("concat", function () {
-    var outStr = "";
-    for (var arg in arguments) {
-        if (typeof arguments[arg] != "object") {
-            outStr += arguments[arg];
-        }
-    }
-    return outStr;
-});
-
-Handlebars.registerHelper("ifEquals", function (arg1, arg2, options) {
-    return arg1 == arg2 ? options.fn(this) : options.inverse(this);
-});

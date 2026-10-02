@@ -111,7 +111,7 @@
             </div>
             <div class="item-controls">
                 <a
-                    on:click={sheet?._onItemDelete(trait.id)}
+                    on:click={() => sheet?._onItemDelete(trait.id)}
                     class="item-control item-delete"
                     title="Delete Item"><i class="fas fa-trash" /></a
                 >

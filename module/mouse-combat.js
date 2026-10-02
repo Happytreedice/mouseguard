@@ -1,25 +1,10 @@
+import MouseSocket from "./socket.js";
+
 /**
- * A specialized form used to pop out the editor.
+ * Specialized Combat class for Mouse Guard conflicts.
  * @extends {Combat}
- *
- * OPTIONS:
- *
- *
  */
-
-import MouseSocket from "./socket";
-
 export default class MouseCombat extends Combat {
-    constructor(object = {}, options = {}) {
-        super(object, options);
-    }
-
-    /** @override */
-    getData() {
-        const context = super.getData();
-        return context;
-    }
-
     get getGoal1() {
         return this.getFlag("mouseguard", "goal1");
     }
@@ -44,8 +29,11 @@ export default class MouseCombat extends Combat {
         return this.setFlag("mouseguard", "ConflictCaptain2", value);
     }
 
+    /** @inheritDoc */
     async _preCreate(data, options, user) {
-        await super._preCreate(data, options, user);
+        const allowed = await super._preCreate(data, options, user);
+        if (allowed === false) return false;
+
         this.updateSource({
             flags: {
                 mouseguard: {
@@ -58,59 +46,54 @@ export default class MouseCombat extends Combat {
                 }
             }
         });
-    }
-
-    static _canUpdate(user, doc, data) {
-        if (user.isGM) return true; // GM users can do anything
-        const updateKeys = new Set(Object.keys(data));
-        const allowedKeys = new Set(["_id", "initiative", "flags"]);
-        return updateKeys.isSubset(allowedKeys); // Players may only update initiative scores and flags
+        return allowed;
     }
 
     async startCombat() {
-        let goal = this.flags.mouseguard.goal1;
-        let goal2 = this.flags.mouseguard.goal2;
-        let CC = this.flags.mouseguard.ConflictCaptain;
-        let CC2 = this.flags.mouseguard.ConflictCaptain2;
+        const goal = this.getFlag("mouseguard", "goal1");
+        const goal2 = this.getFlag("mouseguard", "goal2");
+        const CC = this.getFlag("mouseguard", "ConflictCaptain");
+        const CC2 = this.getFlag("mouseguard", "ConflictCaptain2");
 
         if (!CC) {
             ui.notifications.error(game.i18n.localize("COMBAT.NeedCC"));
             return false;
         }
-        if (goal == null) {
+        if (!goal) {
             ui.notifications.error(game.i18n.localize("COMBAT.NeedGoal"));
-            this.askGoal();
+            await this.askGoal();
             return false;
         }
 
-        if (goal2 == null) {
+        if (!goal2) {
             ui.notifications.error(game.i18n.localize("COMBAT.NeedGoal"));
-            this.askGoal();
+            await this.askGoal();
             return false;
         }
 
-        if (!!goal != false && !!goal2 != false && CC && CC2) {
-            this.askMove();
-            //ui.combat.renderPopout(true)
+        if (goal && goal2 && CC && CC2) {
+            await this.askMove();
             return this.update({ round: 1, turn: 0 });
         }
         return false;
     }
 
     getCCPlayerByID(conflictCaptainID) {
-        let combatant = this.combatants.get(conflictCaptainID);
-        let actor = game.actors.get(combatant.actorId);
+        const combatant = this.combatants.get(conflictCaptainID);
+        if (!combatant) return game.users.activeGM;
+        const actor = combatant.actor ?? game.actors.get(combatant.actorId);
+        if (!actor) return game.users.activeGM;
 
         return (
             game.users.filter(
-                (u) => !u.isGM && actor.testUserPermission(u, "OWNER")
+                (u) => !u.isGM && u.active && actor.testUserPermission(u, "OWNER")
             )?.[0] ?? game.users.activeGM
         );
     }
 
     async askGoal() {
-        let CC = this.flags.mouseguard.ConflictCaptain;
-        let CC2 = this.flags.mouseguard.ConflictCaptain2;
+        const CC = this.getFlag("mouseguard", "ConflictCaptain");
+        const CC2 = this.getFlag("mouseguard", "ConflictCaptain2");
 
         if (!CC) {
             ui.notifications.error("A Conflict Captain Must be set for team 1");
@@ -122,97 +105,93 @@ export default class MouseCombat extends Combat {
             return false;
         }
 
-        let player = this.getCCPlayerByID(CC);
-        await game.socket.emit(
-            "system.mouseguard",
-            { action: "askGoal", combat: this, team: "1" },
-            { recipients: [player._id] }
-        );
+        const player = this.getCCPlayerByID(CC);
+        if (player) {
+            await game.socket.emit(
+                "system.mouseguard",
+                { action: "askGoal", combat: this.id, team: "1" },
+                { recipients: [player.id] }
+            );
+        }
 
-        let player2 = this.getCCPlayerByID(CC2);
-        await game.socket.emit(
-            "system.mouseguard",
-            { action: "askGoal", combat: this, team: "2" },
-            { recipients: [player2._id] }
-        );
+        const player2 = this.getCCPlayerByID(CC2);
+        if (player2) {
+            await game.socket.emit(
+                "system.mouseguard",
+                { action: "askGoal", combat: this.id, team: "2" },
+                { recipients: [player2.id] }
+            );
+        }
     }
 
     async setGoal(goal, team) {
-        this.setFlag("mouseguard", "goal" + team, goal).then((content) => {
-            this.startCombat();
-        });
-
+        await this.setFlag("mouseguard", "goal" + team, goal);
+        await this.startCombat();
         return true;
     }
 
-    // Create a list of combatants for each team then send the conflict captains the modal for moves
-    // Filter by combatant.team
-    // Need to refactor to include Captains for both teams
     async askMove() {
-        let CC = this.flags.mouseguard.ConflictCaptain;
-        let CC2 = this.flags.mouseguard.ConflictCaptain2;
-
-        //console.log(CC2);
+        const CC = this.getFlag("mouseguard", "ConflictCaptain");
+        const CC2 = this.getFlag("mouseguard", "ConflictCaptain2");
 
         if (!CC) {
             ui.notifications.error(game.i18n.localize("COMBAT.NeedCC"));
             return false;
         }
 
-        let data = { combat: this };
-        let team1 = [];
-        let team2 = [];
+        const data = { combat: this.id };
+        const team1 = [];
+        const team2 = [];
 
-        //Team 1
-        let combatants = this.combatants.filter((comb) => comb.team == "1");
-        Object.keys(combatants).forEach((key) => {
+        // Team 1
+        const combatants = this.combatants.filter((comb) => comb.team === "1" || comb.team === 1);
+        for (const comb of combatants) {
             team1.push({
-                combatant: combatants[key].id,
-                name: combatants[key].token.name
+                combatant: comb.id,
+                name: comb.name ?? comb.token?.name
             });
-        });
+        }
 
         data.actors = team1;
         data.action = "askMoves";
 
-        let player = this.getCCPlayerByID(CC);
-
-        await game.socket.emit("system.mouseguard", data, {
-            recipients: [player._id]
-        });
-
-        let player2 = this.getCCPlayerByID(CC2);
-        if (player2 == "undefined") {
-            data.npc = true;
-        }
-        //Team 2
-        let team2combatants = this.combatants.filter(
-            (comb) => comb.team == "2"
-        );
-
-        Object.keys(team2combatants).forEach((key) => {
-            team2.push({
-                combatant: team2combatants[key].id,
-                name: team2combatants[key].token.name
+        const player = this.getCCPlayerByID(CC);
+        if (player) {
+            await game.socket.emit("system.mouseguard", data, {
+                recipients: [player.id]
             });
-        });
+        }
 
-        data.actors = team2;
-        //data.npc = true;
-        await game.socket.emit("system.mouseguard", data, {
-            recipients: [player2._id]
-        });
+        const player2 = this.getCCPlayerByID(CC2);
+        const data2 = { ...data };
+        if (!player2 || player2.isGM) {
+            data2.npc = true;
+        }
 
-        //await MouseSocket.askMoves(data);
+        // Team 2
+        const team2combatants = this.combatants.filter((comb) => comb.team === "2" || comb.team === 2);
+        for (const comb of team2combatants) {
+            team2.push({
+                combatant: comb.id,
+                name: comb.name ?? comb.token?.name
+            });
+        }
+
+        data2.actors = team2;
+        if (player2) {
+            await game.socket.emit("system.mouseguard", data2, {
+                recipients: [player2.id]
+            });
+        }
     }
 
     async askNPCMove(data) {
-        //console.log(data);
-        MouseSocket.askMoves(data);
+        await MouseSocket.askMoves(data);
     }
 
+    /** @override */
     async nextRound() {
-        this.askMove();
-        super.nextRound();
+        await this.askMove();
+        return super.nextRound();
     }
 }

@@ -150,7 +150,6 @@
     "COMBAT.attack": "Attack",
     "COMBAT.feint": "Feint",
     "COMBAT.defend": "Defend",
-    "COMBAT.feint": "Feint",
     "COMBAT.maneuver": "Maneuver",
     "COMBAT.SelectMove": "Please Assign Moves",
     "COMBAT.PlaysCard": "Plays an Action Card",
@@ -164,6 +163,8 @@
     "COMBAT.Team1": "Team 1",
     "COMBAT.Team2": "Team 2",
     "COMBAT.Team0": "Unassigned Combatantants",
+    "COMBAT.HiddenMove": "Hidden Move",
+    "COMBAT.DragDropTeam": "Drag and drop combatants here to assign them to this team.",
 
     "TYPES.Actor.character": "Character",
     "TYPES.Actor.mouse": "Mouse",
