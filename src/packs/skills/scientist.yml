@@ -1,0 +1,17 @@
+_id: Ax8jAK09ZEtExq05
+name: Scientist
+type: skill
+img: icons/svg/item-bag.svg
+system:
+  description: ''
+  rank: 0
+  pass: 0
+  fail: 0
+effects: []
+folder: null
+sort: 0
+ownership:
+  default: 0
+flags:
+  mouseguard:
+    originalName: Scientist

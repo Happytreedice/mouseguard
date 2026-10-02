@@ -116,7 +116,8 @@ export class MouseGuardActorSheet extends foundry.applications.sheets.ActorSheet
         const item = this.actor.items.get(itemId);
         const formula = button.dataset.roll;
         if (!formula) return;
-        const r = new Roll(formula, this.actor.getRollData());
+        const RollClass = foundry.dice.Roll;
+        const r = new RollClass(formula, this.actor.getRollData());
         await r.evaluate();
         return r.toMessage({
             author: game.user.id,

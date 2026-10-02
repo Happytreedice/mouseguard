@@ -1,4 +1,11 @@
-export class MouseDie extends Die {
+/**
+ * Custom Die and Roll classes for the Mouse Guard system.
+ * Subclasses foundry.dice.terms.Die and foundry.dice.Roll.
+ */
+const DieClass = foundry.dice.terms.Die;
+const RollClass = foundry.dice.Roll;
+
+export class MouseDie extends DieClass {
     constructor(termData) {
         termData.faces = 6;
         super(termData);
@@ -38,7 +45,7 @@ const mouseChatData = async (roll, chatOptions) => {
     };
 };
 
-export class MouseRoll extends Roll {
+export class MouseRoll extends RollClass {
     /**
      * Render a DropRoll instance to HTML
      * @param {object} [chatOptions]      An object configuring the behavior of the resulting chat message.
@@ -62,7 +69,7 @@ export class MouseRoll extends Roll {
         const chatData = await mouseChatData(this, chatOptions);
 
         // Render the roll display template
-        return renderTemplate(chatOptions.template, chatData);
+        return foundry.applications.handlebars.renderTemplate(chatOptions.template, chatData);
     }
 
     static CHAT_TEMPLATE = "systems/mouseguard/templates/dice/roll.html";

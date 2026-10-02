@@ -1,0 +1,17 @@
+_id: xhN7jWTEYP2UBB7N
+name: Calm
+type: trait
+img: icons/svg/item-bag.svg
+system:
+  description: ''
+  level: 1
+  usedfor: 0
+  usedagainst: 0
+effects: []
+folder: null
+sort: 0
+ownership:
+  default: 0
+flags:
+  mouseguard:
+    originalName: Calm

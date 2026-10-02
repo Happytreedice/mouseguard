@@ -133,10 +133,6 @@ var MouseGuardActor = class extends Actor {
   }
   prepareData() {
     super.prepareData();
-    this._prepareCharacterData();
-  }
-  _prepareCharacterData() {
-    this.system.itemTypes = this.itemTypes;
   }
   async _preCreate(data, options, user) {
     const allowed = await super._preCreate(data, options, user);
@@ -786,40 +782,42 @@ function instance($$self, $$props, $$invalidate) {
   let sheetData = getContext("sheetStore");
   component_subscribe($$self, sheetData, (value) => $$invalidate(1, $sheetData = value));
   let data;
-  const TextEditor = globalThis.TextEditor;
+  const TextEditor = foundry.applications.ux.TextEditor.implementation;
   let editorContent;
   let height;
   let mce;
-  let rawContent = getProperty($sheetData?.data, target) ?? "";
-  let content = TextEditor.enrichHTML(rawContent, {
-    secrets: $sheetData.isOwner,
-    async: false
-  });
+  let rawContent = "";
+  let content = "";
   let editor = {};
   onDestroy(async () => {
     if (mce)
-      mce.destroy();
+      mce.destroy?.();
   });
   const createEditor = async () => {
+    const doc = $sheetData?.actor ?? $sheetData?.document;
     TextEditor.create({
       target: editorContent,
       invalid_elements: "iframe",
+      document: doc,
+      fieldName: target,
       save_onsavecallback: async (m) => {
         mce = m;
-        const isDirty = mce.getContent() !== editor.initial;
-        mce.remove();
-        if (isDirty) {
-          await $sheetData.sheet._onSubmit(new Event("submit"));
+        const isDirty = (mce.getContent ? mce.getContent() : editorContent?.innerHTML) !== editor.initial;
+        mce.remove?.();
+        if (isDirty && doc) {
+          const newContent = mce.getContent ? mce.getContent() : editorContent?.innerHTML ?? "";
+          await doc.update({ [target]: newContent });
         }
-        mce.destroy();
+        mce.destroy?.();
       }
-    }).then((m) => {
+    }, rawContent).then((m) => {
       editor.m = m;
       mce = m;
+      editor.initial = mce.getContent ? mce.getContent() : "";
       editor.changed = false;
       editor.active = true;
-      mce.focus();
-      mce.on("change", (ev) => editor.changed = true);
+      mce.focus?.();
+      mce.on?.("change", (ev) => editor.changed = true);
     });
   };
   function div0_binding($$value) {
@@ -843,11 +841,10 @@ function instance($$self, $$props, $$invalidate) {
     }
     if ($$self.$$.dirty & 131) {
       $: {
-        $$invalidate(7, rawContent = getProperty($sheetData?.data, target));
-        $$invalidate(4, content = TextEditor.enrichHTML(rawContent, {
-          secrets: $sheetData.isOwner,
-          async: false
-        }));
+        $$invalidate(7, rawContent = foundry.utils.getProperty($sheetData?.data, target) ?? "");
+        TextEditor.enrichHTML(rawContent, { secrets: $sheetData?.isOwner ?? false }).then((res) => {
+          $$invalidate(4, content = res);
+        });
       }
     }
   };
@@ -3922,12 +3919,13 @@ function instance9($$self, $$props, $$invalidate) {
   let $sheetData;
   let sheetData = getContext("sheetStore");
   component_subscribe($$self, sheetData, (value) => $$invalidate(3, $sheetData = value));
-  let { actor, sheet } = $sheetData;
+  let actor;
+  let sheet;
   let data;
   const filePicker = (event) => {
     const attr2 = event.currentTarget.dataset.edit;
-    const current = getProperty(data, attr2);
-    const fp = new FilePicker({
+    const current = foundry.utils.getProperty(data, attr2);
+    const fp = new foundry.applications.apps.FilePicker.implementation({
       type: "image",
       current,
       callback: (path) => {
@@ -3941,7 +3939,15 @@ function instance9($$self, $$props, $$invalidate) {
   $$self.$$.update = () => {
     if ($$self.$$.dirty & 8) {
       $:
-        $$invalidate(0, data = $sheetData.data);
+        actor = $sheetData?.actor;
+    }
+    if ($$self.$$.dirty & 8) {
+      $:
+        sheet = $sheetData?.sheet;
+    }
+    if ($$self.$$.dirty & 8) {
+      $:
+        $$invalidate(0, data = $sheetData?.data);
     }
   };
   return [data, sheetData, filePicker, $sheetData];
@@ -4423,7 +4429,8 @@ var MouseGuardActorSheet = class extends foundry.applications.sheets.ActorSheetV
     const formula = button.dataset.roll;
     if (!formula)
       return;
-    const r = new Roll(formula, this.actor.getRollData());
+    const RollClass2 = foundry.dice.Roll;
+    const r = new RollClass2(formula, this.actor.getRollData());
     await r.evaluate();
     return r.toMessage({
       author: game.user.id,
@@ -4499,13 +4506,13 @@ function instance12($$self, $$props, $$invalidate) {
   let $sheetData;
   let sheetData = getContext("sheetStore");
   component_subscribe($$self, sheetData, (value) => $$invalidate(1, $sheetData = value));
-  let { actor, sheet } = $sheetData;
+  let actor;
+  let sheet;
   let data;
-  console.log(data);
   const filePicker = (event) => {
     const attr2 = event.currentTarget.dataset.edit;
-    const current = getProperty(data, attr2);
-    const fp = new FilePicker({
+    const current = foundry.utils.getProperty(data, attr2);
+    const fp = new foundry.applications.apps.FilePicker.implementation({
       type: "image",
       current,
       callback: (path) => {
@@ -4519,7 +4526,15 @@ function instance12($$self, $$props, $$invalidate) {
   $$self.$$.update = () => {
     if ($$self.$$.dirty & 2) {
       $:
-        data = $sheetData.data;
+        actor = $sheetData?.actor;
+    }
+    if ($$self.$$.dirty & 2) {
+      $:
+        sheet = $sheetData?.sheet;
+    }
+    if ($$self.$$.dirty & 2) {
+      $:
+        data = $sheetData?.data;
     }
   };
   return [sheetData, $sheetData];
@@ -5498,7 +5513,8 @@ var MouseGuardNPCActorSheet = class extends foundry.applications.sheets.ActorShe
     const formula = button.dataset.roll;
     if (!formula)
       return;
-    const r = new Roll(formula, this.actor.getRollData());
+    const RollClass2 = foundry.dice.Roll;
+    const r = new RollClass2(formula, this.actor.getRollData());
     await r.evaluate();
     return r.toMessage({
       author: game.user.id,
@@ -5532,8 +5548,7 @@ var preloadHandlebarsTemplates = async function() {
     "systems/mouseguard/templates/chat/combat-action.hbs",
     "systems/mouseguard/templates/chat/mission.hbs"
   ];
-  const loader = foundry.applications.handlebars?.loadTemplates ?? loadTemplates;
-  return loader(templatePaths);
+  return foundry.applications.handlebars.loadTemplates(templatePaths);
 };
 
 // module/macro.js
@@ -5559,7 +5574,9 @@ await roll.toMessage({
 }
 
 // module/mousedie.js
-var MouseDie = class extends Die {
+var DieClass = foundry.dice.terms.Die;
+var RollClass = foundry.dice.Roll;
+var MouseDie = class extends DieClass {
   constructor(termData) {
     termData.faces = 6;
     super(termData);
@@ -5589,7 +5606,7 @@ var mouseChatData = async (roll, chatOptions) => {
     claimed: roll.claimed ?? false
   };
 };
-var MouseRoll = class extends Roll {
+var MouseRoll = class extends RollClass {
   async render(chatOptions = {}) {
     chatOptions = foundry.utils.mergeObject({
       author: game.user.id,
@@ -5600,7 +5617,7 @@ var MouseRoll = class extends Roll {
     if (!this._evaluated)
       await this.evaluate();
     const chatData = await mouseChatData(this, chatOptions);
-    return renderTemplate(chatOptions.template, chatData);
+    return foundry.applications.handlebars.renderTemplate(chatOptions.template, chatData);
   }
 };
 __publicField(MouseRoll, "CHAT_TEMPLATE", "systems/mouseguard/templates/dice/roll.html");
@@ -5675,7 +5692,7 @@ var MouseCombatant = class extends Combatant {
       return;
     const template = "systems/mouseguard/templates/chat/combat-action.hbs";
     const data = { actor: this.actor, move: theMove.move };
-    const content = await renderTemplate(template, data);
+    const content = await foundry.applications.handlebars.renderTemplate(template, data);
     const chatData = {
       author: game.user.id,
       speaker: ChatMessage.getSpeaker({ actor: this.actor }),
@@ -5695,7 +5712,7 @@ var MouseCombatant = class extends Combatant {
 // module/socket.js
 var MouseSocket = class {
   static async askGoal(data) {
-    const htmlContent = await renderTemplate("systems/mouseguard/templates/parts/conflict-manager.hbs", data);
+    const htmlContent = await foundry.applications.handlebars.renderTemplate("systems/mouseguard/templates/parts/conflict-manager.hbs", data);
     const dialog = new foundry.applications.api.DialogV2({
       window: {
         title: "Conflict Manager"
@@ -5741,7 +5758,7 @@ var MouseSocket = class {
     }
   }
   static async askMoves(data) {
-    const htmlContent = await renderTemplate("systems/mouseguard/templates/parts/conflict-move-manager.hbs", data);
+    const htmlContent = await foundry.applications.handlebars.renderTemplate("systems/mouseguard/templates/parts/conflict-move-manager.hbs", data);
     const dialog = new foundry.applications.api.DialogV2({
       window: {
         title: "Conflict Manager"
@@ -6300,6 +6317,121 @@ var statusEffects = [
   }
 ];
 
+// module/data-models.js
+var { TypeDataModel } = foundry.abstract;
+var fields = foundry.data.fields;
+var CharacterData = class extends TypeDataModel {
+  static defineSchema() {
+    return {
+      biography: new fields.HTMLField({ required: false, blank: true, initial: "" }),
+      details: new fields.SchemaField({
+        age: new fields.NumberField({ initial: 0, integer: true }),
+        home: new fields.StringField({ blank: true, initial: "" }),
+        fur_color: new fields.StringField({ blank: true, initial: "" }),
+        guard_rank: new fields.StringField({ blank: true, initial: "" }),
+        cloak_color: new fields.StringField({ blank: true, initial: "" }),
+        parents: new fields.StringField({ blank: true, initial: "" }),
+        senior_artisan: new fields.StringField({ blank: true, initial: "" }),
+        mentor: new fields.StringField({ blank: true, initial: "" }),
+        friend: new fields.StringField({ blank: true, initial: "" }),
+        enemy: new fields.StringField({ blank: true, initial: "" })
+      }),
+      rewards: new fields.SchemaField({
+        fate: new fields.NumberField({ initial: 1, integer: true }),
+        persona: new fields.NumberField({ initial: 1, integer: true }),
+        belief: new fields.StringField({ blank: true, initial: "" }),
+        goal: new fields.StringField({ blank: true, initial: "" }),
+        instinct: new fields.StringField({ blank: true, initial: "" }),
+        check: new fields.NumberField({ initial: 1, integer: true })
+      }),
+      disposition: new fields.SchemaField({
+        starting: new fields.NumberField({ initial: 1, integer: true }),
+        current: new fields.NumberField({ initial: 0, integer: true })
+      })
+    };
+  }
+  get itemTypes() {
+    return this.parent?.itemTypes ?? {};
+  }
+  set itemTypes(_) {
+  }
+};
+var NPCActorData = class extends TypeDataModel {
+  static defineSchema() {
+    return {
+      biography: new fields.HTMLField({ required: false, blank: true, initial: "" }),
+      disposition: new fields.SchemaField({
+        starting: new fields.NumberField({ initial: 1, integer: true }),
+        current: new fields.NumberField({ initial: 0, integer: true })
+      })
+    };
+  }
+  get itemTypes() {
+    return this.parent?.itemTypes ?? {};
+  }
+  set itemTypes(_) {
+  }
+};
+var ItemData = class extends TypeDataModel {
+  static defineSchema() {
+    return {
+      description: new fields.HTMLField({ required: false, blank: true, initial: "" }),
+      quantity: new fields.NumberField({ initial: 1, integer: true }),
+      weight: new fields.NumberField({ initial: 0 }),
+      attributes: new fields.ObjectField(),
+      groups: new fields.ObjectField()
+    };
+  }
+};
+var SkillData = class extends TypeDataModel {
+  static defineSchema() {
+    return {
+      description: new fields.HTMLField({ required: false, blank: true, initial: "" }),
+      rank: new fields.NumberField({ initial: 1, integer: true }),
+      pass: new fields.NumberField({ initial: 0, integer: true }),
+      fail: new fields.NumberField({ initial: 0, integer: true })
+    };
+  }
+};
+var WiseData = class extends TypeDataModel {
+  static defineSchema() {
+    return {
+      description: new fields.HTMLField({ required: false, blank: true, initial: "" }),
+      rank: new fields.NumberField({ initial: 1, integer: true }),
+      pass: new fields.NumberField({ initial: 0, integer: true }),
+      fail: new fields.NumberField({ initial: 0, integer: true })
+    };
+  }
+};
+var AbilityData = class extends TypeDataModel {
+  static defineSchema() {
+    return {
+      description: new fields.HTMLField({ required: false, blank: true, initial: "" }),
+      rating: new fields.NumberField({ initial: 1, integer: true }),
+      tax: new fields.NumberField({ initial: 1, integer: true }),
+      pass: new fields.NumberField({ initial: 0, integer: true }),
+      fail: new fields.NumberField({ initial: 0, integer: true })
+    };
+  }
+};
+var TraitData = class extends TypeDataModel {
+  static defineSchema() {
+    return {
+      description: new fields.HTMLField({ required: false, blank: true, initial: "" }),
+      level: new fields.NumberField({ initial: 1, integer: true }),
+      usedfor: new fields.NumberField({ initial: 0, integer: true }),
+      usedagainst: new fields.NumberField({ initial: 0, integer: true })
+    };
+  }
+};
+var SimpleItemData = class extends TypeDataModel {
+  static defineSchema() {
+    return {
+      description: new fields.HTMLField({ required: false, blank: true, initial: "" })
+    };
+  }
+};
+
 // module/mouseguard.js
 Hooks.once("init", async function() {
   console.log("Mouse Guard | Initializing Mouse Guard System");
@@ -6320,6 +6452,21 @@ Hooks.once("init", async function() {
   };
   CONFIG.Actor.documentClass = MouseGuardActor;
   CONFIG.Item.documentClass = MouseGuardItem;
+  CONFIG.Actor.dataModels = {
+    character: CharacterData,
+    mouse: NPCActorData,
+    weasel: NPCActorData,
+    animal: NPCActorData
+  };
+  CONFIG.Item.dataModels = {
+    item: ItemData,
+    skill: SkillData,
+    wise: WiseData,
+    ability: AbilityData,
+    trait: TraitData,
+    contact: SimpleItemData,
+    condition: SimpleItemData
+  };
   CONFIG.Combatant.documentClass = MouseCombatant;
   CONFIG.Combat.documentClass = MouseCombat;
   CONFIG.ui.combat = MouseCombatTracker;
@@ -6331,15 +6478,15 @@ Hooks.once("init", async function() {
   CONFIG.Dice.terms["6"] = MouseDie;
   CONFIG.Dice.types.push(MouseDie);
   CONFIG.Dice.rolls.push(MouseRoll);
-  Actors.registerSheet("mouseguard", MouseGuardNPCActorSheet, {
+  foundry.documents.collections.Actors.registerSheet("mouseguard", MouseGuardNPCActorSheet, {
     types: ["mouse", "weasel", "animal"],
     makeDefault: true
   });
-  Actors.registerSheet("mouseguard", MouseGuardActorSheet, {
+  foundry.documents.collections.Actors.registerSheet("mouseguard", MouseGuardActorSheet, {
     types: ["character"],
     makeDefault: true
   });
-  Items.registerSheet("mouseguard", MouseGuardItemSheet, {
+  foundry.documents.collections.Items.registerSheet("mouseguard", MouseGuardItemSheet, {
     makeDefault: true
   });
   game.settings.register("mouseguard", "macroShorthand", {
@@ -6362,7 +6509,8 @@ Hooks.once("init", async function() {
   const initFormula = game.settings.get("mouseguard", "initFormula");
   _simpleUpdateInit(initFormula);
   function _simpleUpdateInit(formula, notify = false) {
-    const isValid = Roll.validate(formula);
+    const RollClass2 = foundry.dice.Roll;
+    const isValid = RollClass2.validate(formula);
     if (!isValid) {
       if (notify) {
         ui.notifications.error(`${game.i18n.localize("MOUSEGUARD.NotifyInitFormulaInvalid")}: ${formula}`);
@@ -6451,7 +6599,7 @@ Hooks.on("renderChatLog", async (app, html) => {
   if (!chatForm)
     return;
   const template = "systems/mouseguard/templates/mousetray.html";
-  const rendered = await renderTemplate(template, {});
+  const rendered = await foundry.applications.handlebars.renderTemplate(template, {});
   const tempDiv = document.createElement("div");
   tempDiv.innerHTML = rendered.trim();
   const tray = tempDiv.firstElementChild;
@@ -6535,7 +6683,7 @@ Hooks.on("canvasReady", () => {
 });
 async function registerTours() {
   try {
-    const TourClass = foundry.nue?.tours?.SidebarTour ?? SidebarTour;
+    const TourClass = foundry.nue?.tours?.SidebarTour;
     if (TourClass) {
       game.tours.register("mouseguard", "welcome", await TourClass.fromJSON("/systems/mouseguard/tours/welcome.json"));
     }

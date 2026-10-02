@@ -17,6 +17,5 @@ export const preloadHandlebarsTemplates = async function () {
         "systems/mouseguard/templates/chat/mission.hbs"
     ];
 
-    const loader = foundry.applications.handlebars?.loadTemplates ?? loadTemplates;
-    return loader(templatePaths);
+    return foundry.applications.handlebars.loadTemplates(templatePaths);
 };

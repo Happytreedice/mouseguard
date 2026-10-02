@@ -17,6 +17,23 @@
     "esmodules": ["dist/mouseguard.js"],
     "socket": true,
     "styles": ["styles/mouseguard.css"],
+    "documentTypes": {
+        "Actor": {
+            "character": {},
+            "mouse": {},
+            "weasel": {},
+            "animal": {}
+        },
+        "Item": {
+            "item": {},
+            "skill": {},
+            "wise": {},
+            "contact": {},
+            "ability": {},
+            "trait": {},
+            "condition": {}
+        }
+    },
     "packs": [
         {
             "name": "skills",

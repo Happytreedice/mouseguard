@@ -11,11 +11,6 @@ export class MouseGuardActor extends Actor {
     /** @inheritdoc */
     prepareData() {
         super.prepareData();
-        this._prepareCharacterData();
-    }
-
-    _prepareCharacterData() {
-        this.system.itemTypes = this.itemTypes;
     }
 
     /** @inheritdoc */

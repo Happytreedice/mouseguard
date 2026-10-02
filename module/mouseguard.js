@@ -19,6 +19,16 @@ import MouseSocket from "./socket.js";
 import { EffectsPanel } from "./mouse-effects.js";
 import { MouseConflictManager } from "./mouse-conflict-manager.js";
 import { statusEffects } from "./status-effects.js";
+import {
+    CharacterData,
+    NPCActorData,
+    ItemData,
+    SkillData,
+    WiseData,
+    AbilityData,
+    TraitData,
+    SimpleItemData
+} from "./data-models.js";
 
 /* -------------------------------------------- */
 /*  Foundry VTT Initialization                  */
@@ -48,6 +58,24 @@ Hooks.once("init", async function () {
     CONFIG.Actor.documentClass = MouseGuardActor;
     CONFIG.Item.documentClass = MouseGuardItem;
 
+    // Register System Data Models (modern replacement for template.json)
+    CONFIG.Actor.dataModels = {
+        character: CharacterData,
+        mouse: NPCActorData,
+        weasel: NPCActorData,
+        animal: NPCActorData
+    };
+
+    CONFIG.Item.dataModels = {
+        item: ItemData,
+        skill: SkillData,
+        wise: WiseData,
+        ability: AbilityData,
+        trait: TraitData,
+        contact: SimpleItemData,
+        condition: SimpleItemData
+    };
+
     // Define custom Combat classes
     CONFIG.Combatant.documentClass = MouseCombatant;
     CONFIG.Combat.documentClass = MouseCombat;
@@ -65,15 +93,15 @@ Hooks.once("init", async function () {
     CONFIG.Dice.rolls.push(MouseRoll);
 
     // Register sheet application classes (No unregisterSheet for core to avoid v14 deprecation warnings)
-    Actors.registerSheet("mouseguard", MouseGuardNPCActorSheet, {
+    foundry.documents.collections.Actors.registerSheet("mouseguard", MouseGuardNPCActorSheet, {
         types: ["mouse", "weasel", "animal"],
         makeDefault: true
     });
-    Actors.registerSheet("mouseguard", MouseGuardActorSheet, {
+    foundry.documents.collections.Actors.registerSheet("mouseguard", MouseGuardActorSheet, {
         types: ["character"],
         makeDefault: true
     });
-    Items.registerSheet("mouseguard", MouseGuardItemSheet, {
+    foundry.documents.collections.Items.registerSheet("mouseguard", MouseGuardItemSheet, {
         makeDefault: true
     });
 
@@ -101,7 +129,8 @@ Hooks.once("init", async function () {
     _simpleUpdateInit(initFormula);
 
     function _simpleUpdateInit(formula, notify = false) {
-        const isValid = Roll.validate(formula);
+        const RollClass = foundry.dice.Roll;
+        const isValid = RollClass.validate(formula);
         if (!isValid) {
             if (notify) {
                 ui.notifications.error(
@@ -214,7 +243,7 @@ Hooks.on("renderChatLog", async (app, html) => {
     if (!chatForm) return;
 
     const template = "systems/mouseguard/templates/mousetray.html";
-    const rendered = await renderTemplate(template, {});
+    const rendered = await foundry.applications.handlebars.renderTemplate(template, {});
     const tempDiv = document.createElement("div");
     tempDiv.innerHTML = rendered.trim();
     const tray = tempDiv.firstElementChild;
@@ -323,7 +352,7 @@ Hooks.on("canvasReady", () => {
 
 async function registerTours() {
     try {
-        const TourClass = foundry.nue?.tours?.SidebarTour ?? SidebarTour;
+        const TourClass = foundry.nue?.tours?.SidebarTour;
         if (TourClass) {
             game.tours.register(
                 "mouseguard",

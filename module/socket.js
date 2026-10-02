@@ -4,7 +4,7 @@
  */
 export default class MouseSocket {
     static async askGoal(data) {
-        const htmlContent = await renderTemplate(
+        const htmlContent = await foundry.applications.handlebars.renderTemplate(
             "systems/mouseguard/templates/parts/conflict-manager.hbs",
             data
         );
@@ -59,7 +59,7 @@ export default class MouseSocket {
     }
 
     static async askMoves(data) {
-        const htmlContent = await renderTemplate(
+        const htmlContent = await foundry.applications.handlebars.renderTemplate(
             "systems/mouseguard/templates/parts/conflict-move-manager.hbs",
             data
         );

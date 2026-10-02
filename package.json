@@ -4,6 +4,7 @@
   "description": "CSS compiler for the MouseGuard system",
   "scripts": {
     "build": "gulp build",
+    "build:packs": "node scripts/build_packs.js",
     "css": "gulp css",
     "watch": "gulp",
     "gulp": "gulp"
@@ -22,7 +23,9 @@
     "svelte": "^3.55.1"
   },
   "devDependencies": {
+    "classic-level": "^3.0.0",
     "eslint": "^8.8.0",
-    "eslint-plugin-svelte3": "^3.4.0"
+    "eslint-plugin-svelte3": "^3.4.0",
+    "js-yaml": "^5.4.2"
   }
 }

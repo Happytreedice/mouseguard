@@ -1,0 +1,17 @@
+_id: h6FSPyF7GDGcoM7V
+name: Scout
+type: skill
+img: icons/svg/item-bag.svg
+system:
+  description: ''
+  rank: 0
+  pass: 0
+  fail: 0
+effects: []
+folder: null
+sort: 0
+ownership:
+  default: 0
+flags:
+  mouseguard:
+    originalName: Scout

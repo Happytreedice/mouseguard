@@ -4,7 +4,6 @@
     //getContext("sheetStore", dataStore);
     export let dataStore;
     setContext("sheetStore", dataStore);
-    console.log(dataStore);
 </script>
 
 <content>

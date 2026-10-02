@@ -6,54 +6,54 @@
     let data;
     $: data = $sheetData.data;
 
-    const TextEditor = globalThis.TextEditor;
+    const TextEditor = foundry.applications.ux.TextEditor.implementation;
     let editorContent;
     let height;
     let mce;
-    let rawContent = getProperty($sheetData?.data, target) ?? "";
-    let content = TextEditor.enrichHTML(rawContent, {
-        secrets: $sheetData.isOwner,
-        async: false
-    });
+    let rawContent = "";
+    let content = "";
     let editor = {};
 
+    $: {
+        rawContent = foundry.utils.getProperty($sheetData?.data, target) ?? "";
+        TextEditor.enrichHTML(rawContent, {
+            secrets: $sheetData?.isOwner ?? false
+        }).then((res) => {
+            content = res;
+        });
+    }
+
     onDestroy(async () => {
-        if (mce) mce.destroy();
+        if (mce) mce.destroy?.();
     });
 
     const createEditor = async () => {
+        const doc = $sheetData?.actor ?? $sheetData?.document;
         TextEditor.create({
             target: editorContent,
             invalid_elements: "iframe",
+            document: doc,
+            fieldName: target,
             save_onsavecallback: async (m) => {
-                //const submit = $sheetData.sheet._onSubmit(new Event("submit"));
-                //mce.remove();
                 mce = m;
-                const isDirty = mce.getContent() !== editor.initial;
-                mce.remove();
-                // Regex remove the iframe
-                if (isDirty) {
-                    await $sheetData.sheet._onSubmit(new Event("submit"));
+                const isDirty = (mce.getContent ? mce.getContent() : editorContent?.innerHTML) !== editor.initial;
+                mce.remove?.();
+                if (isDirty && doc) {
+                    const newContent = mce.getContent ? mce.getContent() : (editorContent?.innerHTML ?? "");
+                    await doc.update({ [target]: newContent });
                 }
-                mce.destroy();
+                mce.destroy?.();
             }
-        }).then((m) => {
+        }, rawContent).then((m) => {
             editor.m = m;
             mce = m;
+            editor.initial = mce.getContent ? mce.getContent() : "";
             editor.changed = false;
             editor.active = true;
-            mce.focus();
-            mce.on("change", (ev) => (editor.changed = true));
+            mce.focus?.();
+            mce.on?.("change", (ev) => (editor.changed = true));
         });
     };
-
-    $: {
-        rawContent = getProperty($sheetData?.data, target);
-        content = TextEditor.enrichHTML(rawContent, {
-            secrets: $sheetData.isOwner,
-            async: false
-        });
-    }
 </script>
 
 <div class="editor">

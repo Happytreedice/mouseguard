@@ -1,0 +1,17 @@
+_id: L6maqKORZq9ccfcY
+name: Apiarist
+type: skill
+img: icons/svg/item-bag.svg
+system:
+  description: ''
+  rank: 0
+  pass: 0
+  fail: 0
+effects: []
+folder: null
+sort: 0
+ownership:
+  default: 0
+flags:
+  mouseguard:
+    originalName: Apiarist

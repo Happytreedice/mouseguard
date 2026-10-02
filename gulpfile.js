@@ -31,8 +31,11 @@ async function buildCode() {
   });
 }
 
-const build = gulp.series(compileLESS, buildCode);
+const { buildAll: buildPacks } = require('./scripts/build_packs.js');
+
+const build = gulp.series(compileLESS, buildCode, buildPacks);
 exports.build = build;
+exports.packs = buildPacks;
 
 const SYSTEM_FILES = ["module/**/*.js", "module/*.js", "module/**/*.svelte", "styles/*.less"];
 

@@ -52,7 +52,7 @@ export default class MouseCombatant extends Combatant {
 
         const template = "systems/mouseguard/templates/chat/combat-action.hbs";
         const data = { actor: this.actor, move: theMove.move };
-        const content = await renderTemplate(template, data);
+        const content = await foundry.applications.handlebars.renderTemplate(template, data);
 
         const chatData = {
             author: game.user.id,

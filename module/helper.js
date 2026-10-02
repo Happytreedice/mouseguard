@@ -514,7 +514,7 @@ export class EntitySheetHelper {
 
     // Collect data
     const documentName = this.metadata.name;
-    const folders = game.folders.filter(f => (f.data.type === documentName) && f.displayed);
+    const folders = game.folders.filter(f => ((f.type ?? f.data?.type) === documentName) && f.displayed);
     const label = game.i18n.localize(this.metadata.label);
     const title = game.i18n.format("ENTITY.Create", {entity: label});
 
@@ -530,7 +530,7 @@ export class EntitySheetHelper {
     }
 
     // Render the entity creation form
-    const html = await renderTemplate(`templates/sidebar/entity-create.html`, {
+    const html = await foundry.applications.handlebars.renderTemplate(`templates/sidebar/entity-create.html`, {
       name: data.name || game.i18n.format("ENTITY.New", {entity: label}),
       folder: data.folder,
       folders: folders,
@@ -541,31 +541,27 @@ export class EntitySheetHelper {
     });
 
     // Render the confirmation dialog window
-    return Dialog.prompt({
-      title: title,
+    return foundry.applications.api.DialogV2.prompt({
+      window: { title: title },
       content: html,
-      label: title,
-      callback: html => {
+      ok: {
+        label: title,
+        callback: (event, button, dialog) => {
+          const form = dialog.element.querySelector("form");
+          const fd = new foundry.applications.ux.FormDataExtended(form);
+          let createData = fd.toObject();
 
-        // Get the form data
-        const form = html[0].querySelector("form");
-        const fd = new FormDataExtended(form);
-        let createData = fd.toObject();
+          const template = collection.get(form.type?.value);
+          if ( template ) {
+            createData = foundry.utils.mergeObject(template.toObject(), createData);
+            createData.type = template.type ?? template.data?.type;
+            delete createData.flags?.mouseguard?.isTemplate;
+          }
 
-        // Merge with template data
-        const template = collection.get(form.type.value);
-        if ( template ) {
-          createData = foundry.utils.mergeObject(template.toObject(), createData);
-          createData.type = template.data.type;
-          delete createData.flags.mouseguard.isTemplate;
+          createData = foundry.utils.mergeObject(createData, data);
+          return this.create(createData, {renderSheet: true});
         }
-
-        // Merge provided override data
-        createData = foundry.utils.mergeObject(createData, data);
-        return this.create(createData, {renderSheet: true});
-      },
-      rejectClose: false,
-      options: options
+      }
     });
   }
 }

@@ -1,0 +1,17 @@
+_id: LLhRG1MPSGor9cEd
+name: Inquisitive
+type: trait
+img: icons/svg/item-bag.svg
+system:
+  description: ''
+  level: 1
+  usedfor: 0
+  usedagainst: 0
+effects: []
+folder: null
+sort: 0
+ownership:
+  default: 0
+flags:
+  mouseguard:
+    originalName: Inquisitive
