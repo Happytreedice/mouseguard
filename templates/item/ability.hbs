@@ -1,0 +1,65 @@
+{{!-- Ability body: which ability, rating (Nature: current / maximum), advancement, description. --}}
+<section class="mgi-body mgi-body--ability">
+    <div class="mgi-cards">
+        <article class="mgi-card">
+            <h2 class="mgi-ribbon mgi-ribbon--rust">{{localize "MOUSEGUARD.ItemSheet.Rating"}}</h2>
+            <div class="mgi-card-body">
+                {{#if editMode}}
+                <label class="mgi-field mgi-field--stack">
+                    <span>{{localize "MOUSEGUARD.ItemSheet.AbilityKey"}}</span>
+                    <select name="system.key">
+                        {{#each ability.keyOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+                    </select>
+                </label>
+                <label class="mgi-field">
+                    <span>{{#if ability.isNature}}{{localize "MOUSEGUARD.ItemSheet.Current"}}{{else}}{{localize "MOUSEGUARD.ItemSheet.Rating"}}{{/if}}</span>
+                    <input type="number" name="system.rating" value="{{system.rating}}" min="0" max="20" step="1">
+                </label>
+                {{#if ability.isNature}}
+                <label class="mgi-field">
+                    <span>{{localize "MOUSEGUARD.ItemSheet.Max"}}</span>
+                    <input type="number" name="system.max" value="{{ability.max}}" min="0" max="20" step="1">
+                </label>
+                {{/if}}
+                {{else}}
+                <div class="mgi-track mgi-track--scale{{#if ability.taxed}} is-taxed{{/if}}">
+                    <span class="mgi-scale" aria-label="{{localize 'MOUSEGUARD.ItemSheet.Rating'}}">{{#each ability.scale}}<i class="mgi-pip{{#if on}} on{{/if}}{{#if taxed}} taxed{{/if}}" inert></i>{{/each}}</span>
+                    <span class="mgi-track-count">{{#if ability.isNature}}{{ability.rating}}/{{ability.max}}{{else}}{{ability.rating}}/{{ability.cap}}{{/if}}</span>
+                </div>
+                {{#unless ability.isNature}}<p class="mgi-hint">{{localize "MOUSEGUARD.ItemSheet.AbilityCapHint"}}</p>{{/unless}}
+                {{/if}}
+                {{#if ability.isNature}}<p class="mgi-hint">{{localize "MOUSEGUARD.ItemSheet.NatureHint"}}</p>{{/if}}
+            </div>
+        </article>
+
+        <article class="mgi-card">
+            <h2 class="mgi-ribbon mgi-ribbon--rust">{{localize "MOUSEGUARD.ItemSheet.Advancement"}}</h2>
+            <div class="mgi-card-body">
+                {{#if editMode}}
+                <label class="mgi-field">
+                    <span>{{localize "MOUSEGUARD.ItemSheet.PassedLabel"}}</span>
+                    <input type="number" name="system.advancement.passed" value="{{system.advancement.passed}}" min="0" max="10" step="1">
+                </label>
+                <label class="mgi-field">
+                    <span>{{localize "MOUSEGUARD.ItemSheet.FailedLabel"}}</span>
+                    <input type="number" name="system.advancement.failed" value="{{system.advancement.failed}}" min="0" max="10" step="1">
+                </label>
+                {{else}}
+                <div class="mgi-track">
+                    <span class="mgi-track-label">{{localize "MOUSEGUARD.ItemSheet.PassedShort"}}</span>
+                    {{> "systems/mouseguard/templates/item/parts/pips.hbs" pips=ability.advancement.passed.pips path="system.advancement.passed" min=0 max=10 advance="passed" interactive=interactive label=(localize "MOUSEGUARD.ItemSheet.Passed")}}
+                    <span class="mgi-track-count">{{ability.advancement.passed.value}}/{{ability.advancement.passed.need}}</span>
+                </div>
+                <div class="mgi-track">
+                    <span class="mgi-track-label">{{localize "MOUSEGUARD.ItemSheet.FailedShort"}}</span>
+                    {{> "systems/mouseguard/templates/item/parts/pips.hbs" pips=ability.advancement.failed.pips path="system.advancement.failed" min=0 max=10 advance="failed" interactive=interactive label=(localize "MOUSEGUARD.ItemSheet.Failed")}}
+                    <span class="mgi-track-count">{{ability.advancement.failed.value}}/{{ability.advancement.failed.need}}</span>
+                </div>
+                {{/if}}
+                <p class="mgi-hint">{{ability.advancement.hint}}</p>
+            </div>
+        </article>
+    </div>
+
+    {{> "systems/mouseguard/templates/item/parts/rich-section.hbs" label=(localize "MOUSEGUARD.ItemSheet.Description") field="system.description" value=raw.description html=enriched.description hint="" hideEmpty=false cssClass="mgi-section--description"}}
+</section>

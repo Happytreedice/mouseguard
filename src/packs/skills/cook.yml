@@ -1,12 +1,30 @@
 _id: IxTZOHftft4pfbMW
-name: Cook
+name: Повар
 type: skill
-img: icons/svg/item-bag.svg
+img: icons/consumables/food/bowl-stew-brown.webp
 system:
-  description: MOUSEGUARD.SkillDescription
   rank: 0
-  pass: 0
-  fail: 0
+  learning: 0
+  beginnersLuck: will
+  specialty: false
+  advancement:
+    passed: 0
+    failed: 0
+  description: |-
+    <p>В каждом патруле должна быть мышь с таким навыком. Еда поможет избавиться от голода, когда ваши персонажи находятся в диких местах, вдали от дома или уютного трактира.</p>
+    <p><strong>Связанные правила:</strong></p>
+    <ul>
+    <li>С.142: «Голодный/Испытывающий жажду» снимается обычной проверкой «Сборщик», «Повар», «Пивовар», «Пекарь» или «Ресурсы»; обычно ПР 1, ведущий может повысить (дикая местность, погода, нехватка припасов в регионе).</li>
+    </ul>
+    <p><em>Книга правил, с. 277–278.</em></p>
+  supplies: <p>Персонажу с навыком «Повар» могут помочь припасами другие персонажи с навыками «Сборщик» или «Мельник», а также любая мышь, использовавшая свои природные особенности для Поиска припасов.</p>
+  factors: |-
+    <p>Чтобы снять с персонажа полученное им состояние «Голодный/Испытывающий жажду», следует провести проверку навыка «Повар» против препятствия, сложность которого будет зависеть от перечисленных ниже факторов, а также от происходящей в игре ситуации.</p>
+    <ul>
+    <li><strong>Для кого:</strong> одна мышь; две мыши; патруль; большая семья; ресторан; район.</li>
+    </ul>
+  help:
+    - Пекарь
 effects: []
 folder: null
 sort: 0
@@ -15,8 +33,3 @@ ownership:
 flags:
   mouseguard:
     originalName: Cook
-    description:
-      description: MOUSEGUARD.Skill.cook.Description
-      supplies: MOUSEGUARD.Skill.cook.Supplies
-      factors: MOUSEGUARD.Skill.cook.Factors
-      help: MOUSEGUARD.Skill.cook.Help

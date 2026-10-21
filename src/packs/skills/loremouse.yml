@@ -1,12 +1,31 @@
 _id: uhmz8aYsW2nrWSMg
-name: Loremouse
+name: Знаток зверей
 type: skill
-img: icons/svg/item-bag.svg
+img: icons/creatures/birds/raptor-owl-flying-moon.webp
 system:
-  description: MOUSEGUARD.SkillDescription
   rank: 0
-  pass: 0
-  fail: 0
+  learning: 0
+  beginnersLuck: will
+  specialty: false
+  advancement:
+    passed: 0
+    failed: 0
+  description: |-
+    <p>Мыши с таким навыком исследуют образ жизни и повадки различных зверей. Затем они могут использовать известную им информацию, чтобы вступать со зверями в элементарное общение и распознавать их природные особенности.</p>
+    <p><strong>Связанные правила:</strong></p>
+    <ul>
+    <li>Конфликты (с.119–120): «Схватка со зверем» — Защита и Манёвр «Знаток зверей» или «Природа».</li>
+    </ul>
+    <p><em>Книга правил, с. 269.</em></p>
+  supplies: ''
+  factors: |-
+    <ul>
+    <li><strong>Общение со зверями (начинается со сложности 2):</strong> птицы; млекопитающие; рептилии; земноводные и водные обитатели.</li>
+    <li><strong>Природные особенности:</strong> применив навык «Знаток зверей», можно распознать природные особенности зверя. Для этого следует провести встречную проверку навыка «Знаток зверей» против способности «Природа» зверя. Если вы успешно пройдёте проверку, ведущий сообщит вам обо всех природных особенностях зверя.</li>
+    </ul>
+  help:
+    - Охотник
+    - Учёный
 effects: []
 folder: null
 sort: 0
@@ -15,8 +34,3 @@ ownership:
 flags:
   mouseguard:
     originalName: Loremouse
-    description:
-      description: MOUSEGUARD.Skill.loremouse.Description
-      supplies: MOUSEGUARD.Skill.loremouse.Supplies
-      factors: MOUSEGUARD.Skill.loremouse.Factors
-      help: MOUSEGUARD.Skill.loremouse.Help

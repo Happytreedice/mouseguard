@@ -1,0 +1,1230 @@
+// =====================================================================================================================
+// Character sheet (module/sheets/character-sheet.js, templates/actor/character/*.hbs).
+// Everything is scoped under .mouseguard.sheet.actor.character, so the NPC (Svelte) sheet and other apps are untouched.
+//
+// Layout and format copied from the Legend in the Mist (mist-engine-fvtt) character sheet:
+//   - dark textured window body (ME default_sheet_background.webp, background-size: cover);
+//   - 300 px portrait column on the left, name 36 px bold serif + short description overlaid on the art;
+//   - header strip: column of brown roll buttons + white torn-paper boxes (ME "Tags & Statuses" box);
+//   - translucent black tab bar (rgba(0,0,0,.5)), bold tab labels #e1d3c1;
+//   - row of ~186 px parchment cards (border-image slice 10, fill) with a 30 px ribbon h2 drawn at 100% x 20 px,
+//     centred italic serif lines with faint rules, the QUEST band and pip trackers;
+//   - biography / notes on the dialog parchment (ME bg2-litm.webp) with the brush-stroke heading underline.
+// Every image is a PLACEHOLDER in assets/sheet/ with the same role, format and pixel size as the ME image it stands in
+// for (see assets/sheet/README.md and scripts/make-placeholders.py). Paths are relative to the compiled
+// styles/mouseguard.css, so "../assets/sheet/x" resolves to systems/mouseguard/assets/sheet/x.
+// =====================================================================================================================
+
+// Caveat (OFL 1.1, assets/fonts/OFL.txt) is the only Legend in the Mist font with Cyrillic glyphs: handwritten text.
+@font-face {
+    font-family: "MG Caveat";
+    src: url("../assets/fonts/Caveat-Regular.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@mgs-brown: #724a32;          // ME $c-brown (buttons, ink of labels, filled pips)
+@mgs-brown-dark: #4f3322;     // darken($c-brown, 10%) (quest text)
+@mgs-cream: #fcf5df;          // ME --litm-color-accent (name on the art)
+@mgs-tab-text: #e1d3c1;       // ME --litm-tab-text-color
+@mgs-ink: #191813;
+@mgs-styled: #4e432d;         // ME --litm-text (biography text)
+@mgs-red: #742a2b;            // ME $c-text-redish (biography headings)
+@mgs-off-white: #f6eeea;      // ME $c-off-white (empty pip)
+@mgs-tag-yellow: #efd693;
+@mgs-tag-orange: #ecba85;
+@mgs-tag-green: #bccdaf;
+
+.mouseguard.sheet.actor.character {
+    --mgs-font-heading: "Palatino Linotype", "Book Antiqua", Palatino, "PT Serif", "Noto Serif", Georgia, "DejaVu Serif", serif;
+    --mgs-font-body: "Palatino Linotype", "Book Antiqua", Palatino, "PT Serif", "Noto Serif", Georgia, "DejaVu Serif", serif;
+    --mgs-font-hand: "MG Caveat", "Segoe Print", "Comic Sans MS", cursive;
+    --mgs-rule: rgba(0, 0, 0, 0.1);
+
+    min-width: 640px;
+    min-height: 520px;
+    color: @mgs-ink;
+    font-family: var(--mgs-font-body);
+    background: #07060b;
+
+    // ---------------------------------------------------------------------------------------------------------------
+    // Window frame (ME: near-black header, padlock left of the title)
+    // ---------------------------------------------------------------------------------------------------------------
+    > .window-header {
+        background: #07060b;
+        color: #efe6d6;
+        border-bottom: 1px solid rgba(225, 211, 193, 0.12);
+        font-family: var(--mgs-font-heading);
+
+        .window-title { color: #efe6d6; }
+        // the system-wide ".mouseguard button" rule must not paint the frame controls
+        button.header-control {
+            --button-text-color: #efe6d6;
+            color: #efe6d6;
+            background: none;
+            border: none;
+            box-shadow: none;
+            &:hover,
+            &:focus-visible {
+                color: #fff;
+                background: none;
+                border: none;
+                text-shadow: 0 0 8px rgba(236, 186, 133, 0.8);
+                box-shadow: none;
+            }
+        }
+        .mgs-mode-toggle {
+            flex: none;
+            &.fa-lock-open { --button-text-color: @mgs-tag-orange; color: @mgs-tag-orange; }
+        }
+    }
+
+    > .window-content {
+        position: relative;
+        display: grid;
+        grid-template-columns: clamp(160px, 27%, 300px) minmax(0, 1fr);
+        grid-template-rows: auto auto minmax(0, 1fr);
+        height: auto;
+        min-height: 0;
+        padding: 0;
+        gap: 0;
+        overflow: hidden;
+        color: @mgs-ink;
+        font-family: var(--mgs-font-body);
+        font-size: 14px;
+        background-color: #1f1c15;
+        background-image: url("../assets/sheet/sheet-background.webp");   // ME default_sheet_background.webp
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+
+        > [data-application-part="portrait"] { grid-column: 1; grid-row: ~"1 / -1"; }
+        > [data-application-part="header"] { grid-column: 2; grid-row: 1; container: mgs-header / inline-size; }
+        > [data-application-part="tabs"] { grid-column: 2; grid-row: 2; }
+        > .tab { grid-column: 2; grid-row: 3; }
+    }
+
+    // Generic form controls on paper (theme-independent, the sheet forces theme-light anyway).
+    input[type="text"],
+    input[type="number"],
+    textarea,
+    select {
+        color: @mgs-ink;
+        font-family: var(--mgs-font-body);
+        background: rgba(255, 250, 240, 0.6);
+        border: 1px solid rgba(114, 74, 50, 0.45);
+        border-radius: 2px;
+        box-shadow: none;
+        &:focus {
+            outline: 2px solid rgba(114, 74, 50, 0.35);
+            outline-offset: 0;
+            box-shadow: none;
+        }
+    }
+    input[type="number"] { text-align: center; }
+    textarea { resize: vertical; }
+
+    a[role="button"] { cursor: pointer; }
+    a[role="button"]:focus-visible,
+    .mgs-pip:focus-visible {
+        outline: 2px solid rgba(114, 74, 50, 0.55);
+        outline-offset: 1px;
+        border-radius: 2px;
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------
+    // Portrait column (ME art column: 300 px, name block at ~2/3 of the height)
+    // ---------------------------------------------------------------------------------------------------------------
+    .mgs-portrait-col {
+        position: relative;
+        min-height: 0;
+        overflow: hidden;
+        isolation: isolate;
+
+        // cloak colour: a thin vertical band along the left edge of the art
+        &::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
+            z-index: 2;
+            background: var(--mgs-cloak, transparent);
+            box-shadow: 1px 0 4px rgba(0, 0, 0, 0.5);
+            opacity: 0.9;
+        }
+
+        // dark vignette over the art
+        &::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            background:
+                radial-gradient(ellipse 85% 70% at 50% 32%, transparent 48%, rgba(7, 6, 5, 0.55) 100%),
+                linear-gradient(to bottom, transparent 52%, rgba(16, 13, 10, 0.88) 86%);
+        }
+    }
+
+    .mgs-portrait-frame {
+        position: absolute;
+        inset: 0;
+    }
+
+    .mgs-portrait {
+        display: block;
+        width: 100%;
+        height: 100%;
+        max-width: none;
+        border: 0;
+        border-radius: 0;
+        object-fit: cover;
+        object-position: 50% 15%;
+        -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 94%), linear-gradient(to left, transparent 0, #000 48px);
+        -webkit-mask-composite: source-in;
+        mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 94%), linear-gradient(to left, transparent 0, #000 48px);
+        mask-composite: intersect;
+
+        &.is-icon {
+            object-fit: contain;
+            object-position: 50% 22%;
+            padding: 40px 34px 48%;
+            opacity: 0.5;
+            filter: sepia(0.7) brightness(0.95);
+        }
+        &[data-action] { cursor: pointer; }
+        &[data-action]:hover { filter: brightness(1.08); }
+        &.is-icon[data-action]:hover { opacity: 0.7; }
+    }
+
+    .mgs-namecard {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 13%;
+        z-index: 3;
+        padding: 0 18px;
+        text-align: center;
+        color: @mgs-cream;
+    }
+
+    .mgs-name {
+        margin: 0 0 6px;
+        padding: 0;
+        border: 0;
+        font-family: var(--mgs-font-heading);
+        font-size: 36px;                    // ME h1.charname
+        font-weight: 700;
+        line-height: 1.05;
+        color: @mgs-cream;
+        overflow-wrap: anywhere;
+        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.85), 0 0 2px rgba(0, 0, 0, 0.9);
+    }
+
+    .mgs-subtitle,
+    .mgs-cloak,
+    .mgs-player {
+        font-family: var(--mgs-font-body);
+        font-size: 13px;
+        line-height: 1.3;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;          // ME .short-description (typed in capitals on the reference)
+        color: @mgs-cream;
+        opacity: 0.9;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+        overflow-wrap: anywhere;
+    }
+
+    .mgs-cloak {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 6px;
+        font-size: 11px;
+        .mgs-cloak-swatch {
+            width: 14px;
+            height: 14px;
+            flex: none;
+            border-radius: 2px 2px 7px 7px;  // a little cloak / pennant
+            background: var(--mgs-cloak, transparent);
+            border: 1px solid rgba(252, 245, 223, 0.65);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+            &.is-unknown { background: repeating-linear-gradient(45deg, rgba(252, 245, 223, 0.35) 0 2px, transparent 2px 4px); }
+        }
+    }
+
+    .mgs-player {
+        margin-top: 4px;
+        font-size: 11px;
+        text-transform: none;
+        letter-spacing: 0.02em;
+        opacity: 0.75;
+    }
+
+    // Edit mode identity form, on a translucent dark panel at the bottom of the art
+    .mgs-portrait-col.is-editing .mgs-namecard {
+        bottom: 10px;
+        padding: 0 10px;
+    }
+
+    .mgs-identity-form {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        padding: 10px;
+        text-align: left;
+        background: rgba(7, 6, 5, 0.62);
+        border: 1px solid rgba(252, 245, 223, 0.18);
+        border-radius: 3px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            height: 24px;
+            color: @mgs-cream;
+            background: rgba(0, 0, 0, 0.4);
+            border-color: rgba(252, 245, 223, 0.3);
+            &:focus { outline-color: rgba(236, 186, 133, 0.6); }
+        }
+
+        .mgs-subtitle { text-align: center; }
+
+        .mgs-name-input {
+            height: 34px;
+            font-family: var(--mgs-font-heading);
+            font-size: 22px;
+            font-weight: 700;
+            text-align: center;
+        }
+    }
+
+    .mgs-ident-hint {
+        font-size: 10px;
+        line-height: 1.3;
+        text-align: center;
+        color: rgba(252, 245, 223, 0.6);
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------
+    // Header strip: roll buttons + white paper boxes
+    // ---------------------------------------------------------------------------------------------------------------
+    .mgs-header {
+        padding: 10px 14px 8px 12px;
+    }
+
+    // ME .header-fields: roll buttons column (150 px) + status paper box; narrow windows: see @container below
+    .mgs-header-grid {
+        display: grid;
+        grid-template-columns: 164px minmax(0, 1fr) minmax(190px, 0.72fr);
+        align-items: stretch;
+        gap: 8px 10px;
+    }
+
+    .mgs-actions {
+        min-width: 0;                       // ME .col-main min-width 150px
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    .mgs-roll-button {                      // ME .roll-button (theme-independent brown)
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        width: 100%;
+        height: 30px;
+        margin: 0;
+        padding: 0 8px;
+        font-family: var(--mgs-font-body);
+        font-size: 14px;
+        line-height: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: #fff;
+        background: @mgs-brown;
+        border: 1px solid rgba(0, 0, 0, 0.35);
+        border-radius: 3px;
+        text-shadow: none;
+        box-shadow: none;
+        i { color: #fff; margin: 0; }
+
+        &:hover:not(:disabled),
+        &:focus-visible {
+            color: #fff;
+            background: color-mix(in srgb, @mgs-brown 82%, white);
+            border-color: rgba(0, 0, 0, 0.35);
+            box-shadow: 0 0 6px @mgs-brown;
+        }
+        &:disabled { opacity: 0.6; }
+        &.active {
+            background: color-mix(in srgb, @mgs-brown 70%, #c9822f);
+            box-shadow: inset 0 0 0 1px rgba(255, 220, 160, 0.55), 0 0 6px rgba(236, 186, 133, 0.55);
+        }
+    }
+
+    .mgs-note {                             // ME .floating-status-container-character (text-container-300.webp)
+        position: relative;
+        min-width: 0;
+        padding: 8px 14px;
+        color: @mgs-ink;
+        font-family: var(--mgs-font-body);
+        border-style: solid;
+        border-width: 5px;
+        border-image: url("../assets/sheet/paper-note-300.webp") 5 5 5 5 fill stretch stretch;
+    }
+
+
+    .mgs-subhead {                          // ME .npc-subtitle-container-c: centred caps with fading rules
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0 0 6px;
+        padding: 0;
+        border: 0;
+        font-family: var(--mgs-font-heading);
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 1.3;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: @mgs-brown;
+        white-space: nowrap;
+        &::before,
+        &::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+        }
+        &::before { background: linear-gradient(to right, transparent, rgba(107, 91, 77, 0.65)); }
+        &::after { background: linear-gradient(to left, transparent, rgba(107, 91, 77, 0.65)); }
+    }
+
+    .mgs-chips {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+        gap: 5px 6px;
+    }
+
+    .mgs-chip {                             // ME tag / status pill
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        min-width: 0;
+        min-height: 22px;
+        padding: 1px 4px;
+        font-size: 12px;
+        line-height: 1.1;
+        text-align: center;
+        color: rgba(0, 0, 0, 0.5);
+        background: rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(100, 55, 8, 0.3);
+        border-radius: 3px 2px 3px 2px;
+        user-select: none;
+
+        .mgs-chip-icon {
+            width: 14px;
+            height: 14px;
+            flex: none;
+            border: 0;
+            filter: brightness(0);
+            opacity: 0.45;
+        }
+        &:hover { color: rgba(0, 0, 0, 0.75); }
+        &.active {
+            color: #2b2016;
+            background: @mgs-tag-orange;
+            border-color: rgba(100, 55, 8, 0.65);
+            box-shadow: inset 0 1px 2px rgba(255, 205, 90, 0.12), 0 1px 3px rgba(0, 0, 0, 0.2);
+            .mgs-chip-icon { opacity: 0.85; }
+        }
+        &.mgs-chip--healthy {
+            cursor: default;
+            i { font-size: 11px; }
+            &.active {
+                background: @mgs-tag-green;
+                border-color: rgba(20, 60, 18, 0.55);
+            }
+        }
+    }
+
+    .mgs-reward-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 4px;
+        text-align: center;
+    }
+
+    .mgs-reward {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-width: 0;
+    }
+
+    .mgs-reward-value,
+    .mgs-reward-input {
+        display: block;
+        width: 46px;
+        height: 30px;
+        font-family: var(--mgs-font-heading);
+        font-size: 22px;
+        font-weight: 700;
+        line-height: 30px;
+        text-align: center;
+        color: @mgs-brown-dark;
+    }
+
+    .mgs-reward-value {
+        border-radius: 50%;
+        user-select: none;
+        &:hover { color: @mgs-brown; text-shadow: 0 0 6px rgba(236, 186, 133, 0.9); }
+    }
+
+    .mgs-reward-input { padding: 0; font-size: 18px; }
+
+    .mgs-reward-label {
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 10px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: @mgs-brown;
+    }
+
+    .mgs-dispo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        margin-top: 4px;
+        padding-top: 3px;
+        border-top: 1px solid rgba(0, 0, 0, 0.12);
+        font-size: 12px;
+        color: @mgs-brown-dark;
+
+        .mgs-dispo-label {
+            margin-right: 4px;
+            font-size: 10px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: @mgs-brown;
+        }
+        .mgs-dispo-value { font-weight: 700; font-size: 14px; &:hover { text-shadow: 0 0 6px rgba(236, 186, 133, 0.9); } }
+        input[type="number"] { width: 36px; height: 20px; padding: 0; }
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------
+    // Tab bar (ME .litm-character-sheet-tabs)
+    // ---------------------------------------------------------------------------------------------------------------
+    nav.mgs-tabs {
+        margin: 0 14px 0 12px;
+        gap: 0;
+        line-height: 2.2;
+        background-color: rgba(0, 0, 0, 0.5);
+        border-top: 1px solid rgba(225, 211, 193, 0.28);
+        border-bottom: 1px solid rgba(225, 211, 193, 0.28);
+
+        [data-tab] {
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            font-family: var(--mgs-font-heading);
+            font-size: 15px;
+            font-weight: 700;
+            color: @mgs-tab-text;
+            text-shadow: none;
+        }
+        [data-tab]:hover { color: #fff; text-shadow: 0 0 10px rgba(236, 186, 133, 0.6); }
+        [data-tab].active { color: #fff; text-shadow: 0 0 10px rgba(236, 186, 133, 0.85); }
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------
+    // Tab bodies (never set `display` on .tab: core hides inactive tabs with display:none)
+    // ---------------------------------------------------------------------------------------------------------------
+    .mgs-tab-body {
+        min-height: 0;
+        overflow-x: hidden;
+        overflow-y: auto;
+        padding: 8px 14px 14px 12px;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(114, 74, 50, 0.9) transparent;
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------
+    // Cards (ME .themebook-container.container-themebook-with-border + .themebook-style)
+    // ---------------------------------------------------------------------------------------------------------------
+    .mgs-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(176px, 1fr));   // ME repeat(auto-fit, 186px)
+        gap: 4px;
+        align-items: stretch;
+    }
+
+    .mgs-card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        min-height: 404px;
+        padding: 0 0 8px;                   // ME padding-bottom 8px
+        color: @mgs-ink;
+        border-style: solid;
+        border-width: 10px;
+        border-image: url("../assets/sheet/card-parchment.webp") 10 10 10 10 fill stretch stretch;   // ME litm-themebook-bg.webp
+    }
+
+    .mgs-ribbon {                           // ME .themebook-style h2 (ribbon = top 20 px of the 30 px h2)
+        position: relative;
+        flex: none;
+        height: 30px;
+        margin: -7px -8px 0 -8px;
+        padding: 2px 26px 0;
+        border: 0;
+        font-family: var(--mgs-font-heading);
+        font-size: 0.7rem;
+        font-weight: 700;
+        line-height: 1.5em;
+        letter-spacing: 0.04em;
+        text-align: center;
+        text-transform: uppercase;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: #fff;
+        -webkit-font-smoothing: antialiased;
+        background-repeat: no-repeat;
+        background-size: 100% 20px;
+
+        &--green { background-image: url("../assets/sheet/header-green.webp"); }    // ME headers/header-origin.webp
+        &--rust { background-image: url("../assets/sheet/header-rust.webp"); }      // ME headers/header-adventure.webp
+        &--slate { background-image: url("../assets/sheet/header-slate.webp"); }    // ME headers/header-greatness.webp
+        &--orange { background-image: url("../assets/sheet/header-orange.webp"); }  // ME headers/header-backpack.webp
+        &--black { background-image: url("../assets/sheet/header-black.webp"); }    // ME headers/header-black.webp
+
+        .mgs-ribbon-icon {                  // ME .themebook-icon (12 px, right)
+            position: absolute;
+            top: 4px;
+            right: 7px;
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.85);
+        }
+        .mgs-ribbon-tools {
+            position: absolute;
+            top: 3px;
+            right: 6px;
+            display: flex;
+            gap: 6px;
+        }
+        .mgs-ribbon-btn {
+            color: #fff;
+            font-size: 10px;
+            line-height: 14px;
+            &:hover { color: @mgs-tag-yellow; text-shadow: 0 0 4px rgba(0, 0, 0, 0.6); }
+        }
+    }
+
+    .mgs-lines {
+        flex: 1;
+        margin: 2px 0 0;
+        padding: 0 2px;
+        list-style: none;
+    }
+
+    .mgs-line {                             // ME .item-powertag-line
+        margin: 0 3px;
+        padding: 4px 0 3px;
+        list-style: none;
+        border-bottom: 1.5px solid var(--mgs-rule);
+        color: #000;
+
+        &:last-child { border-bottom-color: transparent; }
+        &.draggable { cursor: grab; }
+    }
+
+    .mgs-line-main {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        min-height: 22px;
+        padding: 0 25px;                    // room for the rank badge (left) and the star (right), name stays centred
+    }
+
+    .mgs-line-name {
+        position: relative;
+        flex: 0 1 auto;
+        min-width: 0;
+        margin: 0 auto;
+        font-family: var(--mgs-font-body);
+        font-size: 14.5px;
+        font-style: italic;
+        line-height: 1.2;
+        text-align: center;
+        color: #000;
+        overflow-wrap: break-word;
+        &:hover {
+            color: @mgs-brown;
+            text-shadow: 0 0 6px rgba(236, 186, 133, 0.9);
+        }
+    }
+
+    .mgs-line--ability .mgs-line-name,
+    .mgs-line--skill .mgs-line-name { cursor: pointer; }
+
+    .mgs-rank {                             // ME numbered marking circle
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 22px;
+        height: 22px;
+        padding: 0 4px;
+        border-radius: 11px;
+        font-family: var(--mgs-font-heading);
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 1;
+        color: rgba(255, 255, 255, 0.92);
+        background: rgba(0, 0, 0, 0.72);
+        border: 1.5px solid rgba(0, 0, 0, 0.5);
+        small { font-size: 9px; font-weight: 400; opacity: 0.8; }
+        &--roman { font-size: 10px; letter-spacing: 0.02em; background: rgba(79, 51, 34, 0.85); }
+    }
+
+    .mgs-line.is-unlearned {                // ME "planned" tag (faded)
+        .mgs-line-name { color: rgba(0, 0, 0, 0.5); }
+        .mgs-rank { color: rgba(0, 0, 0, 0.4); background: rgba(0, 0, 0, 0.08); border-color: rgba(0, 0, 0, 0.15); }
+    }
+
+    .mgs-line--ability.is-taxed .mgs-rank { background: rgba(116, 42, 43, 0.85); }
+
+    .mgs-line.is-specialty .mgs-line-name::before {   // ME .selected::before (circle-selection.svg)
+        content: "";
+        position: absolute;
+        inset: -7px -10px;
+        z-index: 1;
+        pointer-events: none;
+        background-image: url("../assets/sheet/circle-selection.svg");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 100% 100%;
+    }
+
+    .mgs-specialty-mark {
+        position: absolute;
+        right: 2px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        color: #b8862f;
+        text-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+    }
+
+    .mgs-line.is-ready .mgs-line-name {     // ready to advance: golden glow (ME weakness glow, recoloured)
+        color: #3a2414;
+        text-shadow: 0 0 5px rgba(232, 170, 40, 0.65), 0 0 12px rgba(232, 170, 40, 0.5);
+    }
+
+    .mgs-line.is-spent .mgs-line-name { color: rgba(0, 0, 0, 0.6); }
+
+    .mgs-dev {                              // ME .development-container
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 2px 10px;
+        margin-top: 2px;
+        min-height: 12px;
+    }
+
+    .mgs-track {                            // ME .development-partial-container
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .mgs-track-label {
+        margin-right: 3px;
+        font-family: var(--mgs-font-heading);
+        font-size: 9px;                     // ME xx-small
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: @mgs-brown;
+    }
+
+    .mgs-pip {
+        display: inline-block;
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: @mgs-off-white;
+        box-shadow: inset 0 0 0 1px rgba(114, 74, 50, 0.45);
+        transition: transform 0.1s ease, background-color 0.15s ease;
+        &.on { background: @mgs-brown; box-shadow: none; }
+        &:hover { transform: scale(1.3); }
+    }
+
+    .mgs-track.is-full {
+        .mgs-track-label { color: #2f6b34; }
+        .mgs-pip.on { background: #3f6b3a; }
+    }
+    .mgs-track--learning .mgs-pip.on { background: #5c5c92; }   // ME icon blue
+
+    .mgs-badge {
+        padding: 0 4px;
+        font-family: var(--mgs-font-heading);
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: #fff;
+        background: @mgs-brown;
+        border-radius: 2px;
+    }
+
+    .mgs-against {                          // trait used against yourself (ME weakness: angles-down + orange glow)
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+        font-size: 11px;
+        font-weight: 700;
+        color: rgba(114, 74, 50, 0.75);
+        user-select: none;
+        i { font-size: 9px; }
+        &:hover { color: @mgs-brown; }
+        &.on {
+            color: #8f4024;
+            text-shadow: 0 0 5px rgba(220, 107, 0, 0.5), 0 0 10px rgba(220, 107, 0, 0.4);
+        }
+    }
+
+    .mgs-wise-marks { gap: 3px; }
+
+    .mgs-mark {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 18px;
+        height: 16px;
+        padding: 0 2px;
+        font-family: var(--mgs-font-heading);
+        font-size: 9px;
+        font-weight: 700;
+        color: rgba(114, 74, 50, 0.8);
+        background: rgba(255, 255, 255, 0.35);
+        border: 1px solid rgba(114, 74, 50, 0.45);
+        border-radius: 2px;
+        user-select: none;
+        &:hover { border-color: @mgs-brown; }
+        &.on { color: #fff; background: @mgs-brown; border-color: @mgs-brown; }
+    }
+
+    .mgs-line--wise.is-ready .mgs-mark.on { background: #3f6b3a; border-color: #3f6b3a; }
+
+    .mgs-empty {
+        margin: 10px 6px;
+        list-style: none;
+        font-size: 13px;
+        font-style: italic;
+        text-align: center;
+        color: rgba(0, 0, 0, 0.5);         // ME .empty-message
+    }
+
+    // Edit mode rows: number inputs on the left of the name, edit / delete tools at the right of the pip line
+    .is-editing {
+        .mgs-line-main {
+            justify-content: flex-start;
+            padding: 0;
+        }
+        .mgs-line-name { margin: 0 auto 0 2px; text-align: left; }
+        .mgs-dev {
+            position: relative;
+            min-height: 16px;
+            padding: 0 36px 0 0;
+            > .mgs-line-tools {
+                position: absolute;
+                right: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                margin: 0;
+            }
+        }
+    }
+
+    .mgs-num-inputs {
+        display: inline-flex;
+        align-items: center;
+        gap: 1px;
+        flex: none;
+        input[type="number"] {
+            width: 30px;
+            height: 20px;
+            padding: 0;
+            font-size: 12px;
+        }
+        .mgs-num-sep { font-size: 11px; color: @mgs-brown; }
+    }
+
+    .mgs-line-tools {
+        display: inline-flex;
+        gap: 6px;
+        flex: none;
+        margin-left: 4px;
+    }
+
+    .mgs-tool {
+        font-size: 11px;
+        color: rgba(114, 74, 50, 0.7);
+        &:hover { color: @mgs-brown; text-shadow: 0 0 4px rgba(236, 186, 133, 0.9); }
+    }
+
+    .mgs-star {
+        color: rgba(114, 74, 50, 0.35);
+        &.on { color: #b8862f; }
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------
+    // Belief / Goal / Instinct (ME .quest-container: QUEST band + handwritten text)
+    // ---------------------------------------------------------------------------------------------------------------
+    .mgs-quests {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+        gap: 4px;
+        margin-top: 6px;
+    }
+
+    .mgs-quest {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        padding: 0 2px 2px;
+        border-style: solid;
+        border-width: 10px;
+        border-image: url("../assets/sheet/card-parchment.webp") 10 10 10 10 fill stretch stretch;   // ME litm-themebook-bg.webp
+
+        textarea {
+            width: 100%;
+            min-height: 54px;
+            margin: 2px 0;
+            font-family: var(--mgs-font-hand);
+            font-size: 18px;
+            line-height: 1.15;
+        }
+    }
+
+    .mgs-quest-title {                      // ME .quest-container h3
+        margin: 0 2px 3px;
+        padding: 2px;
+        border: 0;
+        font-family: var(--mgs-font-heading);
+        font-size: 0.8rem;
+        font-weight: 800;
+        line-height: 1.3;
+        text-align: center;
+        text-transform: uppercase;
+        white-space: nowrap;
+        color: @mgs-brown;
+        background-color: rgba(114, 74, 50, 0.2);
+    }
+
+    .mgs-hand {                             // ME .quest-text (CCDreamland has no Cyrillic: Caveat instead)
+        margin: 0;
+        padding: 2px 10px;
+        font-family: var(--mgs-font-hand);
+        font-size: 20px;
+        line-height: 1.15;
+        text-align: center;
+        color: @mgs-brown-dark;
+        overflow-wrap: anywhere;
+        -webkit-font-smoothing: antialiased;
+        &.is-empty { color: rgba(79, 51, 34, 0.45); }
+    }
+
+    .mgs-quest-hint {
+        margin: auto 0 0;
+        padding-top: 2px;
+        overflow: hidden;
+        font-size: 9px;
+        letter-spacing: 0.04em;
+        line-height: 1.2;
+        text-align: center;
+        text-overflow: ellipsis;
+        text-transform: uppercase;
+        white-space: nowrap;
+        color: rgba(114, 74, 50, 0.8);
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------
+    // Biography / Notes paper (ME .tab-biography / .tab-notes .container-card-with-border, bg2-litm.webp)
+    // ---------------------------------------------------------------------------------------------------------------
+    .mgs-paper {
+        min-width: 0;
+        padding: 6px 12px 14px;
+        font-family: var(--mgs-font-body);
+        font-size: 14px;
+        color: @mgs-styled;
+        border-style: solid;
+        border-width: 10px;
+        border-image: url("../assets/sheet/paper-dialog.webp") 10 10 10 10 fill stretch stretch;   // ME bg2-litm.webp
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--mgs-font-heading);
+            color: @mgs-red;
+            border: 0;
+        }
+    }
+
+    .mgs-with-line {                        // ME h3.with-line::after (header-backline.webp, 105 x 6)
+        display: flex;
+        align-items: center;
+        margin: 2px 0 8px;
+        font-size: 15px;
+        font-weight: 900;
+        text-transform: uppercase;
+        &::after {
+            content: "";
+            display: inline-block;
+            flex: none;
+            width: 105px;
+            height: 6px;
+            margin-left: 10px;
+            background-image: url("../assets/sheet/header-backline.webp");
+            background-repeat: no-repeat;
+        }
+    }
+
+    .mgs-bio-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 6px;
+        align-items: start;
+    }
+
+    .mgs-detail-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+        gap: 3px 16px;
+        margin: 0;
+    }
+
+    .mgs-detail {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+        min-height: 26px;
+        border-bottom: 1px solid var(--mgs-rule);
+
+        dt {
+            flex: 0 0 42%;
+            min-width: 0;
+            margin: 0;
+            font-size: 10px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: @mgs-brown;
+            label { cursor: inherit; }
+        }
+        dd {
+            flex: 1;
+            min-width: 0;
+            margin: 0;
+            input { width: 100%; height: 22px; }
+        }
+    }
+
+    .mgs-detail-value {
+        display: block;
+        font-style: italic;
+        color: @mgs-ink;
+        overflow-wrap: anywhere;
+        &.is-empty { color: rgba(0, 0, 0, 0.35); }
+    }
+
+    .mgs-card--contacts {
+        min-height: 0;
+        height: 100%;
+    }
+
+    .mgs-contact {
+        margin: 0 3px;
+        padding: 4px 0;
+        list-style: none;
+        border-bottom: 1.5px solid var(--mgs-rule);
+        &:last-child { border-bottom-color: transparent; }
+        &.draggable { cursor: grab; }
+    }
+
+    .mgs-contact-main {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        .mgs-line-name { margin: 0 auto; }
+    }
+
+    .mgs-excerpt {
+        margin: 1px 0 0;
+        font-size: 11px;
+        line-height: 1.25;
+        text-align: center;
+        color: rgba(0, 0, 0, 0.55);
+    }
+
+    .mgs-biography,
+    .mgs-notes {
+        margin-top: 6px;
+        min-height: 240px;
+    }
+
+    .mgs-tab-notes .mgs-notes {
+        margin-top: 0;
+        min-height: 100%;
+    }
+
+    .mgs-prose {
+        prose-mirror,
+        .mgs-prose-content {
+            display: block;
+            min-height: 180px;
+            color: @mgs-styled;
+            font-size: 14px;
+            line-height: 1.45;
+        }
+        prose-mirror .editor-content { min-height: 160px; }
+        prose-mirror.active { min-height: 260px; }
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------
+    // Gear tab (ME backpack card)
+    // ---------------------------------------------------------------------------------------------------------------
+    .mgs-card--gear,
+    .mgs-card--others {
+        min-height: 0;
+        margin-bottom: 6px;
+    }
+
+    .mgs-card-hint {
+        margin: 4px 8px 6px;
+        font-size: 12px;
+        font-style: italic;
+        line-height: 1.3;
+        text-align: center;
+        color: rgba(0, 0, 0, 0.55);
+    }
+
+    .mgs-gear-list {
+        margin: 0;
+        padding: 0 4px;
+        list-style: none;
+    }
+
+    .mgs-gear-head,
+    .mgs-gear-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 72px 72px 52px;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .mgs-card--others .mgs-gear-row { grid-template-columns: minmax(0, 1fr) auto 52px; }
+
+    .mgs-gear-head {
+        margin: 0 4px;
+        padding: 0 0 2px;
+        font-family: var(--mgs-font-heading);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: @mgs-brown;
+        border-bottom: 1px solid rgba(114, 74, 50, 0.35);
+    }
+
+    .mgs-gear-row {
+        min-height: 30px;
+        padding: 3px 0;
+        list-style: none;
+        border-bottom: 1.5px solid var(--mgs-rule);
+        &.draggable { cursor: grab; }
+    }
+
+    .mgs-gear-name {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+        .mgs-line-name { margin: 0; text-align: left; }
+    }
+
+    .mgs-gear-img {
+        width: 24px;
+        height: 24px;
+        flex: none;
+        border: 0;
+        object-fit: contain;
+    }
+
+    .mgs-gear-num {
+        text-align: center;
+        font-size: 13px;
+        input[type="number"] { width: 100%; height: 22px; }
+    }
+
+    .mgs-gear-type {
+        font-size: 10px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: @mgs-brown;
+    }
+
+    .mgs-gear-tools {
+        display: flex;
+        justify-content: flex-end;
+        .mgs-line-tools { margin: 0; }
+    }
+
+    .mgs-gear-total {
+        display: flex;
+        justify-content: flex-end;
+        align-items: baseline;
+        gap: 8px;
+        padding: 6px 8px 0;
+        font-size: 12px;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        color: @mgs-brown;
+        strong { font-size: 15px; color: @mgs-brown-dark; }
+    }
+}
+
+// Narrow windows: the header strip folds (buttons in a row above the two paper boxes, then everything stacked).
+@container mgs-header (max-width: 600px) {
+    .mouseguard.sheet.actor.character .mgs-header-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .mouseguard.sheet.actor.character .mgs-actions { grid-column: ~"1 / -1"; flex-direction: row; }
+    .mouseguard.sheet.actor.character .mgs-roll-button { flex: 1 1 0; min-width: 0; }
+}
+
+@container mgs-header (max-width: 380px) {
+    .mouseguard.sheet.actor.character .mgs-header-grid { grid-template-columns: minmax(0, 1fr); }
+    .mouseguard.sheet.actor.character .mgs-actions { flex-direction: column; }
+}

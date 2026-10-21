@@ -3,8 +3,8 @@
     <div class="dice-flavor">{{flavor}}</div>
     {{/if}}
     <div class="dice-result">
-        <div class="dice-formula">Rolls {{dice_count}} dice</div>
+        <div class="dice-formula">{{#if bonus_dice}}{{localize "MOUSEGUARD.Test.Tray.DiceBonus" count=dice_count bonus=bonus_dice}}{{else}}{{localize "MOUSEGUARD.Test.Tray.Dice" count=dice_count}}{{/if}}</div>
         {{{tooltip}}}
-        <h4 class="dice-total">{{result}} {{localize 'MOUSEGUARD.Success'}}</h4>
+        <h4 class="dice-total">{{localize "MOUSEGUARD.Test.Card.Successes" n=result}}</h4>
     </div>
 </div>

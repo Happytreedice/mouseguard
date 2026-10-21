@@ -1,309 +1,142 @@
+@mg-ink: #30251b;
+@mg-paper: #eee1c6;
+@mg-panel: #f8f1e3;
+@mg-card: #fffaf0;
+@mg-border: #b8a27f;
+@mg-accent: #704227;
+@mg-muted: #756754;
+
+
+:root {
+    --mg-ink: @mg-ink;
+    --mg-paper: @mg-paper;
+    --mg-panel: @mg-panel;
+    --mg-card: @mg-card;
+    --mg-border: @mg-border;
+    --mg-accent: @mg-accent;
+    --mg-muted: @mg-muted;
+    --mg-heading: "Germania One", "Palatino Linotype", serif;
+    --mg-body: "Khula", "Palatino Linotype", serif;
+}
+
 .mouseguard {
+    color: var(--mg-ink);
+    font-family: var(--mg-body);
+
     .window-content {
         height: 100%;
-        padding: 5px;
-        overflow-y: hidden;
+        min-height: 0;
+        padding: 10px;
+        overflow: hidden;
+        color: var(--mg-ink);
+        background-color: var(--mg-paper);
+        background-image: linear-gradient(135deg, rgba(255, 250, 240, .72), rgba(232, 216, 186, .83));
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
     }
 
-    form {
-        height: 100%;
+    .mouseguard-sheet {
+        color: var(--mg-ink);
+        font-family: var(--mg-body);
+    }
+
+    // Content-only typography and controls. Scoped to .window-content (with :where(), so the specificity stays that of
+    // ".mouseguard button") because Foundry's core CSS lives in cascade layers: an unscoped ".mouseguard h1/button"
+    // rule would restyle every Mouse Guard window header (title, header buttons, padlock).
+    :where(.window-content) {
+        h1, h2, h3, h4,
+        .sheet-navigation,
+        .section-heading,
+        .skill-roll {
+            font-family: var(--mg-heading);
+        }
+
+        h1, h2, h3 { color: var(--mg-accent); }
+
+        input, textarea, select {
+            color: var(--mg-ink);
+            border: 1px solid var(--mg-border);
+            border-radius: 2px;
+            background: rgba(255, 252, 244, .88);
+            box-shadow: inset 0 1px 2px rgba(61, 41, 22, .08);
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: 2px solid rgba(112, 66, 39, .28);
+            outline-offset: 1px;
+            box-shadow: none;
+        }
+
+        button {
+            color: var(--mg-ink);
+            border-color: var(--mg-border);
+            background: var(--mg-panel);
+        }
+
+        button:hover:not(:disabled) {
+            color: var(--mg-accent);
+            border-color: var(--mg-accent);
+            box-shadow: 0 0 5px rgba(112, 66, 39, .22);
+        }
     }
 
     .sheet-header {
-        flex: 0 0 100px;
-        overflow: hidden;
         display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: flex-start;
-        margin-bottom: 10px;
-
-        .profile-img {
-            flex: 0 0 100px;
-            height: 100px;
-            margin-right: 10px;
-        }
-
-        .header-fields {
-            flex: 1;
-            height: 100px;
-        }
-
-        h1.charname {
-            height: 50px;
-            padding: 0px;
-            margin: 5px 0;
-            border-bottom: 0;
-            input {
-                width: 100%;
-                height: 100%;
-                margin: 0;
-            }
-        }
-    }
-
-    .unused {
-    }
-
-    .resource {
-        width: 50%;
-        height: 40px;
-        margin-top: 10px;
-        float: left;
-        text-align: center;
-        input {
-            width: 100px;
-            height: 28px;
-        }
-    }
-
-    /* Sheet Tabs */
-    .tabs {
-        flex: 0 0 40px;
-        border-top: 1px solid #aaa;
-        border-bottom: 1px solid #aaa;
-
-        .item {
-            line-height: 40px;
-            font-weight: bold;
-        }
-
-        .item.active {
-            text-shadow: none;
-            text-shadow: 0 0 10px var(--color-shadow-primary);
-            border-bottom: 3px solid #58180d;
-        }
-    }
-
-    .sheet-body {
-        overflow: hidden;
-        .tab {
-            height: 100%;
-            overflow-y: auto;
-        }
-    }
-
-    .editor,
-    .editor-content {
-        height: 100%;
-    }
-
-    /* Items List */
-    .item-list {
-        list-style: none;
-        margin: 7px 0;
-        padding: 0;
-        overflow-y: auto;
-
-        .item {
-            min-height: 30px;
-            line-height: 24px;
-            padding: 3px 0;
-            border-bottom: 1px solid #bbb;
-            align-items: stretch;
-
-            img {
-                flex: 0 0 24px;
-                margin-right: 5px;
-            }
-        }
-
-        .item-name {
-            margin: 0;
-        }
-
-        .item-controls {
-            flex: 0 0 36px;
-        }
-
-        .item-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            flex-direction: row;
-            align-items: center;
-            flex: 2;
-            justify-content: flex-start;
-        }
-
-        .item-button {
-            line-height: 1;
-            font-size: 11px;
-            flex: none;
-            width: auto;
-        }
-    }
-
-    /* Attributes */
-    .attributes {
-        position: relative;
-
-        .attribute-control,
-        .group-control {
-            flex: 0 0 20px;
-            text-align: center;
-            line-height: 28px;
-            border: none;
-        }
-
-        .attribute-roll {
-            flex: 0 0 20px;
-            text-align: center;
-            border-bottom: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .group-prefix {
-            height: 31px;
-            margin-right: 10px;
-        }
-
-        .button {
-            width: 100%;
-            flex: 1;
-            margin: 0;
-            background: rgba(0, 0, 0, 0.1);
-            border: 2px groove #f0f0e0;
-            border-radius: 3px;
-            font-size: 14px;
-            line-height: 28px;
-            display: block;
-        }
-
-        .attribute-key {
-            background: transparent;
-            border: none;
-        }
-    }
-
-    .attributes-header {
-        position: sticky;
-        top: 0;
-        left: 0;
         align-items: center;
-        padding: 0 5px;
-        margin: 5px 0;
-        background: #cfcdc2;
-        border: 1px solid #aaa;
-        border-radius: 2px;
-        text-align: left;
-        font-weight: bold;
+        gap: 14px;
+        min-height: 114px;
+        padding: 8px 12px;
+        border: 1px solid var(--mg-border);
+        border-radius: 4px;
+        background: rgba(248, 241, 227, .82);
     }
 
-    .attributes-list {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-
-        li > * {
-            margin: 0 3px;
-            height: 28px;
-            line-height: 24px;
-            background: transparent;
-            border: none;
-            border-radius: 0;
-            border-bottom: 1px solid #aaa;
-        }
-
-        .attribute-col {
-            label {
-                font-size: 10px;
-                text-align: center;
-                line-height: 1;
-            }
-
-            input {
-                font-size: 11px;
-                text-align: center;
-                line-height: 1;
-                height: 50%;
-            }
-        }
+    .profile-img {
+        width: 104px;
+        height: 104px;
+        flex: 0 0 104px;
+        object-fit: cover;
+        border: 2px solid var(--mg-border);
+        border-radius: 3px;
+        cursor: pointer;
     }
 
-    .attribute,
-    .group-header {
-        input[type="text"] {
-            &::placeholder {
-                opacity: 0;
-                transition: opacity 0.25s ease-in-out;
-            }
+    .profile-img:hover { border-color: var(--mg-accent); }
 
-            &:focus::placeholder {
-                opacity: 1;
-            }
-        }
+    .sheet-body, .tab { min-height: 0; }
+
+    .item-create, .item-controls { color: var(--mg-accent); }
+
+    &.sheet.actor {
+        min-width: 600px;
+        min-height: 480px;
     }
 
-    .group-controls {
-        margin: 5px;
-    }
-
-    .groups-list {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-    }
-
-    .group {
-        margin: 5px 0 0;
-        padding: 0;
-    }
-
-    .group-header {
-        align-items: center;
-        background: rgba(0, 0, 0, 0.05);
-        border: 1px solid #aaa;
-        border-radius: 2px;
-        padding: 2px 5px;
-    }
-
-    .group-key,
-    .group-label {
-        font-weight: bold;
-        border: none;
-        border-bottom: 1px solid #aaa;
-        background: transparent;
-        border-radius: 0;
-        margin-right: 6px;
-    }
-
-    .group-key {
-        opacity: 0.75;
-    }
-
-    .group-label {
-        flex: 2;
-    }
-
-    .group-dtype {
-        height: 24px;
-        flex: 0 0 116px;
-        margin: 0 5px;
+    &.sheet.item {
+        min-width: 440px;
+        min-height: 360px;
     }
 }
 
-.mouseguard.sheet.actor {
-    min-width: 560px;
-    min-height: 420px;
+.mouseguard.sheet.item .window-content {
+    overflow-y: auto;
 }
 
-.mouseguard.sheet.item {
-    min-width: 460px;
-    min-height: 400px;
+@media (max-width: 640px) {
+    .mouseguard.sheet.actor { min-width: 0; }
+    .mouseguard .sheet-header { align-items: flex-start; }
 }
 
-.mouse_dice_button {
-    flex: 1 1 0;
-}
+// ---------------------------------------------------------------------------------------------------------------------
+// Non-sheet UI (restored from git HEAD 48de1dc: they were dropped by the uncommitted rework): chat mouse tray,
+// effects panel, conflict/combat tracker sidebar.
+// ---------------------------------------------------------------------------------------------------------------------
 
-.mouse_roll_button {
-    flex: 2 1 0;
-}
-
-.dice {
-    min-height: 40px;
+.mouse-tray {
+    .mouse_dice_button { flex: 1 1 0; }
+    .mouse_roll_button { flex: 2 1 0; }
+    .dice { min-height: 40px; }
 }
 
 /* Effects Panel ApplicationV2 */
@@ -526,3 +359,6 @@
     }
 }
 
+@import "character-sheet.less";
+@import "item-sheet.less";
+@import "test-roll.less";

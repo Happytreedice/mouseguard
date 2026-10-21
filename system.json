@@ -1,10 +1,10 @@
 {
     "id": "mouseguard",
-    "title": "MOUSEGUARD.SystemName",
-    "description": "MOUSEGUARD.SystemDescription",
+    "title": "Mouse Guard (Мышиная Стража)",
+    "description": "Система для настольной ролевой игры «Мышиная Стража» (Mouse Guard RPG, 2-я редакция) в Foundry VTT.",
     "version": "0.3.0",
     "compatibility": {
-        "minimum": "12",
+        "minimum": "13",
         "verified": "14",
         "maximum": "14"
     },
@@ -16,7 +16,7 @@
     ],
     "esmodules": ["dist/mouseguard.js"],
     "socket": true,
-    "styles": ["styles/mouseguard.css"],
+    "styles": ["styles/mouseguard.css", "dist/mouseguard.css"],
     "documentTypes": {
         "Actor": {
             "character": {},
@@ -67,8 +67,7 @@
         "units": "ft"
     },
     "initiative": "1d20",
-    "primaryTokenAttribute": "health",
-    "secondaryTokenAttribute": "power",
+    "primaryTokenAttribute": "disposition.current",
     "url": "https://github.com/Happytreedice/mouseguard",
     "license": "LICENSE.txt"
 }

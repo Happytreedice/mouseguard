@@ -40,6 +40,7 @@ const mouseChatData = async (roll, chatOptions) => {
         tooltip: isPrivate ? "" : await roll.getTooltip(),
         result: isPrivate ? "?" : (roll.total ?? 0),
         dice_count: isPrivate ? "?" : (roll.terms?.[0]?.number ?? 1),
+        bonus_dice: isPrivate ? "?" : (roll.options?.mouseguard?.bonusDice ?? 0),
         drop: false,
         claimed: roll.claimed ?? false
     };

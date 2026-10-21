@@ -1,30 +1,29 @@
 _id: 96dYoC1KNEMoSmHA
 name: Архивариус
 type: skill
-img: icons/svg/item-bag.svg
+img: icons/sundries/books/book-worn-brown.webp
 system:
-  description: MOUSEGUARD.SkillDescription
   rank: 0
-  pass: 0
-  fail: 0
-details:
-  навык: Архивариус
-  описание: Персонажи с этим навыком занимаются ведением записей и хранением информации об исторических событиях, а также
-    умеют находить нужную информацию в архивах и библиотеках.
-  припасы: Персонажу с навыком «Архивариус» может помочь припасами (бумагой) другой персонаж с навыком «Мельник» и (чернилами)
-    — «Насекомовод».
-  факторы_навыка:
-    написание:
-    - разборчиво
-    - понятно
-    - просто
-    поиск_чего_то:
-    - конкретного
-    - малоизвестного
-    - потерянного
-    - частично сохранившегося
-  помощь:
-    навыки:
+  learning: 0
+  beginnersLuck: will
+  specialty: false
+  advancement:
+    passed: 0
+    failed: 0
+  description: |-
+    <p>Персонажи с этим навыком занимаются ведением записей и хранением информации об исторических событиях. Они также умеют находить нужную информацию в архивах и библиотеках.</p>
+    <p><strong>Связанные правила:</strong></p>
+    <ul>
+    <li>«Архивариус» даёт припасы навыкам «Администратор» (записи или документы) и «Учёный» (записи из архива).</li>
+    </ul>
+    <p><em>Книга правил, с. 267.</em></p>
+  supplies: <p>Персонажу с навыком «Архивариус» может помочь припасами (бумагой) другой персонаж с навыком «Мельник» и (чернилами) «Насекомовод».</p>
+  factors: |-
+    <ul>
+    <li><strong>Написание:</strong> разборчиво; понятно; просто.</li>
+    <li><strong>Поиск чего-то:</strong> конкретного; малоизвестного; потерянного; частично сохранившегося.</li>
+    </ul>
+  help:
     - Картограф
     - Администратор
 effects: []
@@ -35,8 +34,3 @@ ownership:
 flags:
   mouseguard:
     originalName: Archivist
-    description:
-      description: MOUSEGUARD.Skill.Archivist.Description
-      supplies: MOUSEGUARD.Skill.Archivist.Supplies
-      factors: MOUSEGUARD.Skill.Archivist.Factors
-      help: MOUSEGUARD.Skill.Archivist.Help

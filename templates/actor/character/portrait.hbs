@@ -1,0 +1,30 @@
+{{!-- Left column: portrait fading into the sheet background, name and subtitle overlaid (Legend in the Mist art column). --}}
+<aside class="mgs-portrait-col {{#if editMode}}is-editing{{/if}}" {{#if portrait.cloakSwatch}}style="--mgs-cloak: {{portrait.cloakSwatch}};"{{/if}}>
+    <div class="mgs-portrait-frame">
+        <img class="mgs-portrait {{#if portrait.isIcon}}is-icon{{/if}}" src="{{portrait.src}}" alt="{{actor.name}}"
+             {{#if editMode}}data-action="editImage" data-edit="img" data-tooltip="MOUSEGUARD.Sheet.ChangePortrait"{{/if}}>
+    </div>
+
+    <div class="mgs-namecard">
+        {{#if editMode}}
+        {{!-- Only the name is edited here: the other details are inputs on the Biography tab (one input per field,
+              duplicate names in one form would overwrite each other on submit). --}}
+        <div class="mgs-identity-form">
+            <input class="mgs-name-input" type="text" name="name" value="{{actor.name}}"
+                   placeholder="{{localize "MOUSEGUARD.Sheet.Name"}}" aria-label="{{localize "MOUSEGUARD.Sheet.Name"}}">
+            {{#if portrait.subtitle}}<div class="mgs-subtitle">{{portrait.subtitle}}</div>{{/if}}
+            <div class="mgs-ident-hint">{{localize "MOUSEGUARD.Sheet.IdentityHint"}}</div>
+        </div>
+        {{else}}
+        <h1 class="mgs-name">{{actor.name}}</h1>
+        {{#if portrait.subtitle}}<div class="mgs-subtitle">{{portrait.subtitle}}</div>{{/if}}
+        {{#if portrait.cloak}}
+        <div class="mgs-cloak" data-tooltip="MOUSEGUARD.Sheet.CloakColor">
+            <span class="mgs-cloak-swatch {{#unless portrait.cloakSwatch}}is-unknown{{/unless}}"></span>
+            <span class="mgs-cloak-text">{{localize "MOUSEGUARD.Sheet.CloakPrefix"}} {{portrait.cloak}}</span>
+        </div>
+        {{/if}}
+        {{#if portrait.player}}<div class="mgs-player">{{localize "MOUSEGUARD.Sheet.Player"}}: {{portrait.player}}</div>{{/if}}
+        {{/if}}
+    </div>
+</aside>

@@ -1,0 +1,9 @@
+{{!-- Ribbon buttons of a card (edit mode): browse the compendium pack, create a blank item. Context: type, pack, hasPack, browse, create --}}
+<span class="mgs-ribbon-tools">
+    {{#if hasPack}}
+    <a class="mgs-ribbon-btn" data-action="openCompendium" data-pack="{{pack}}" data-tooltip="{{browse}}" role="button" tabindex="0"
+       aria-label="{{localize browse}}"><i class="fa-solid fa-book-open" inert></i></a>
+    {{/if}}
+    <a class="mgs-ribbon-btn" data-action="itemCreate" data-type="{{type}}" data-tooltip="{{create}}" role="button" tabindex="0"
+       aria-label="{{localize create}}"><i class="fa-solid fa-plus" inert></i></a>
+</span>

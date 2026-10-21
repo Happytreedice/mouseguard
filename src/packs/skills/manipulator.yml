@@ -1,12 +1,26 @@
 _id: 7ecLglyKCrvzF0fy
-name: Manipulator
+name: Манипулятор
 type: skill
-img: icons/svg/item-bag.svg
+img: icons/magic/control/mouth-smile-deception-purple.webp
 system:
-  description: MOUSEGUARD.SkillDescription
   rank: 0
-  pass: 0
-  fail: 0
+  learning: 0
+  beginnersLuck: will
+  specialty: false
+  advancement:
+    passed: 0
+    failed: 0
+  description: |-
+    <p>Персонажи с таким навыком могут использовать ложь, полуправду, жестокие подробности, банальные рассуждения или запугивание, чтобы получить желаемое или достигнуть своей цели.</p>
+    <p><strong>Связанные правила:</strong></p>
+    <ul>
+    <li>Конфликты (с.118–120): в «Переговорах» — Финт и Манёвр; в «Речи» и «Споре» может заменять «Оратор»/«Переговорщик» при Финте и Манёвре (если персонаж пытается соврать, запугать или манипулировать).</li>
+    </ul>
+    <p><em>Книга правил, с. 272.</em></p>
+  supplies: ''
+  factors: <p>Этот навык используется при встречных проверках против навыков «Манипулятор» или «Переговорщик», а также способности «Воля» противника. В некоторых типах конфликтов навык «Манипулятор» можно использовать при обычных проверках.</p>
+  help:
+    - Переговорщик
 effects: []
 folder: null
 sort: 0
@@ -15,8 +29,3 @@ ownership:
 flags:
   mouseguard:
     originalName: Manipulator
-    description:
-      description: MOUSEGUARD.Skill.manipulator.Description
-      supplies: MOUSEGUARD.Skill.manipulator.Supplies
-      factors: MOUSEGUARD.Skill.manipulator.Factors
-      help: MOUSEGUARD.Skill.manipulator.Help

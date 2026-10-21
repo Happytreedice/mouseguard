@@ -1,0 +1,30 @@
+{{!--
+  Rich-text section: heading with underline ornament, enriched HTML in view mode, ProseMirror editor in edit mode.
+  Params: label, field (form name), value (raw HTML), html (enriched HTML), hint (optional rule reminder),
+          hideEmpty (omit the whole section in view mode when there is no text),
+          noEmptyNote (view mode without text: keep heading and hint, drop the "nothing written" note), cssClass (optional).
+--}}
+{{#if @root.editMode}}
+<section class="mgi-section {{cssClass}}">
+    <h3 class="mgi-heading mgi-with-line">{{label}}</h3>
+    {{#if hint}}<p class="mgi-hint">{{hint}}</p>{{/if}}
+    <prose-mirror class="mgi-editor content-sized" name="{{field}}" value="{{value}}" toggled
+                  data-document-uuid="{{@root.item.uuid}}">{{{html}}}</prose-mirror>
+</section>
+{{else}}
+{{#if html}}
+<section class="mgi-section {{cssClass}}">
+    <h3 class="mgi-heading mgi-with-line">{{label}}</h3>
+    {{#if hint}}<p class="mgi-hint">{{hint}}</p>{{/if}}
+    <div class="mgi-prose">{{{html}}}</div>
+</section>
+{{else}}
+{{#unless hideEmpty}}
+<section class="mgi-section {{cssClass}}">
+    <h3 class="mgi-heading mgi-with-line">{{label}}</h3>
+    {{#if hint}}<p class="mgi-hint">{{hint}}</p>{{/if}}
+    {{#unless noEmptyNote}}<p class="mgi-empty">{{localize "MOUSEGUARD.ItemSheet.Empty"}}</p>{{/unless}}
+</section>
+{{/unless}}
+{{/if}}
+{{/if}}

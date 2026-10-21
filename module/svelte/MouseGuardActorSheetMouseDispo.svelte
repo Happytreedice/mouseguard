@@ -22,6 +22,7 @@
                 type="number"
                 value={data.system.disposition.starting}
                 placeholder="0"
+                disabled={!$sheetData.editable}
             />
         </startingBox>
         <currentBox>
@@ -35,6 +36,7 @@
                 type="number"
                 value={data.system.disposition.current}
                 placeholder="0"
+                disabled={!$sheetData.editable}
             />
         </currentBox>
     </dispoBox>

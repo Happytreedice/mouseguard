@@ -1,0 +1,66 @@
+{{!-- Gear tab: gear and possessions (Legend in the Mist backpack card) and any other items. --}}
+<section class="tab mgs-tab-body mgs-tab-gear {{tab.cssClass}} {{#if editMode}}is-editing{{/if}}" data-tab="gear" data-group="primary">
+    <article class="mgs-card mgs-card--gear">
+        <h2 class="mgs-ribbon mgs-ribbon--orange">
+            <span class="mgs-ribbon-title">{{localize "MOUSEGUARD.Sheet.Gear"}}</span>
+            {{#if editMode}}
+            {{> "systems/mouseguard/templates/actor/character/parts/ribbon-tools.hbs" type="item" create="MOUSEGUARD.Sheet.CreateGear"}}
+            {{else}}<i class="mgs-ribbon-icon fa-solid fa-box-open" inert></i>{{/if}}
+        </h2>
+        <p class="mgs-card-hint">{{localize "MOUSEGUARD.Sheet.GearHint"}}</p>
+        <div class="mgs-gear-head" aria-hidden="true">
+            <span class="mgs-gear-name">{{localize "MOUSEGUARD.Sheet.GearName"}}</span>
+            <span class="mgs-gear-num">{{localize "MOUSEGUARD.Sheet.Quantity"}}</span>
+            <span class="mgs-gear-num">{{localize "MOUSEGUARD.Sheet.Weight"}}</span>
+            <span class="mgs-gear-tools"></span>
+        </div>
+        <ol class="mgs-gear-list" data-item-type="item">
+            {{#each gear as |item|}}
+            <li class="mgs-gear-row draggable" data-item-id="{{item.id}}">
+                <span class="mgs-gear-name">
+                    <img class="mgs-gear-img" src="{{item.img}}" alt="">
+                    <a class="mgs-line-name" data-action="itemEdit" role="button" tabindex="0"
+                       {{#if item.excerpt}}data-tooltip-text="{{item.excerpt}}"{{else}}data-tooltip="MOUSEGUARD.Sheet.OpenHint"{{/if}}>{{item.name}}</a>
+                </span>
+                {{#if @root.editMode}}
+                <span class="mgs-gear-num"><input type="number" id="{{@root.partId}}-{{item.id}}-quantity" data-item-field="system.quantity" value="{{item.quantity}}" min="0" step="1"
+                       aria-label="{{localize "MOUSEGUARD.Sheet.Quantity"}}"></span>
+                <span class="mgs-gear-num"><input type="number" id="{{@root.partId}}-{{item.id}}-weight" data-item-field="system.weight" value="{{item.weight}}" min="0" step="any"
+                       aria-label="{{localize "MOUSEGUARD.Sheet.Weight"}}"></span>
+                <span class="mgs-gear-tools">{{> "systems/mouseguard/templates/actor/character/parts/line-tools.hbs"}}</span>
+                {{else}}
+                <span class="mgs-gear-num">{{item.quantity}}</span>
+                <span class="mgs-gear-num">{{item.weight}}</span>
+                <span class="mgs-gear-tools"></span>
+                {{/if}}
+            </li>
+            {{else}}
+            <li class="mgs-empty">{{localize "MOUSEGUARD.Sheet.EmptyGear"}}</li>
+            {{/each}}
+        </ol>
+        <div class="mgs-gear-total">
+            <span>{{localize "MOUSEGUARD.Sheet.TotalWeight"}}</span>
+            <strong>{{totalWeight}}</strong>
+        </div>
+    </article>
+
+    {{#if others.length}}
+    <article class="mgs-card mgs-card--others">
+        <h2 class="mgs-ribbon mgs-ribbon--black">
+            <span class="mgs-ribbon-title">{{localize "MOUSEGUARD.Sheet.OtherItems"}}</span>
+        </h2>
+        <ol class="mgs-gear-list">
+            {{#each others as |item|}}
+            <li class="mgs-gear-row draggable" data-item-id="{{item.id}}">
+                <span class="mgs-gear-name">
+                    <img class="mgs-gear-img" src="{{item.img}}" alt="">
+                    <a class="mgs-line-name" data-action="itemEdit" role="button" tabindex="0">{{item.name}}</a>
+                </span>
+                <span class="mgs-gear-type">{{item.typeLabel}}</span>
+                <span class="mgs-gear-tools">{{#if @root.editMode}}{{> "systems/mouseguard/templates/actor/character/parts/line-tools.hbs"}}{{/if}}</span>
+            </li>
+            {{/each}}
+        </ol>
+    </article>
+    {{/if}}
+</section>

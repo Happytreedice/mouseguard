@@ -1,12 +1,31 @@
 _id: ec8xizJNmIhysbvQ
-name: Cartographer
+name: Картограф
 type: skill
-img: icons/svg/item-bag.svg
+img: icons/tools/navigation/map-chart-tan.webp
 system:
-  description: MOUSEGUARD.SkillDescription
   rank: 0
-  pass: 0
-  fail: 0
+  learning: 0
+  beginnersLuck: will
+  specialty: false
+  advancement:
+    passed: 0
+    failed: 0
+  description: |-
+    <p>Персонажи с этим навыком могут создавать и читать географические карты.</p>
+    <p><strong>Связанные правила:</strong></p>
+    <ul>
+    <li>«Картограф» даёт припасы (картами) навыку «Следопыт».</li>
+    </ul>
+    <p><em>Книга правил, с. 270.</em></p>
+  supplies: <p>Персонажу с навыком «Картограф» может помочь припасами (бумагой) другой персонаж с навыком «Мельник» и (чернилами) «Насекомовод».</p>
+  factors: |-
+    <ul>
+    <li><strong>Сложность карты:</strong> простая; подробная; очень точная.</li>
+    <li><strong>Информация:</strong> личный осмотр местности; чьи-то записи (не картографа); чей-то рассказ.</li>
+    </ul>
+  help:
+    - Архивариус
+    - Следопыт
 effects: []
 folder: null
 sort: 0
@@ -15,8 +34,3 @@ ownership:
 flags:
   mouseguard:
     originalName: Cartographer
-    description:
-      description: MOUSEGUARD.Skill.cartographer.Description
-      supplies: MOUSEGUARD.Skill.cartographer.Supplies
-      factors: MOUSEGUARD.Skill.cartographer.Factors
-      help: MOUSEGUARD.Skill.cartographer.Help

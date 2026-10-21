@@ -10,7 +10,7 @@ export default class ConflictTracker extends HandlebarsApplicationMixin(Applicat
         id: "conflict-tracker",
         classes: ["mouseguard"],
         window: {
-            title: "Conflict Tracker"
+            title: "MOUSEGUARD.Conflict.Tracker"
         },
         position: {
             width: 150,

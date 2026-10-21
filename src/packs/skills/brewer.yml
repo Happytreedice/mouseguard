@@ -1,12 +1,32 @@
 _id: Z9utZId975czD6ra
-name: Brewer
+name: Пивовар
 type: skill
-img: icons/svg/item-bag.svg
+img: icons/consumables/drinks/alcohol-beer-stein-wooden-brown.webp
 system:
-  description: MOUSEGUARD.SkillDescription
   rank: 0
-  pass: 0
-  fail: 0
+  learning: 0
+  beginnersLuck: health
+  specialty: false
+  advancement:
+    passed: 0
+    failed: 0
+  description: |-
+    <p>Персонажи с этим навыком — известные и уважаемые мыши, ведь они варят пиво для жителей мышиных городов. Если в поселении проблемы с чистой питьевой водой, его обитатели пьют только пиво.</p>
+    <p><strong>Связанные правила:</strong></p>
+    <ul>
+    <li>С.142: «Пивовар» — один из навыков, которым снимают «Голодный/Испытывающий жажду» (обычно ПР 1).</li>
+    <li>«Пивовар» сам даёт припасы «Пекарю».</li>
+    </ul>
+    <p><em>Книга правил, с. 276–277.</em></p>
+  supplies: <p>Персонажу с навыком «Пивовар» может помочь припасами (солодом) другой персонаж с навыком «Мельник» и (мёдом) «Пчеловод».</p>
+  factors: |-
+    <ul>
+    <li><strong>Качество пива:</strong> обычное; хорошее; отменное.</li>
+    <li><strong>Для кого:</strong> несколько мышей; таверна или ресторан; городок.</li>
+    </ul>
+  help:
+    - Учёный
+    - Разнорабочий
 effects: []
 folder: null
 sort: 0
@@ -15,8 +35,3 @@ ownership:
 flags:
   mouseguard:
     originalName: Brewer
-    description:
-      description: MOUSEGUARD.Skill.brewer.Description
-      supplies: MOUSEGUARD.Skill.brewer.Supplies
-      factors: MOUSEGUARD.Skill.brewer.Factors
-      help: MOUSEGUARD.Skill.brewer.Help

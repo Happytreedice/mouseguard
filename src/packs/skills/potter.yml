@@ -1,34 +1,33 @@
 _id: qJ0kX6F5o1yT4FqU
 name: Гончар
 type: skill
-img: icons/svg/item-bag.svg
+img: icons/containers/kitchenware/vase-clay-etched-brown.webp
 system:
-  description: MOUSEGUARD.SkillDescription
   rank: 0
-  pass: 0
-  fail: 0
-details:
-  навык: Гончар
-  описание: Персонажи с этим навыком изготавливают из глины различные изделия для приёма пищи (чашки и тарелки), а также для
-    приготовления и хранения пищи (горшки).
-  припасы: Специальные припасы в описании навыка не указаны; при этом изготовленная глиняная посуда может служить припасами
-    для других навыков (например, для навыка «Сборщик» при хранении урожая).
-  факторы_навыка:
-    для_хранения:
-    - продуктов
-    - жидкостей
-    тип:
-    - простой
-    - функциональный
-    - красивый
-    размер:
-    - маленький
-    - большой
-    - очень большой
-  помощь:
-    навыки:
+  learning: 0
+  beginnersLuck: health
+  specialty: false
+  advancement:
+    passed: 0
+    failed: 0
+  description: |-
+    <p>Персонажи с таким навыком изготавливают из глины различные изделия для приёма пищи (чашки и тарелки), приготовления и хранения пищи (горшки).</p>
+    <p><strong>Связанные правила:</strong></p>
+    <ul>
+    <li>Глиняная посуда гончара считается припасами для навыка «Сборщик» (см. Сборщик).</li>
+    </ul>
+    <p><em>Книга правил, с. 268.</em></p>
+  supplies: ''
+  factors: |-
+    <ul>
+    <li><strong>Для хранения:</strong> продуктов; жидкостей.</li>
+    <li><strong>Тип:</strong> простой; функциональный; красивый.</li>
+    <li><strong>Размер:</strong> маленький; большой; очень большой.</li>
+    </ul>
+  help:
     - Стекольщик
     - Пекарь
+    - Разнорабочий
 effects: []
 folder: null
 sort: 0
@@ -37,8 +36,3 @@ ownership:
 flags:
   mouseguard:
     originalName: Potter
-    description:
-      description: MOUSEGUARD.Skill.Potter.Description
-      supplies: MOUSEGUARD.Skill.Potter.Supplies
-      factors: MOUSEGUARD.Skill.Potter.Factors
-      help: MOUSEGUARD.Skill.Potter.Help

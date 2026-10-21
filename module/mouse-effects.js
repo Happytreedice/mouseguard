@@ -2,7 +2,12 @@
  * Modern ApplicationV2 Effects Panel for displaying active status conditions on controlled token / user character.
  * @extends {foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2)}
  */
+import { statusEffects } from "./status-effects.js";
+
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+
+/** Status ids of the Mouse Guard conditions (module/status-effects.js). */
+const MOUSEGUARD_STATUS_IDS = new Set(statusEffects.map((e) => e.id));
 
 export class EffectsPanel extends HandlebarsApplicationMixin(ApplicationV2) {
     /** @inheritDoc */
@@ -44,7 +49,8 @@ export class EffectsPanel extends HandlebarsApplicationMixin(ApplicationV2) {
         let currentStatus = [];
         const { actor } = this;
         if (actor) {
-            currentStatus = Array.from(actor.statuses ?? []);
+            // Only the Mouse Guard conditions have an icon and a tooltip here (core statuses such as "dead" do not).
+            currentStatus = Array.from(actor.statuses ?? []).filter((id) => MOUSEGUARD_STATUS_IDS.has(id));
         }
         return { currentStatus };
     }

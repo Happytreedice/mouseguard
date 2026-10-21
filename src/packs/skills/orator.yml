@@ -1,12 +1,29 @@
 _id: wIS4VW5ROE4djEhj
-name: Orator
+name: Оратор
 type: skill
-img: icons/svg/item-bag.svg
+img: icons/skills/trades/music-singing-voice-blue.webp
 system:
-  description: MOUSEGUARD.SkillDescription
   rank: 0
-  pass: 0
-  fail: 0
+  learning: 0
+  beginnersLuck: will
+  specialty: false
+  advancement:
+    passed: 0
+    failed: 0
+  description: |-
+    <p>Персонажи с таким навыком произносят публичные речи. Такой навык не подходит для споров с друзьями. С помощью него можно подталкивать группы мышей к активным действиям.</p>
+    <p><strong>Помощь:</strong> При проверке этого навыка можно помочь навыком «Манипулятор» или использовав подходящее знание.</p>
+    <p><strong>Связанные правила:</strong></p>
+    <ul>
+    <li>Таблица «Типы конфликта» (с.110): «Речь» — проверяемый навык «Оратор», основа диспозиции «Воля».</li>
+    <li>«Оратор» сам помогает навыку «Администратор».</li>
+    <li>Конфликты (с.118–120): «Речь» — любые действия «Оратор», при Финте и Манёвре вместо него можно «Манипулятор»; в «Войне» может заменять «Военный» при Защите.</li>
+    </ul>
+    <p><em>Книга правил, с. 274.</em></p>
+  supplies: ''
+  factors: <p>Этот навык используется при встречных проверках против навыка «Оратор» или способности «Воля» противника. Встречная проверка против навыка «Оратор» используется, если персонаж пытается переспорить другого персонажа и привлечь внимание толпы к себе. Встречная проверка против способности «Воля» используется, когда персонаж пытается «завести» толпу и побудить её к действиям. Этот навык также можно использовать при обычных проверках во время некоторых конфликтов.</p>
+  help:
+    - Манипулятор
 effects: []
 folder: null
 sort: 0
@@ -15,8 +32,3 @@ ownership:
 flags:
   mouseguard:
     originalName: Orator
-    description:
-      description: MOUSEGUARD.Skill.orator.Description
-      supplies: MOUSEGUARD.Skill.orator.Supplies
-      factors: MOUSEGUARD.Skill.orator.Factors
-      help: MOUSEGUARD.Skill.orator.Help

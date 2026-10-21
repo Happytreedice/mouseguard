@@ -1,12 +1,33 @@
 _id: gjBsNBuk7LS3EVME
-name: Survivalist
+name: Специалист по выживанию
 type: skill
-img: icons/svg/item-bag.svg
+img: icons/environment/wilderness/camp-improvised.webp
 system:
-  description: MOUSEGUARD.SkillDescription
   rank: 0
-  pass: 0
-  fail: 0
+  learning: 0
+  beginnersLuck: health
+  specialty: false
+  advancement:
+    passed: 0
+    failed: 0
+  description: |-
+    <p>Мыши с таким навыком знают, как построить укрытие, найти воду, разжечь огонь и починить снаряжение.</p>
+    <p>Особое правило: если персонаж с навыком «Специалист по выживанию» не проходит проверку этого навыка, он не получает состояние «Разозлённый».</p>
+    <p><strong>Связанные правила:</strong></p>
+    <ul>
+    <li>С.164 («Мороз», осень): при морозе ведущий может потребовать проверку «Специалист по выживанию»; при провале персонажи могут получить состояние «Больной» или «Раненый». Добыть воду из замёрзшей лужи или озера тоже требует проверки этого навыка.</li>
+    <li>Конфликты (с.118–119): «Путешествие» — Защита и Манёвр «Специалист по выживанию» или «Наблюдатель за погодой».</li>
+    </ul>
+    <p><em>Книга правил, с. 280–281.</em></p>
+  supplies: ''
+  factors: |-
+    <ul>
+    <li><strong>Действие:</strong> построить укрытие; найти воду; разжечь огонь в плохих условиях; собрать инструмент из того, что оказалось под рукой; заделать пробоину в лодке.</li>
+    <li><strong>Для кого:</strong> одна мышь; патруль; большая группа.</li>
+    </ul>
+  help:
+    - Охотник
+    - Наблюдатель за погодой
 effects: []
 folder: null
 sort: 0
@@ -15,8 +36,3 @@ ownership:
 flags:
   mouseguard:
     originalName: Survivalist
-    description:
-      description: MOUSEGUARD.Skill.survivalist.Description
-      supplies: MOUSEGUARD.Skill.survivalist.Supplies
-      factors: MOUSEGUARD.Skill.survivalist.Factors
-      help: MOUSEGUARD.Skill.survivalist.Help

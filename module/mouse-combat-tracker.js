@@ -91,7 +91,7 @@ export default class MouseCombatTracker extends CombatTracker {
 
                 const team = combatant.team;
                 if (!team || team === "0") {
-                    ui.notifications.warn("Assign a team to the combatant before setting as Conflict Captain.");
+                    ui.notifications.warn(game.i18n.localize("MOUSEGUARD.Conflict.AssignTeamFirst"));
                     return;
                 }
 

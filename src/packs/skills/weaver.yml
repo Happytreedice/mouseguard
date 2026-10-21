@@ -1,12 +1,31 @@
 _id: Bm49zBlLeqBukuEM
-name: Weaver
+name: Ткач
 type: skill
-img: icons/svg/item-bag.svg
+img: icons/commodities/cloth/thread-spindle-white-grey.webp
 system:
-  description: MOUSEGUARD.SkillDescription
   rank: 0
-  pass: 0
-  fail: 0
+  learning: 0
+  beginnersLuck: will
+  specialty: false
+  advancement:
+    passed: 0
+    failed: 0
+  description: |-
+    <p>Персонажи с таким навыком могут изготавливать ткани и шить из них плащи, фартуки, одеяла, простыни и гобелены.</p>
+    <p>Сделанные с помощью этого навыка вещи можно использовать как припасы при проверках для восстановления от состояния «Усталый», полученного из-за того, что персонаж замёрз и/или промок.</p>
+    <p><strong>Помощь:</strong> При проверке этого навыка можно помочь подходящим знанием.</p>
+    <p><strong>Связанные правила:</strong></p>
+    <ul>
+    <li>«Ткач» сам даёт припасы «Оружейнику».</li>
+    </ul>
+    <p><em>Книга правил, с. 281–282.</em></p>
+  supplies: <p>Персонажа с навыком «Ткач» может снабдить припасами (мехом и шкурами) другой персонаж с навыком «Охотник», (растительными волокнами для ткани и ниток) «Сборщик», (шёлковой пряжей) «Насекомовод», а также (красками) «Каменщик», «Учёный» или «Насекомовод».</p>
+  factors: |-
+    <ul>
+    <li><strong>Тип:</strong> одеяло; постельное бельё; плащ; одежда; гобелен.</li>
+    </ul>
+  help:
+    - Разнорабочий
 effects: []
 folder: null
 sort: 0
@@ -15,8 +34,3 @@ ownership:
 flags:
   mouseguard:
     originalName: Weaver
-    description:
-      description: MOUSEGUARD.Skill.weaver.Description
-      supplies: MOUSEGUARD.Skill.weaver.Supplies
-      factors: MOUSEGUARD.Skill.weaver.Factors
-      help: MOUSEGUARD.Skill.weaver.Help

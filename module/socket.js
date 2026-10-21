@@ -11,13 +11,13 @@ export default class MouseSocket {
 
         const dialog = new foundry.applications.api.DialogV2({
             window: {
-                title: "Conflict Manager"
+                title: "MOUSEGUARD.Conflict.Manager"
             },
             content: htmlContent,
             buttons: [
                 {
                     action: "ok",
-                    label: "Apply",
+                    label: "MOUSEGUARD.Conflict.Apply",
                     default: true,
                     callback: (event, button, dialog) => {
                         const form = dialog.element.querySelector("form") ?? dialog.element;
@@ -40,7 +40,7 @@ export default class MouseSocket {
                 },
                 {
                     action: "cancel",
-                    label: "Cancel"
+                    label: "MOUSEGUARD.Conflict.Cancel"
                 }
             ]
         });
@@ -66,7 +66,7 @@ export default class MouseSocket {
 
         const dialog = new foundry.applications.api.DialogV2({
             window: {
-                title: "Conflict Manager"
+                title: "MOUSEGUARD.Conflict.Manager"
             },
             content: htmlContent,
             buttons: [
@@ -85,7 +85,7 @@ export default class MouseSocket {
 
                         if (!move1Move || !move2Move || !move3Move || !move1Actor || !move2Actor || !move3Actor) {
                             ui.notifications.error(
-                                "An error occurred while setting your moves. Please select new moves."
+                                game.i18n.localize("MOUSEGUARD.Conflict.MovesError")
                             );
                             this.askMoves(data);
                             return;
@@ -129,7 +129,7 @@ export default class MouseSocket {
                 },
                 {
                     action: "cancel",
-                    label: "Cancel"
+                    label: "MOUSEGUARD.Conflict.Cancel"
                 }
             ]
         });

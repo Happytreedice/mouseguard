@@ -1,12 +1,24 @@
 _id: 2sHVG0YokAak1PgF
-name: Instructor
+name: Инструктор
 type: skill
-img: icons/svg/item-bag.svg
+img: icons/skills/trades/academics-study-reading-book.webp
 system:
-  description: MOUSEGUARD.SkillDescription
   rank: 0
-  pass: 0
-  fail: 0
+  learning: 0
+  beginnersLuck: will
+  specialty: false
+  advancement:
+    passed: 0
+    failed: 0
+  description: |-
+    <p>Мыши, обладающие навыком «Инструктор», знают, как помогать другим осваивать различные навыки.</p>
+    <p>С помощью навыка «Инструктор» персонаж может добавлять другому персонажу отметки на шкалу развития навыка. При этом рейтинг навыка, которому персонаж учит, у него самого должен быть выше, чем у его «ученика». Если это не так, инструктор может привлечь себе в помощь ещё одного персонажа, у которого есть нужный навык. В таком случае персонажи будут инструктировать «ученика» вдвоём (это будет считаться командной работой).</p>
+    <p>Если вы прошли проверку навыка «Инструктор», поставьте отметку на бланке «ученика» (не вашего персонажа) в ряд «П» или «Н» (на ваш выбор) шкалы развития навыка. С помощью навыка «Инструктор» можно как развивать навыки, уже имеющиеся у ученика, так и обучать новым навыкам.</p>
+    <p><strong>Помощь:</strong> При проверке этого навыка можно помочь навыком, которому обучается ученик.</p>
+    <p><em>Книга правил, с. 269–270.</em></p>
+  supplies: ''
+  factors: <p>Сложность препятствия при проверке навыка «Инструктор» равна текущему рейтингу способности «Природа» ученика. Если «Природа» ученика была урезана, в качестве сложности используйте значение её текущего (урезанного) рейтинга, если не была — используйте максимальное (а не урезанное) значение.</p>
+  help: []
 effects: []
 folder: null
 sort: 0
@@ -15,8 +27,3 @@ ownership:
 flags:
   mouseguard:
     originalName: Instructor
-    description:
-      description: MOUSEGUARD.Skill.instructor.Description
-      supplies: MOUSEGUARD.Skill.instructor.Supplies
-      factors: MOUSEGUARD.Skill.instructor.Factors
-      help: MOUSEGUARD.Skill.instructor.Help

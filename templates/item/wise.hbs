@@ -1,0 +1,27 @@
+{{!-- Wise body: the four marks (P, F, Deeper Understanding, Of Course!) and the description. --}}
+<section class="mgi-body mgi-body--wise">
+    <div class="mgi-cards">
+        <article class="mgi-card mgi-card--wide">
+            <h2 class="mgi-ribbon mgi-ribbon--black">{{localize "MOUSEGUARD.ItemSheet.WiseMarks"}}</h2>
+            <div class="mgi-card-body">
+                <ul class="mgi-marks">
+                    {{#each wise.marks as |mark|}}
+                    <li class="mgi-mark{{#if mark.on}} on{{/if}}{{#if @root.interactive}} interactive{{/if}}"
+                        {{#if @root.interactive}}data-action="toggleFlag" data-path="{{mark.path}}" data-tooltip="MOUSEGUARD.ItemSheet.ToggleHint"{{/if}}
+                        role="checkbox" aria-checked="{{#if mark.on}}true{{else}}false{{/if}}" aria-label="{{mark.label}}">
+                        <span class="mgi-mark-box">{{mark.short}}</span>
+                        <span class="mgi-mark-label">{{mark.label}}</span>
+                    </li>
+                    {{/each}}
+                </ul>
+                {{#if wise.enlightened}}
+                <p class="mgi-callout"><i class="fa-solid fa-lightbulb" inert></i> {{localize "MOUSEGUARD.ItemSheet.WiseEnlightened"}}</p>
+                {{else}}
+                <p class="mgi-hint">{{localize "MOUSEGUARD.ItemSheet.WiseHint"}}</p>
+                {{/if}}
+            </div>
+        </article>
+    </div>
+
+    {{> "systems/mouseguard/templates/item/parts/rich-section.hbs" label=(localize "MOUSEGUARD.ItemSheet.Description") field="system.description" value=raw.description html=enriched.description hint="" hideEmpty=false cssClass="mgi-section--description"}}
+</section>

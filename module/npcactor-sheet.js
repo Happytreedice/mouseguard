@@ -11,20 +11,31 @@ export class MouseGuardNPCActorSheet extends foundry.applications.sheets.ActorSh
 
     /** @inheritDoc */
     static DEFAULT_OPTIONS = {
-        classes: ["mouseguard", "sheet", "actor"],
+        classes: ["mouseguard", "sheet", "actor", "npc"],
         position: {
-            width: 550,
-            height: 600
+            width: 780,
+            height: 720
         },
         window: {
             resizable: true
+        },
+        // The Svelte inputs that carry a `name` (actor name, disposition) belong to this sheet's <form> element and
+        // are saved by the core DocumentSheetV2 form handler. Embedded-item inputs carry no `name`.
+        form: {
+            submitOnChange: true,
+            closeOnSubmit: false
         }
     };
 
     /** @inheritDoc */
     async _prepareContext(options) {
         const actorData = this.actor.toObject(false);
-        actorData.system.itemTypes = this.actor.itemTypes;
+        actorData.system.itemTypes = Object.fromEntries(
+            Object.entries(this.actor.itemTypes).map(([type, items]) => [
+                type,
+                items.map((item) => ({ ...item.toObject(false), id: item.id }))
+            ])
+        );
         return {
             actor: this.actor,
             document: this.actor,
@@ -46,13 +57,14 @@ export class MouseGuardNPCActorSheet extends foundry.applications.sheets.ActorSh
     _replaceHTML(result, content, options) {}
 
     /** @inheritDoc */
-    _onRender(context, options) {
-        super._onRender(context, options);
-
+    async _onRender(context, options) {
+        // Mount / refresh the Svelte tree first, so the core render steps (disabling inputs of read-only sheets,
+        // drag & drop binding) see its elements.
         if (!this.app) {
             this.dataStore = writable(context);
+            // Mount inside the window content (this.element is the whole window <form>, header included).
             this.app = new MouseGuardNPCActorSheetBase({
-                target: this.element,
+                target: this.element.querySelector(".window-content") ?? this.element,
                 props: {
                     dataStore: this.dataStore
                 }
@@ -60,6 +72,7 @@ export class MouseGuardNPCActorSheet extends foundry.applications.sheets.ActorSh
         } else {
             this.dataStore?.set(context);
         }
+        await super._onRender(context, options);
     }
 
     /** @inheritDoc */
@@ -72,25 +85,29 @@ export class MouseGuardNPCActorSheet extends foundry.applications.sheets.ActorSh
         super._onClose(options);
     }
 
-    _setMouseDice(count, message = "") {
-        game.mouseguard.RollCount = count;
+    _setMouseDice(count, message = "", bonus = 0) {
+        game.mouseguard.RollCount = Math.max(0, Number(count) || 0) + Math.max(0, Number(bonus) || 0);
+        game.mouseguard.RollBonus = Math.max(0, Number(bonus) || 0);
         game.mouseguard.RollMessage = message;
-        game.mouseguard.updateDisplay(count);
+        game.mouseguard.updateDisplay(game.mouseguard.RollCount);
     }
 
     async _updateActorAbility(id, type, value) {
+        if (!this.actor.isOwner) return;
         await this.actor.updateEmbeddedDocuments("Item", [
             { _id: id, system: { [type]: value } }
         ]);
     }
 
     async _updateEmbededItem(id, _data) {
+        if (!this.actor.isOwner || !id) return;
         await this.actor.updateEmbeddedDocuments("Item", [
             { _id: id, system: _data }
         ]);
     }
 
     async _onItemDelete(itemId) {
+        if (!this.actor.isOwner) return;
         const item = this.actor.items.get(itemId);
         if (item) await item.delete();
     }
@@ -99,12 +116,13 @@ export class MouseGuardNPCActorSheet extends foundry.applications.sheets.ActorSh
         event.preventDefault();
         const header = event.currentTarget;
         const type = header.dataset.type;
-        const name = `New ${type.capitalize()}`;
-        const itemData = {
-            name: name,
-            type: type,
-            system: { rank: 1 }
+        if (!this.actor.isOwner || !CONFIG.Item.dataModels[type]) return;
+        const NEW_NAMES = {
+            skill: "MOUSEGUARD.Sheet.NewSkill", trait: "MOUSEGUARD.Sheet.NewTrait", wise: "MOUSEGUARD.Sheet.NewWise",
+            ability: "MOUSEGUARD.Sheet.NewAbility", contact: "MOUSEGUARD.Sheet.NewContact", condition: "MOUSEGUARD.Sheet.NewCondition"
         };
+        const name = game.i18n.localize(NEW_NAMES[type] ?? "MOUSEGUARD.Sheet.NewGear");
+        const itemData = { name, type };
         const [item] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
         item?.sheet?.render(true);
         return item;
@@ -126,4 +144,5 @@ export class MouseGuardNPCActorSheet extends foundry.applications.sheets.ActorSh
             flavor: `<h2>${item?.name ?? ""}</h2><h3>${button.textContent}</h3>`
         });
     }
+
 }

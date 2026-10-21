@@ -9,7 +9,7 @@ export class MouseConflictManager extends ApplicationV2 {
         id: "mouseguard-conflict-panel",
         classes: ["mouseguard"],
         window: {
-            title: "Conflict Manager"
+            title: "MOUSEGUARD.Conflict.Manager"
         },
         position: {
             width: 850,

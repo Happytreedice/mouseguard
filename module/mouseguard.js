@@ -6,7 +6,8 @@
 import { MouseGuardActor } from "./actor.js";
 import { MouseGuardItem } from "./item.js";
 import { MouseGuardItemSheet } from "./item-sheet.js";
-import { MouseGuardActorSheet } from "./actor-sheet.js";
+import { MouseGuardCharacterSheet } from "./sheets/character-sheet.js";
+import { registerRollSystem } from "./rolls/index.js";
 import { MouseGuardNPCActorSheet } from "./npcactor-sheet.js";
 import { preloadHandlebarsTemplates } from "./templates.js";
 import { createMouseGuardMacro } from "./macro.js";
@@ -39,6 +40,7 @@ Hooks.once("init", async function () {
 
     let RollCount = 0;
     let RollMessage = "";
+    let RollBonus = 0;
 
     game.mouseguard = {
         MouseGuardActor,
@@ -46,6 +48,7 @@ Hooks.once("init", async function () {
         createMouseGuardMacro,
         RollCount,
         RollMessage,
+        RollBonus,
         updateDisplay,
         MouseDie,
         MouseRoll,
@@ -95,15 +98,21 @@ Hooks.once("init", async function () {
     // Register sheet application classes (No unregisterSheet for core to avoid v14 deprecation warnings)
     foundry.documents.collections.Actors.registerSheet("mouseguard", MouseGuardNPCActorSheet, {
         types: ["mouse", "weasel", "animal"],
-        makeDefault: true
+        makeDefault: true,
+        label: "MOUSEGUARD.Sheet.NPCSheetLabel"
     });
-    foundry.documents.collections.Actors.registerSheet("mouseguard", MouseGuardActorSheet, {
+    foundry.documents.collections.Actors.registerSheet("mouseguard", MouseGuardCharacterSheet, {
         types: ["character"],
-        makeDefault: true
+        makeDefault: true,
+        label: "MOUSEGUARD.Sheet.SheetLabel"
     });
     foundry.documents.collections.Items.registerSheet("mouseguard", MouseGuardItemSheet, {
-        makeDefault: true
+        makeDefault: true,
+        label: "MOUSEGUARD.ItemSheet.SheetLabel"
     });
+
+    // Register the test / roll system
+    registerRollSystem();
 
     // Register system settings
     game.settings.register("mouseguard", "macroShorthand", {
@@ -200,6 +209,7 @@ Hooks.once("init", async function () {
 /* -------------------------------------------- */
 
 Hooks.once("diceSoNiceReady", (dice3d) => {
+    if (!dice3d) return;
     dice3d.addSystem({ id: "mouseguard", name: "Mouse Guard" }, true);
 
     dice3d.addDicePreset(
@@ -254,12 +264,14 @@ Hooks.on("renderChatLog", async (app, html) => {
     tray.querySelector(".mouse_dice_button.add")?.addEventListener("click", (event) => {
         event.preventDefault();
         game.mouseguard.RollCount++;
+        game.mouseguard.RollBonus = 0;
         updateDisplay(game.mouseguard.RollCount);
     });
 
     tray.querySelector(".mouse_dice_button.subtract")?.addEventListener("click", (event) => {
         event.preventDefault();
         if (game.mouseguard.RollCount > 0) game.mouseguard.RollCount--;
+        game.mouseguard.RollBonus = 0;
         updateDisplay(game.mouseguard.RollCount);
     });
 
@@ -268,6 +280,10 @@ Hooks.on("renderChatLog", async (app, html) => {
         if (game.mouseguard.RollCount > 0) {
             const actor = game.user.character ?? canvas.tokens?.controlled?.[0]?.actor;
             const roll = new MouseRoll(`${game.mouseguard.RollCount}dmcs>3`);
+            roll.options.mouseguard = {
+                baseDice: game.mouseguard.RollCount,
+                bonusDice: game.mouseguard.RollBonus ?? 0
+            };
             await roll.evaluate();
             await roll.toMessage({
                 author: game.user.id,
@@ -277,6 +293,8 @@ Hooks.on("renderChatLog", async (app, html) => {
 
             game.mouseguard.RollCount = 0;
             game.mouseguard.RollMessage = "";
+            game.mouseguard.RollBonus = 0;
+            for (const input of document.querySelectorAll("#mg-skill-bonus")) input.value = "0";
             updateDisplay(0);
         }
     });
@@ -299,7 +317,7 @@ Hooks.on("renderChatMessageHTML", (message, html) => {
                 const btn = document.createElement("button");
                 btn.type = "button";
                 btn.className = "reveal-button";
-                btn.textContent = "Reveal Card";
+                btn.textContent = game.i18n.localize("MOUSEGUARD.RevealCard");
                 btn.addEventListener("click", async () => {
                     await message.setFlag("mouseguard", "unflipped", false);
                 });
@@ -314,7 +332,11 @@ Hooks.on("renderChatMessageHTML", (message, html) => {
 /* -------------------------------------------- */
 
 Hooks.once("setup", () => {
-    CONFIG.statusEffects = statusEffects;
+    // Mouse Guard conditions replace the core status list, but the core "dead" status is kept: the combat tracker's
+    // "mark defeated" toggles CONFIG.specialStatusEffects.DEFEATED and throws "Invalid status ID" without it.
+    const defeatedId = CONFIG.specialStatusEffects?.DEFEATED ?? "dead";
+    const defeated = Array.from(CONFIG.statusEffects ?? []).find((e) => e?.id === defeatedId);
+    CONFIG.statusEffects = defeated ? [...statusEffects, defeated] : [...statusEffects];
 });
 
 Hooks.once("ready", async () => {

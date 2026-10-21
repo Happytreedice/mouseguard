@@ -1,12 +1,34 @@
 _id: 9VeAQKJ6ZUK52m2I
-name: Pathfinder
+name: Следопыт
 type: skill
-img: icons/svg/item-bag.svg
+img: icons/tools/navigation/compass-chain-blue.webp
 system:
-  description: MOUSEGUARD.SkillDescription
   rank: 0
-  pass: 0
-  fail: 0
+  learning: 0
+  beginnersLuck: will
+  specialty: false
+  advancement:
+    passed: 0
+    failed: 0
+  description: |-
+    <p>Мыши с таким навыком прокладывают и обозначают маршруты, ведущие от одного мышиного поселения до другого, а также к местам, где можно найти различные ресурсы (пищу, полезные ископаемые, строительные материалы и тому подобное), ручьям и рекам, прудам и озёрам, к полям, где растут всякие травы. Это один из самых важных навыков.</p>
+    <p><strong>Связанные правила:</strong></p>
+    <ul>
+    <li>Таблица «Типы конфликта» (с.110): «Путешествие» — проверяемый навык «Следопыт», основа диспозиции «Здоровье».</li>
+    <li>Конфликты (с.118–119): «Погоня» — Защита и Финт «Следопыт»; «Путешествие» — Атака и Финт «Следопыт».</li>
+    </ul>
+    <p><em>Книга правил, с. 279–280.</em></p>
+  supplies: <p>Персонажу с навыком «Следопыт» может помочь припасами (картами) другой персонаж с навыком «Картограф».</p>
+  factors: |-
+    <p>Если персонаж с таким навыком (или его группа/патруль) хочет попасть куда-то раньше другого персонажа (или другой группы/патруля), требуется провести встречную проверку этого навыка против навыка «Следопыт» конкурента (или его группы/патруля).</p>
+    <ul>
+    <li><strong>Место назначения:</strong> близко; короткое путешествие; долгое путешествие; надо попасть в изолированное место или на остров.</li>
+    <li><strong>Маршрут:</strong> хорошо известный; редко используемый; заросший или размытый; требуется проложить новый маршрут.</li>
+    </ul>
+  help:
+    - Разведчик
+    - Охотник
+    - Наблюдатель за погодой
 effects: []
 folder: null
 sort: 0
@@ -15,8 +37,3 @@ ownership:
 flags:
   mouseguard:
     originalName: Pathfinder
-    description:
-      description: MOUSEGUARD.Skill.pathfinder.Description
-      supplies: MOUSEGUARD.Skill.pathfinder.Supplies
-      factors: MOUSEGUARD.Skill.pathfinder.Factors
-      help: MOUSEGUARD.Skill.pathfinder.Help

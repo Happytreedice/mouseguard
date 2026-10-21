@@ -1,12 +1,40 @@
 _id: NW2EHAo7SWStX8zc
-name: Armorer
+name: Оружейник
 type: skill
-img: icons/svg/item-bag.svg
+img: icons/equipment/chest/breastplate-layered-leather-brown.webp
 system:
-  description: MOUSEGUARD.SkillDescription
   rank: 0
-  pass: 0
-  fail: 0
+  learning: 0
+  beginnersLuck: health
+  specialty: false
+  advancement:
+    passed: 0
+    failed: 0
+  description: |-
+    <p>Персонажи с этим навыком создают броню и оружие для стражей и городских ополчений.</p>
+    <p><strong>Тяжёлый, неудобный и громоздкий</strong></p>
+    <p>Если при создании оружия или брони игрок не пройдёт проверку навыка «Оружейник», ведущий может в качестве сюжетного поворота добавить 1 или 2 следующих качества произведённому предмету:</p>
+    <ul>
+    <li><strong>Большой:</strong> −1К при проверке Защиты или Финта;</li>
+    <li><strong>Громоздкий:</strong> −1К при проверке Манёвра или Финта;</li>
+    <li><strong>Грубо сделанный:</strong> −1К при проверке Манёвра или Атаки;</li>
+    <li><strong>Замедляющий:</strong> −1К при проверке Защиты или Финта;</li>
+    <li><strong>Неудобный:</strong> −1К при проверке Манёвра, а также −1К при проверке навыка «Разведчик» или способности «Природа», когда персонажу надо красться или прятаться;</li>
+    <li><strong>Сложный:</strong> −1К при проверке Атаки;</li>
+    <li><strong>Тяжёлый:</strong> −1К при проверке способности «Здоровье» для восстановления от состояния «Усталый» (если этот предмет использовался в схватке в прошлый ход ведущего или ход игроков).</li>
+    </ul>
+    <p><em>Книга правил, с. 274–275.</em></p>
+  supplies: <p>Персонажу с навыком «Оружейник» могут помочь припасами другие персонажи с навыками «Кузнец», «Насекомовод» и «Ткач».</p>
+  factors: |-
+    <p>«Оружейник» использует специальные факторы, которые позволяют создавать своё собственное оружие и свою собственную броню.</p>
+    <ul>
+    <li><strong>Оружие:</strong> кинжалы и посохи; копья и пращи; мечи и луки; топоры и булавы; крюки на верёвке и алебарды.</li>
+    <li><strong>Броня и щиты (начинается со сложности ПР 2):</strong> щит; лёгкая броня; тяжёлая броня.</li>
+    </ul>
+  help:
+    - Кузнец
+    - Учёный
+    - Разнорабочий
 effects: []
 folder: null
 sort: 0
@@ -15,8 +43,3 @@ ownership:
 flags:
   mouseguard:
     originalName: Armorer
-    description:
-      description: MOUSEGUARD.Skill.armorer.Description
-      supplies: MOUSEGUARD.Skill.armorer.Supplies
-      factors: MOUSEGUARD.Skill.armorer.Factors
-      help: MOUSEGUARD.Skill.armorer.Help

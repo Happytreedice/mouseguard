@@ -1,0 +1,6 @@
+{{!-- Pip track (Legend in the Mist "development" markers). Context: track = {kind, label, tooltip, action, mode, pips, full} --}}
+<span class="mgs-track mgs-track--{{track.kind}} {{#if track.full}}is-full{{/if}}" data-action="{{track.action}}"
+      data-track="{{track.kind}}" {{#if track.mode}}data-mode="{{track.mode}}"{{/if}} data-tooltip="{{track.tooltip}}">
+    <span class="mgs-track-label">{{localize track.label}}</span>
+    {{#each track.pips}}<i class="mgs-pip {{#if on}}on{{/if}}" data-index="{{index}}"></i>{{/each}}
+</span>

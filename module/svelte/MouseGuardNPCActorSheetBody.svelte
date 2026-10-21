@@ -1,6 +1,7 @@
 <script>
     import { getContext } from "svelte";
-    import { updateRating, setMouseDice } from "./MouseGuardCommon.svelte";
+    import { updateRating, rollTest } from "./MouseGuardCommon.svelte";
+    import { abilityLabel, itemLabel } from "../rolls/labels.js";
 
     //getContext("sheetStore", dataStore);
     let sheetData = getContext("sheetStore");
@@ -8,7 +9,15 @@
     let data;
     let abilities;
     $: data = $sheetData.data;
-    $: abilities = $sheetData.data.system.itemTypes.ability;
+    $: actorType = $sheetData.data.type;
+    $: abilities = [...($sheetData.data.system.itemTypes.ability ?? [])].sort(
+        (a, b) => abilityOrder(a) - abilityOrder(b)
+    );
+    const ABILITY_ORDER = ["nature", "will", "health", "resources", "circles"];
+    function abilityOrder(ability) {
+        const i = ABILITY_ORDER.indexOf(ability?.system?.key);
+        return i === -1 ? ABILITY_ORDER.length : i;
+    }
     $: skills = $sheetData.data.system.itemTypes.skill;
     $: wises = $sheetData.data.system.itemTypes.wise;
     $: traits = $sheetData.data.system.itemTypes.trait;
@@ -23,19 +32,21 @@
                     <div name={ability.id}>
                         <label
                             on:click={(e) =>
-                                setMouseDice(sheet, ability.system.rating)}
+                                rollTest(sheet, ability.id ?? ability._id, e)}
                             class="header"
-                            ><a>{game.i18n.localize(ability.name)}</a>:
+                            ><a>{abilityLabel(ability, actorType)}</a>:
                         </label>
                         <input
-                            name={ability.id}
+                            data-item-id={ability.id ?? ability._id}
                             type="number"
                             min="0"
+                            max="20"
                             value={ability.system.rating}
-                            on:change={(e) =>
+                            disabled={!$sheetData.editable}
+                            on:change|stopPropagation={(e) =>
                                 updateRating(
                                     sheet,
-                                    e.target.name,
+                                    e.target.dataset.itemId,
                                     "rating",
                                     parseInt(e.target.value)
                                 )}
@@ -56,22 +67,21 @@
                     <div name={skill.id}>
                         <label
                             on:click={(e) =>
-                                setMouseDice(
-                                    sheet,
-                                    skill.system.rank,
-                                    game.i18n.localize(skill.name)
-                                )}
+                                rollTest(sheet, skill.id ?? skill._id, e)}
                             class="header"
-                            ><a>{game.i18n.localize(skill.name)}</a>:
+                            ><a>{itemLabel(skill)}</a>:
                         </label>
                         <input
-                            name={skill.id}
+                            data-item-id={skill.id ?? skill._id}
                             type="number"
+                            min="0"
+                            max="6"
                             value={skill.system.rank}
-                            on:change={(e) =>
+                            disabled={!$sheetData.editable}
+                            on:change|stopPropagation={(e) =>
                                 updateRating(
                                     sheet,
-                                    e.target.name,
+                                    e.target.dataset.itemId,
                                     "rank",
                                     parseInt(e.target.value)
                                 )}
@@ -81,7 +91,7 @@
                         <a
                             on:click={() => sheet?._onItemDelete(skill.id ?? skill._id)}
                             class="item-control item-delete"
-                            title="Delete Item"><i class="fas fa-trash" /></a
+                            title={game.i18n.localize("MOUSEGUARD.DeleteItem")}><i class="fas fa-trash" /></a
                         >
                     </div>
                 </skill>
@@ -97,24 +107,18 @@
             {#each traits as trait}
                 <trait>
                     <div name={trait.id}>
-                        <label
-                            on:click={(e) =>
-                                setMouseDice(
-                                    sheet,
-                                    trait.system.level,
-                                    game.i18n.localize(trait.name)
-                                )}
-                            class="header"
-                            ><a>{game.i18n.localize(trait.name)}</a>:
-                        </label>
+                        <label class="header">{itemLabel(trait)}:</label>
                         <input
-                            name={trait.id}
+                            data-item-id={trait.id ?? trait._id}
                             type="number"
+                            min="1"
+                            max="3"
                             value={trait.system.level}
-                            on:change={(e) =>
+                            disabled={!$sheetData.editable}
+                            on:change|stopPropagation={(e) =>
                                 updateRating(
                                     sheet,
-                                    e.target.name,
+                                    e.target.dataset.itemId,
                                     "level",
                                     parseInt(e.target.value)
                                 )}
@@ -124,7 +128,7 @@
                         <a
                             on:click={() => sheet?._onItemDelete(trait.id ?? trait._id)}
                             class="item-control item-delete"
-                            title="Delete Item"><i class="fas fa-trash" /></a
+                            title={game.i18n.localize("MOUSEGUARD.DeleteItem")}><i class="fas fa-trash" /></a
                         >
                     </div>
                 </trait>
@@ -138,34 +142,13 @@
     {#each wises as wise}
         <wise>
             <div name={wise.id}>
-                <label
-                    on:click={(e) =>
-                        setMouseDice(
-                            sheet,
-                            wise.system.rank,
-                            game.i18n.localize(wise.name)
-                        )}
-                    class="header"
-                    ><a>{game.i18n.localize(wise.name)}</a>:
-                </label>
-                <input
-                    name={wise.id}
-                    type="number"
-                    value={wise.system.rank}
-                    on:change={(e) =>
-                        updateRating(
-                            sheet,
-                            e.target.name,
-                            "rank",
-                            parseInt(e.target.value)
-                        )}
-                />
+                <label class="header">{itemLabel(wise)}</label>
             </div>
             <div class="item-controls">
                 <a
                     on:click={() => sheet?._onItemDelete(wise.id ?? wise._id)}
                     class="item-control item-delete"
-                    title="Delete Item"><i class="fas fa-trash" /></a
+                    title={game.i18n.localize("MOUSEGUARD.DeleteItem")}><i class="fas fa-trash" /></a
                 >
             </div>
         </wise>

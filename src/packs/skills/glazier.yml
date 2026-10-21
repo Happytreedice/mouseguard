@@ -1,12 +1,31 @@
 _id: GMSs8qu6yq1jFgw8
-name: Glazier
+name: Стекольщик
 type: skill
-img: icons/svg/item-bag.svg
+img: icons/consumables/potions/bottle-round-empty-glass.webp
 system:
-  description: MOUSEGUARD.SkillDescription
   rank: 0
-  pass: 0
-  fail: 0
+  learning: 0
+  beginnersLuck: health
+  specialty: false
+  advancement:
+    passed: 0
+    failed: 0
+  description: |-
+    <p>Персонажи с таким навыком могут изготовить стеклянную посуду и вазы, оконные стёкла и разные линзы. Такой навык встречается нечасто и высоко ценится, так как подобные товары хрупкие и дорогие в производстве.</p>
+    <p><strong>Связанные правила:</strong></p>
+    <ul>
+    <li>«Стекольщик» сам помогает навыку «Гончар».</li>
+    </ul>
+    <p><em>Книга правил, с. 281.</em></p>
+  supplies: ''
+  factors: |-
+    <ul>
+    <li><strong>Качество:</strong> простое; функциональное; красивое.</li>
+    <li><strong>Размер:</strong> маленький; средний; большой.</li>
+    </ul>
+  help:
+    - Учёный
+    - Разнорабочий
 effects: []
 folder: null
 sort: 0
@@ -15,8 +34,3 @@ ownership:
 flags:
   mouseguard:
     originalName: Glazier
-    description:
-      description: MOUSEGUARD.Skill.glazier.Description
-      supplies: MOUSEGUARD.Skill.glazier.Supplies
-      factors: MOUSEGUARD.Skill.glazier.Factors
-      help: MOUSEGUARD.Skill.glazier.Help

@@ -1,12 +1,30 @@
 _id: tw3cZ5hoSstrapzf
-name: Stonemason
+name: Каменщик
 type: skill
-img: icons/svg/item-bag.svg
+img: icons/tools/hand/chisel-steel-brown.webp
 system:
-  description: MOUSEGUARD.SkillDescription
   rank: 0
-  pass: 0
-  fail: 0
+  learning: 0
+  beginnersLuck: health
+  specialty: false
+  advancement:
+    passed: 0
+    failed: 0
+  description: |-
+    <p>Мыши с таким навыком умеют вытёсывать камни и использовать их для постройки стен, мостов и зданий.</p>
+    <p><strong>Связанные правила:</strong></p>
+    <ul>
+    <li>«Каменщик» даёт припасы (красками) навыку «Ткач».</li>
+    </ul>
+    <p><em>Книга правил, с. 270.</em></p>
+  supplies: <p>Чтобы облегчить их работу, им требуются хорошие инструменты (припасы), которые изготавливают мыши, владеющие навыком «Кузнец».</p>
+  factors: |-
+    <ul>
+    <li><strong>Сложность:</strong> простая конструкция (например, стена); конструкция средней сложности (например, колонна); сложная конструкция (например, арка); укреплённая конструкция (например, фортификационное сооружение).</li>
+    <li><strong>Размер:</strong> маленький (размером со стол); средний (размером со стену комнаты); большой (размером с дом).</li>
+    </ul>
+  help:
+    - Разнорабочий
 effects: []
 folder: null
 sort: 0
@@ -15,8 +33,3 @@ ownership:
 flags:
   mouseguard:
     originalName: Stonemason
-    description:
-      description: MOUSEGUARD.Skill.stonemason.Description
-      supplies: MOUSEGUARD.Skill.stonemason.Supplies
-      factors: MOUSEGUARD.Skill.stonemason.Factors
-      help: MOUSEGUARD.Skill.stonemason.Help

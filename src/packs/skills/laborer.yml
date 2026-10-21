@@ -1,12 +1,30 @@
 _id: ckQUY4quasj9nYxY
-name: Laborer
+name: Разнорабочий
 type: skill
-img: icons/svg/item-bag.svg
+img: icons/tools/hand/pickaxe-steel-white.webp
 system:
-  description: MOUSEGUARD.SkillDescription
   rank: 0
-  pass: 0
-  fail: 0
+  learning: 0
+  beginnersLuck: health
+  specialty: false
+  advancement:
+    passed: 0
+    failed: 0
+  description: |-
+    <p>Мыши с таким навыком являются основой производственных сил любого поселения. Они добывают древесину для плотников, камень для каменщиков и металл для кузнецов, роют канавы, таскают грузы и делают прочую текущую работу.</p>
+    <p>Персонаж с навыком «Разнорабочий» может помочь при проверке следующих навыков: «Гончар», «Каменщик», «Кузнец», «Лекарь», «Корабел», «Мельник», «Насекомовод», «Оружейник», «Пекарь», «Пивовар», «Плотник», «Пчеловод», «Сборщик», «Стекольщик», «Ткач» и «Учёный».</p>
+    <p><strong>Помощь:</strong> При проверке этого навыка можно помочь любым подходящим навыком.</p>
+    <p><strong>Связанные правила:</strong></p>
+    <ul>
+    <li>«Разнорабочий» даёт припасы (древесиной) «Плотнику».</li>
+    </ul>
+    <p><em>Книга правил, с. 278–279.</em></p>
+  supplies: <p>Этим мышам требуются инструменты (припасы), которые могут изготовить другие мыши, владеющие навыком «Кузнец».</p>
+  factors: |-
+    <ul>
+    <li><strong>Виды работ:</strong> добыча древесины; добыча камня; добыча металла.</li>
+    </ul>
+  help: []
 effects: []
 folder: null
 sort: 0
@@ -15,8 +33,3 @@ ownership:
 flags:
   mouseguard:
     originalName: Laborer
-    description:
-      description: MOUSEGUARD.Skill.laborer.Description
-      supplies: MOUSEGUARD.Skill.laborer.Supplies
-      factors: MOUSEGUARD.Skill.laborer.Factors
-      help: MOUSEGUARD.Skill.laborer.Help

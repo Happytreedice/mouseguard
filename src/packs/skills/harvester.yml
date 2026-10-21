@@ -1,12 +1,35 @@
 _id: QX6WibeEWfcJbtGz
-name: Harvester
+name: Сборщик
 type: skill
-img: icons/svg/item-bag.svg
+img: icons/consumables/food/berries-ration-round-red.webp
 system:
-  description: MOUSEGUARD.SkillDescription
   rank: 0
-  pass: 0
-  fail: 0
+  learning: 0
+  beginnersLuck: health
+  specialty: false
+  advancement:
+    passed: 0
+    failed: 0
+  description: |-
+    <p>Мыши с этим навыком очень важны для поселений, расположенных на землях Территорий. Они собирают дикорастущие зёрна, семена, ягоды, коренья, травы, плоды и другие полезные вещи.</p>
+    <p><strong>Связанные правила:</strong></p>
+    <ul>
+    <li>С.142: «Голодный/Испытывающий жажду» снимается обычной проверкой «Сборщик» (и др.), обычно ПР 1.</li>
+    <li>С.166: зимой нельзя использовать проверку навыка «Сборщик» для поиска пропитания.</li>
+    <li>С.204: во время засухи и голода сложность обычных проверок «Сборщик» увеличивается на 3.</li>
+    <li>«Сборщик» сам даёт припасы: травы — «Лекарю», древесину — «Плотнику», растительные волокна — «Ткачу», а также «Повару».</li>
+    </ul>
+    <p><em>Книга правил, с. 279.</em></p>
+  supplies: <p>Мыши с навыком «Сборщик» могут использовать глиняную посуду, чтобы хранить собранное и не давать ему портиться. В этом случае глиняная посуда, изготовленная персонажем с навыком «Гончар», считается припасами.</p>
+  factors: |-
+    <ul>
+    <li><strong>Время:</strong> позднее лето и ранняя осень; раннее лето и поздняя весна; поздняя осень; зима.</li>
+    <li><strong>Для кого:</strong> патруль; большая семья; булочная или ресторан; район; городок; большой город.</li>
+    <li><strong>Тяжёлые условия (этот набор факторов можно использовать, только если такие условия уже присутствуют в игре):</strong> паводки; засуха.</li>
+    </ul>
+  help:
+    - Наблюдатель за погодой
+    - Разнорабочий
 effects: []
 folder: null
 sort: 0
@@ -15,8 +38,3 @@ ownership:
 flags:
   mouseguard:
     originalName: Harvester
-    description:
-      description: MOUSEGUARD.Skill.harvester.Description
-      supplies: MOUSEGUARD.Skill.harvester.Supplies
-      factors: MOUSEGUARD.Skill.harvester.Factors
-      help: MOUSEGUARD.Skill.harvester.Help

@@ -1,0 +1,132 @@
+{{!-- Skill body: rank / advancement / Beginner's Luck cards, then description, supplies, factors and help. --}}
+<section class="mgi-body mgi-body--skill">
+    <div class="mgi-cards">
+        {{!-- Rank & specialty --}}
+        <article class="mgi-card">
+            <h2 class="mgi-ribbon mgi-ribbon--green">{{localize "MOUSEGUARD.ItemSheet.Rank"}}</h2>
+            <div class="mgi-card-body">
+                {{#if editMode}}
+                <label class="mgi-field">
+                    <span>{{localize "MOUSEGUARD.ItemSheet.Rank"}}</span>
+                    <input type="number" name="system.rank" value="{{system.rank}}" min="0" max="6" step="1">
+                </label>
+                <label class="mgi-field mgi-field--check" data-tooltip="MOUSEGUARD.ItemSheet.SpecialtyHint">
+                    <span>{{localize "MOUSEGUARD.ItemSheet.Specialty"}}</span>
+                    <input type="checkbox" name="system.specialty" {{checked system.specialty}}>
+                </label>
+                <p class="mgi-hint">{{localize "MOUSEGUARD.ItemSheet.RankHint"}}</p>
+                {{else}}
+                <div class="mgi-track mgi-track--scale{{#unless skill.learned}} is-unlearned{{/unless}}">
+                    <span class="mgi-scale" aria-label="{{localize 'MOUSEGUARD.ItemSheet.Rank'}}">{{#each skill.scale}}<i class="mgi-pip{{#if on}} on{{/if}}" inert></i>{{/each}}</span>
+                    <span class="mgi-track-count">{{#if skill.learned}}{{skill.rank}}/6{{else}}×{{/if}}</span>
+                </div>
+                {{#if skill.specialty}}
+                <p class="mgi-flag" data-tooltip="MOUSEGUARD.ItemSheet.SpecialtyHint"><i class="fa-solid fa-star" inert></i> {{localize "MOUSEGUARD.ItemSheet.Specialty"}}</p>
+                {{/if}}
+                <p class="mgi-hint">{{#if skill.learned}}{{localize "MOUSEGUARD.ItemSheet.RankMaxHint"}}{{else}}{{localize "MOUSEGUARD.ItemSheet.UnlearnedHint"}}{{/if}}</p>
+                {{/if}}
+            </div>
+        </article>
+
+        {{!-- Advancement --}}
+        <article class="mgi-card">
+            <h2 class="mgi-ribbon mgi-ribbon--green">{{localize "MOUSEGUARD.ItemSheet.Advancement"}}</h2>
+            <div class="mgi-card-body">
+                {{#if editMode}}
+                <label class="mgi-field">
+                    <span>{{localize "MOUSEGUARD.ItemSheet.PassedLabel"}}</span>
+                    <input type="number" name="system.advancement.passed" value="{{system.advancement.passed}}" min="0" max="6" step="1">
+                </label>
+                <label class="mgi-field">
+                    <span>{{localize "MOUSEGUARD.ItemSheet.FailedLabel"}}</span>
+                    <input type="number" name="system.advancement.failed" value="{{system.advancement.failed}}" min="0" max="6" step="1">
+                </label>
+                {{else}}
+                <div class="mgi-track">
+                    <span class="mgi-track-label">{{localize "MOUSEGUARD.ItemSheet.PassedShort"}}</span>
+                    {{> "systems/mouseguard/templates/item/parts/pips.hbs" pips=skill.advancement.passed.pips path="system.advancement.passed" min=0 max=6 advance="passed" interactive=interactive label=(localize "MOUSEGUARD.ItemSheet.Passed")}}
+                    <span class="mgi-track-count">{{skill.advancement.passed.value}}/{{skill.advancement.passed.need}}</span>
+                </div>
+                <div class="mgi-track">
+                    <span class="mgi-track-label">{{localize "MOUSEGUARD.ItemSheet.FailedShort"}}</span>
+                    {{> "systems/mouseguard/templates/item/parts/pips.hbs" pips=skill.advancement.failed.pips path="system.advancement.failed" min=0 max=6 advance="failed" interactive=interactive label=(localize "MOUSEGUARD.ItemSheet.Failed")}}
+                    <span class="mgi-track-count">{{skill.advancement.failed.value}}/{{skill.advancement.failed.need}}</span>
+                </div>
+                {{/if}}
+                {{#if skill.learned}}<p class="mgi-hint">{{skill.advancement.hint}}</p>{{/if}}
+            </div>
+        </article>
+
+        {{!-- Beginner's Luck & learning --}}
+        <article class="mgi-card">
+            <h2 class="mgi-ribbon mgi-ribbon--green">{{localize "MOUSEGUARD.ItemSheet.BeginnersLuck"}}</h2>
+            <div class="mgi-card-body">
+                {{#if editMode}}
+                <label class="mgi-field mgi-field--stack">
+                    <span>{{localize "MOUSEGUARD.ItemSheet.BeginnersLuckAbility"}}</span>
+                    <select name="system.beginnersLuck">
+                        {{#each skill.beginnersLuckOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+                    </select>
+                </label>
+                <label class="mgi-field">
+                    <span>{{localize "MOUSEGUARD.ItemSheet.Learning"}}</span>
+                    <input type="number" name="system.learning" value="{{system.learning}}" min="0" max="10" step="1">
+                </label>
+                {{else}}
+                <p class="mgi-line"><span class="mgi-line-label">{{localize "MOUSEGUARD.ItemSheet.BeginnersLuckAbility"}}</span>
+                    <strong>{{skill.beginnersLuckLabel}}</strong></p>
+                {{#if skill.learned}}
+                <p class="mgi-hint">{{localize "MOUSEGUARD.ItemSheet.BeginnersLuckLearned"}}</p>
+                {{else}}
+                <div class="mgi-track">
+                    <span class="mgi-track-label">{{localize "MOUSEGUARD.ItemSheet.Learning"}}</span>
+                    {{> "systems/mouseguard/templates/item/parts/pips.hbs" pips=skill.learning.pips path="system.learning" min=0 max=10 learn=true interactive=interactive label=(localize "MOUSEGUARD.ItemSheet.Learning")}}
+                    <span class="mgi-track-count">{{skill.learning.value}}{{#if skill.learning.need}}/{{skill.learning.need}}{{/if}}</span>
+                </div>
+                <p class="mgi-hint">{{skill.learning.hint}}</p>
+                {{/if}}
+                {{/if}}
+                {{#if editMode}}<p class="mgi-hint">{{skill.learning.hint}}</p>{{/if}}
+            </div>
+        </article>
+    </div>
+
+    {{> "systems/mouseguard/templates/item/parts/rich-section.hbs" label=(localize "MOUSEGUARD.ItemSheet.Description") field="system.description" value=raw.description html=enriched.description hint="" hideEmpty=false cssClass="mgi-section--description"}}
+
+    {{> "systems/mouseguard/templates/item/parts/rich-section.hbs" label=(localize "MOUSEGUARD.ItemSheet.Supplies") field="system.supplies" value=raw.supplies html=enriched.supplies hint=(localize "MOUSEGUARD.ItemSheet.SuppliesHint") hideEmpty=true cssClass="mgi-section--supplies"}}
+
+    {{> "systems/mouseguard/templates/item/parts/rich-section.hbs" label=(localize "MOUSEGUARD.ItemSheet.Factors") field="system.factors" value=raw.factors html=enriched.factors hint="" hideEmpty=true cssClass="mgi-section--factors"}}
+
+    {{!-- Skills that can help (tags) --}}
+    {{#if editMode}}
+    <section class="mgi-section mgi-section--help">
+        <h3 class="mgi-heading mgi-with-line">{{localize "MOUSEGUARD.ItemSheet.Help"}}</h3>
+        <p class="mgi-hint">{{localize "MOUSEGUARD.ItemSheet.HelpHint"}} {{localize "MOUSEGUARD.ItemSheet.HelpDropHint"}}</p>
+        <div class="mgi-tags">
+            {{#each skill.help}}
+            <span class="mgi-tag">{{this}}<a class="mgi-tag-remove" data-action="helpRemove" data-index="{{@index}}"
+                data-tooltip="MOUSEGUARD.ItemSheet.HelpRemove" aria-label="{{localize 'MOUSEGUARD.ItemSheet.HelpRemove'}}"><i class="fa-solid fa-xmark" inert></i></a></span>
+            {{/each}}
+            <span class="mgi-tag-new">
+                <input type="text" data-help-input list="{{partId}}-help-options"
+                       placeholder="{{localize 'MOUSEGUARD.ItemSheet.HelpPlaceholder'}}" aria-label="{{localize 'MOUSEGUARD.ItemSheet.HelpAdd'}}">
+                <button type="button" class="mgi-icon-button" data-action="helpAdd" data-tooltip="MOUSEGUARD.ItemSheet.HelpAdd"
+                        aria-label="{{localize 'MOUSEGUARD.ItemSheet.HelpAdd'}}"><i class="fa-solid fa-plus" inert></i></button>
+            </span>
+            <datalist id="{{partId}}-help-options">
+                {{#each skill.helpOptions}}<option value="{{this}}"></option>{{/each}}
+            </datalist>
+        </div>
+    </section>
+    {{else}}
+    {{#if skill.help.length}}
+    <section class="mgi-section mgi-section--help">
+        <h3 class="mgi-heading mgi-with-line">{{localize "MOUSEGUARD.ItemSheet.Help"}}</h3>
+        <p class="mgi-hint">{{localize "MOUSEGUARD.ItemSheet.HelpHint"}}</p>
+        <div class="mgi-tags">
+            {{#each skill.help}}<span class="mgi-tag">{{this}}</span>{{/each}}
+        </div>
+    </section>
+    {{/if}}
+    {{/if}}
+</section>

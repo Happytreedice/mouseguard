@@ -1,12 +1,30 @@
 _id: O0zlOLkDCvQw0OUC
-name: Carpenter
+name: Плотник
 type: skill
-img: icons/svg/item-bag.svg
+img: icons/skills/trades/construction-carpentry-hammer.webp
 system:
-  description: MOUSEGUARD.SkillDescription
   rank: 0
-  pass: 0
-  fail: 0
+  learning: 0
+  beginnersLuck: health
+  specialty: false
+  advancement:
+    passed: 0
+    failed: 0
+  description: |-
+    <p>Персонажи с этим навыком делают разные предметы из дерева: мебель, двери, лестницы, леса, колёса, черенки и многое другое.</p>
+    <p><strong>Связанные правила:</strong></p>
+    <ul>
+    <li>«Плотник» сам даёт припасы (доски и брёвна) «Корабелу» и помогает ему.</li>
+    </ul>
+    <p><em>Книга правил, с. 277.</em></p>
+  supplies: <p>Персонажу с навыком «Плотник» могут помочь припасами (древесиной) другие персонажи с навыками «Сборщик» и «Разнорабочий», а также (скобяными изделиями и инструментами) «Кузнец».</p>
+  factors: |-
+    <ul>
+    <li><strong>Тип:</strong> домашняя утварь (миски, чашки и тому подобное) или доски, или строительные материалы; деревянные части или лестницы; мебель; небольшие строения (лачуга); комната или широкая и высокая внешняя стена; домик.</li>
+    </ul>
+  help:
+    - Учёный
+    - Разнорабочий
 effects: []
 folder: null
 sort: 0
@@ -15,8 +33,3 @@ ownership:
 flags:
   mouseguard:
     originalName: Carpenter
-    description:
-      description: MOUSEGUARD.Skill.carpenter.Description
-      supplies: MOUSEGUARD.Skill.carpenter.Supplies
-      factors: MOUSEGUARD.Skill.carpenter.Factors
-      help: MOUSEGUARD.Skill.carpenter.Help

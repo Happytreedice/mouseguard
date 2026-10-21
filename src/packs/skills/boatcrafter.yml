@@ -1,12 +1,28 @@
 _id: tgfvpJIP07LZT9KK
-name: Boatcrafter
+name: Корабел
 type: skill
-img: icons/svg/item-bag.svg
+img: icons/skills/trades/profession-sailing-ship.webp
 system:
-  description: MOUSEGUARD.SkillDescription
   rank: 0
-  pass: 0
-  fail: 0
+  learning: 0
+  beginnersLuck: health
+  specialty: false
+  advancement:
+    passed: 0
+    failed: 0
+  description: |-
+    <p>Персонажи с этим навыком разбираются во всём, что касается плотов, лодок и кораблей. Они могут делать самые разные плавательные средства: от лодок из листьев до деревянных судов. Их навык также позволяет им управлять любыми кораблями и прокладывать курс.</p>
+    <p><em>Книга правил, с. 271.</em></p>
+  supplies: <p>Персонажу с навыком «Корабел» может помочь припасами (досками и брёвнами) другой персонаж с навыком «Плотник» и (шкурами и кожей) «Охотник». С помощью таких припасов можно делать более прочные суда.</p>
+  factors: |-
+    <ul>
+    <li><strong>Использование:</strong> один раз; много раз.</li>
+    <li><strong>Вместимость:</strong> одна мышь; две мыши; патруль; груз; десяток мышей.</li>
+    </ul>
+  help:
+    - Плотник
+    - Учёный
+    - Разнорабочий
 effects: []
 folder: null
 sort: 0
@@ -15,8 +31,3 @@ ownership:
 flags:
   mouseguard:
     originalName: Boatcrafter
-    description:
-      description: MOUSEGUARD.Skill.boatcrafter.Description
-      supplies: MOUSEGUARD.Skill.boatcrafter.Supplies
-      factors: MOUSEGUARD.Skill.boatcrafter.Factors
-      help: MOUSEGUARD.Skill.boatcrafter.Help

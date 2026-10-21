@@ -1,0 +1,40 @@
+{{!-- Item sheet header (shared by every item type): image, name, type line, badge, test button. --}}
+<header class="mgi-header">
+    <div class="mgi-header-row">
+        <div class="mgi-portrait">
+            {{#if editMode}}
+            <img class="editable" src="{{item.img}}" alt="" data-action="editImage" data-edit="img"
+                 data-tooltip="MOUSEGUARD.ItemSheet.ChangeImage">
+            {{else}}
+            <img src="{{item.img}}" alt="">
+            {{/if}}
+        </div>
+
+        <div class="mgi-title">
+            {{#if editMode}}
+            <input class="mgi-name-input" type="text" name="name" value="{{nameValue}}"
+                   placeholder="{{localize 'MOUSEGUARD.ItemSheet.Name'}}" aria-label="{{localize 'MOUSEGUARD.ItemSheet.Name'}}">
+            {{else}}
+            <h1 class="mgi-name">{{displayName}}</h1>
+            {{/if}}
+            <div class="mgi-subtitle">
+                <span class="mgi-type">{{typeLabel}}</span>
+                {{#each subtitle}}<span class="mgi-dot" aria-hidden="true">·</span><span>{{this}}</span>{{/each}}
+            </div>
+        </div>
+
+        {{#if badge}}
+        <div class="mgi-badge {{badge.cssClass}}" {{#if badge.tooltip}}data-tooltip-text="{{badge.tooltip}}"{{/if}}>
+            <span class="mgi-badge-value">{{badge.value}}</span>
+            <span class="mgi-badge-label">{{badge.label}}</span>
+        </div>
+        {{/if}}
+
+        {{#if canRoll}}
+        <button type="button" class="mgi-roll-button" data-action="roll" data-tooltip="MOUSEGUARD.ItemSheet.RollHint">
+            <i class="fa-solid fa-dice-d6" inert></i> {{localize "MOUSEGUARD.ItemSheet.Roll"}}
+        </button>
+        {{/if}}
+    </div>
+    <div class="mgi-sep" aria-hidden="true"></div>
+</header>

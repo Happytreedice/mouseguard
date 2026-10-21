@@ -1,34 +1,30 @@
 _id: uR975U5rV42i4Jb1
 name: Администратор
 type: skill
-img: icons/svg/item-bag.svg
+img: icons/sundries/documents/document-sealed-red-white.webp
 system:
-  description: MOUSEGUARD.SkillDescription
   rank: 0
-  pass: 0
-  fail: 0
-details:
-  навык: Администратор
-  описание: Персонажи с этим навыком управляют поселениями или группами мышей. Они пишут законы, занимаются финансами, заполняют
-    отчёты и распределяют ресурсы.
-  припасы: Персонажу с навыком «Администратор» может помочь припасами (записями или документами) другой персонаж с навыком
-    «Архивариус».
-  факторы_навыка:
-    тип:
-    - отчёт
-    - бюджет
-    - закон
-    - правила снабжения
-    для_кого:
-    - одна мышь
-    - патруль
-    - застава или форт
-    - бизнес
-    - район
-    - городок
-    - крупный город
-  помощь:
-    навыки:
+  learning: 0
+  beginnersLuck: will
+  specialty: false
+  advancement:
+    passed: 0
+    failed: 0
+  description: |-
+    <p>Персонажи с этим навыком управляют поселениями или группами мышей. Они пишут законы, занимаются финансами, заполняют отчёты и распределяют ресурсы.</p>
+    <p><strong>Связанные правила:</strong></p>
+    <ul>
+    <li>«Администратор» сам помогает навыку «Военный» (см. Военный).</li>
+    <li>Конфликты (с.118–119): в «Войне» может заменять «Военный» при Защите и Манёвре.</li>
+    </ul>
+    <p><em>Книга правил, с. 267.</em></p>
+  supplies: <p>Персонажу с навыком «Администратор» может помочь припасами (записями или документами) другой персонаж с навыком «Архивариус».</p>
+  factors: |-
+    <ul>
+    <li><strong>Тип:</strong> отчёт; бюджет; закон; правила снабжения.</li>
+    <li><strong>Для кого:</strong> одна мышь; патруль; застава или форт; бизнес; район; городок; крупный город.</li>
+    </ul>
+  help:
     - Архивариус
     - Оратор
 effects: []
@@ -39,8 +35,3 @@ ownership:
 flags:
   mouseguard:
     originalName: Administrator
-    description:
-      description: MOUSEGUARD.Skill.Administrator.Description
-      supplies: MOUSEGUARD.Skill.Administrator.Supplies
-      factors: MOUSEGUARD.Skill.Administrator.Factors
-      help: MOUSEGUARD.Skill.Administrator.Help

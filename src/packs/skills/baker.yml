@@ -1,12 +1,32 @@
 _id: cyOQTb8bP5JtqQ7y
-name: Baker
+name: Пекарь
 type: skill
-img: icons/svg/item-bag.svg
+img: icons/consumables/grains/bread-loaf-boule-rustic-brown.webp
 system:
-  description: MOUSEGUARD.SkillDescription
   rank: 0
-  pass: 0
-  fail: 0
+  learning: 0
+  beginnersLuck: will
+  specialty: false
+  advancement:
+    passed: 0
+    failed: 0
+  description: |-
+    <p>Персонажи с этим навыком могут выпекать ароматный хлеб, вкусные печенья и сладкие пирожные.</p>
+    <p><strong>Связанные правила:</strong></p>
+    <ul>
+    <li>С.142: состояние «Голодный/Испытывающий жажду» снимается обычной проверкой «Сборщик», «Повар», «Пивовар», «Пекарь» или способности «Ресурсы» (обычно ПР 1).</li>
+    <li>«Пекарь» сам помогает навыкам «Гончар» и «Повар».</li>
+    </ul>
+    <p><em>Книга правил, с. 276.</em></p>
+  supplies: <p>Персонажу с навыком «Пекарь» могут помочь припасами другие персонажи с навыками «Пивовар», «Мельник» и «Пчеловод».</p>
+  factors: |-
+    <ul>
+    <li><strong>Продукты:</strong> мука; семена и зерно; дикорастущие растения.</li>
+    <li><strong>Для кого:</strong> одна мышь; две мыши; патруль; домохозяйство; пекарня.</li>
+    </ul>
+  help:
+    - Учёный
+    - Разнорабочий
 effects: []
 folder: null
 sort: 0
@@ -15,8 +35,3 @@ ownership:
 flags:
   mouseguard:
     originalName: Baker
-    description:
-      description: MOUSEGUARD.Skill.baker.Description
-      supplies: MOUSEGUARD.Skill.baker.Supplies
-      factors: MOUSEGUARD.Skill.baker.Factors
-      help: MOUSEGUARD.Skill.baker.Help

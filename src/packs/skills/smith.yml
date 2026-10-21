@@ -1,12 +1,32 @@
 _id: jOQEeXShn7EsMbwa
-name: Smith
+name: Кузнец
 type: skill
-img: icons/svg/item-bag.svg
+img: icons/skills/trades/smithing-anvil-silver-red.webp
 system:
-  description: MOUSEGUARD.SkillDescription
   rank: 0
-  pass: 0
-  fail: 0
+  learning: 0
+  beginnersLuck: health
+  specialty: false
+  advancement:
+    passed: 0
+    failed: 0
+  description: |-
+    <p>Персонажи с таким навыком изготавливают изделия из металла: иглы, режущие инструменты, кухонную утварь и инструменты для производства, а также скобяные изделия (дверные петли, подшипники и гвозди).</p>
+    <p>Нельзя использовать навык «Кузнец», чтобы делать оружие или броню, для этого существует навык «Оружейник».</p>
+    <p><strong>Связанные правила:</strong></p>
+    <ul>
+    <li>«Кузнец» сам даёт припасы навыкам «Каменщик» и «Разнорабочий» (инструменты), «Плотник» (скобяные изделия и инструменты), «Оружейник».</li>
+    <li>Пример ведущему (с.102): «Кузнец может без проблем сделать котелки и сковородки» — простые вещи ведущий разрешает без броска.</li>
+    </ul>
+    <p><em>Книга правил, с. 271.</em></p>
+  supplies: ''
+  factors: |-
+    <ul>
+    <li><strong>Тип изделия:</strong> скобяные изделия; кухонная утварь; инструменты; небольшие металлические конструкции вроде ворот; большие металлические конструкции вроде ограды; пол или решётка.</li>
+    </ul>
+  help:
+    - Разнорабочий
+    - Оружейник
 effects: []
 folder: null
 sort: 0
@@ -15,8 +35,3 @@ ownership:
 flags:
   mouseguard:
     originalName: Smith
-    description:
-      description: MOUSEGUARD.Skill.smith.Description
-      supplies: MOUSEGUARD.Skill.smith.Supplies
-      factors: MOUSEGUARD.Skill.smith.Factors
-      help: MOUSEGUARD.Skill.smith.Help

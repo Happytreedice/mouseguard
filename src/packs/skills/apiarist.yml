@@ -1,12 +1,35 @@
 _id: L6maqKORZq9ccfcY
-name: Apiarist
+name: Пчеловод
 type: skill
-img: icons/svg/item-bag.svg
+img: icons/creatures/invertebrates/wasp-swarm-tan.webp
 system:
-  description: MOUSEGUARD.SkillDescription
   rank: 0
-  pass: 0
-  fail: 0
+  learning: 0
+  beginnersLuck: will
+  specialty: false
+  advancement:
+    passed: 0
+    failed: 0
+  description: |-
+    <p>Персонажи с таким навыком могут разводить пчёл, а также собирать мёд и воск.</p>
+    <p>Пчеловод может разводить пчёл, добывать мёд, а также делать свечи из воска.</p>
+    <p><strong>Связанные правила:</strong></p>
+    <ul>
+    <li>«Пчеловод» сам даёт припасы: мёд — «Пивовару», а также «Пекарю».</li>
+    </ul>
+    <p><em>Книга правил, с. 278.</em></p>
+  supplies: ''
+  factors: |-
+    <ul>
+    <li><strong>Пчёлы:</strong> трутни; рабочие пчёлы; пчеломатка; весь улей.</li>
+    <li><strong>Продукт:</strong> мёд; воск.</li>
+    <li><strong>Действие:</strong> успокоить; разозлить; натравить рой.</li>
+    </ul>
+  help:
+    - Учёный
+    - Насекомовод
+    - Знаток зверей
+    - Разнорабочий
 effects: []
 folder: null
 sort: 0
@@ -15,8 +38,3 @@ ownership:
 flags:
   mouseguard:
     originalName: Apiarist
-    description:
-      description: MOUSEGUARD.Skill.Apiarist.Description
-      supplies: MOUSEGUARD.Skill.Apiarist.Supplies
-      factors: MOUSEGUARD.Skill.Apiarist.Factors
-      help: MOUSEGUARD.Skill.Apiarist.Help

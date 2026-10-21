@@ -1,12 +1,32 @@
 _id: 5vrmwV7o1pA1PA16
-name: Insectrist
+name: Насекомовод
 type: skill
-img: icons/svg/item-bag.svg
+img: icons/creatures/invertebrates/spider-mandibles-brown.webp
 system:
-  description: MOUSEGUARD.SkillDescription
   rank: 0
-  pass: 0
-  fail: 0
+  learning: 0
+  beginnersLuck: will
+  specialty: false
+  advancement:
+    passed: 0
+    failed: 0
+  description: |-
+    <p>Мыши с этим навыком используют насекомых (жуков, гусениц, червей и тому подобных существ) для выполнения различных задач. Они обучают жуков в качестве помощников, используют гусениц и пауков для производства шёлковых нитей, а червей могут научить разрыхлять и удобрять почву под посевы. Обученных такими мышами сверчков можно использовать для наблюдения за погодой, а муравьёв — для переноса небольших грузов.</p>
+    <p><strong>Связанные правила:</strong></p>
+    <ul>
+    <li>«Насекомовод» сам даёт припасы: чернила — «Архивариусу» и «Картографу»; эссенции и экстракты — «Учёному»; шёлковую пряжу и краски — «Ткачу»; а также «Оружейнику».</li>
+    </ul>
+    <p><em>Книга правил, с. 273–274.</em></p>
+  supplies: ''
+  factors: |-
+    <ul>
+    <li><strong>Вид насекомого:</strong> сверчок; жук; гусеница-шелкопряд или червь; муравей; паук.</li>
+    <li><strong>Количество насекомых:</strong> одно; много; очень много.</li>
+    <li><strong>Результат:</strong> делает работу; слушается команд; производит.</li>
+    </ul>
+  help:
+    - Знаток зверей
+    - Разнорабочий
 effects: []
 folder: null
 sort: 0
@@ -15,8 +35,3 @@ ownership:
 flags:
   mouseguard:
     originalName: Insectrist
-    description:
-      description: MOUSEGUARD.Skill.insectrist.Description
-      supplies: MOUSEGUARD.Skill.insectrist.Supplies
-      factors: MOUSEGUARD.Skill.insectrist.Factors
-      help: MOUSEGUARD.Skill.insectrist.Help

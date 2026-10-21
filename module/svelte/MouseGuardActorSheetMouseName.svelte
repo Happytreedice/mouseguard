@@ -7,8 +7,8 @@
 </script>
 
 <div class="namebox">
-  <label>{game.i18n.localize("MOUSEGUARD.Name")}</label>
-  <input name="name" type="text" value={data.name} placeholder="{game.i18n.localize('MOUSEGUARD.Name')}" />
+  <label for="mouseguard-name">{game.i18n.localize("MOUSEGUARD.Name")}</label>
+  <input id="mouseguard-name" name="name" type="text" value={data.name} placeholder={game.i18n.localize("MOUSEGUARD.Name")} disabled={!$sheetData.editable} />
 </div>
 
 <style>
@@ -16,7 +16,7 @@
         position: relative;
         font-family: "Germania One", cursive;
         height: 60px;
-        pointer-events: none;
+        pointer-events: auto;
     }
 
     .namebox label {
@@ -35,5 +35,7 @@
         pointer-events: auto;
         border: none;
         box-shadow: none;
+        color: #2e2419;
+        font-family: "Germania One", cursive;
     }
 </style>

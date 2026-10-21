@@ -1,0 +1,772 @@
+// =====================================================================================================================
+// Item sheets (module/item-sheet.js, templates/item/*.hbs). Everything is scoped under .mouseguard.sheet.item.
+//
+// Format copied from the Legend in the Mist (mist-engine-fvtt) item sheet and character-sheet cards:
+//   - window body = paper image drawn at natural size from the top-left (ME sheets/_item.scss);
+//   - parchment cards (border-image, slice 10, fill) with a coloured ribbon h2 (ME components/_themebook.scss);
+//   - headings with the brush-stroke underline ornament (ME h3.with-line::after) and a separator line (ME .seperator);
+//   - pip trackers, numbered marking circles, tag pills, roll button (ME _tags.scss / _actor-character.scss).
+// All images are PLACEHOLDERS in assets/sheet/ (same names as the character sheet uses; see assets/sheet/README.md).
+// Paths are relative to the compiled styles/mouseguard.css, so "../assets/sheet/x" = systems/mouseguard/assets/sheet/x.
+// =====================================================================================================================
+
+.mouseguard.sheet.item {
+    --mgi-ink: #2b2016;
+    --mgi-brown: #724a32;          // ME $c-brown / $c-styled-text
+    --mgi-brown-dark: #4f3322;     // darken($c-brown, 10%)
+    --mgi-red: #8c1f14;            // ME overcome badge
+    --mgi-cream: #fcf5df;
+    --mgi-pip-off: #f6eeea;        // ME empty development pip
+    --mgi-tag: #efd693;            // ME tag yellow
+    --mgi-rule: rgba(0, 0, 0, 0.1);
+    --mgi-font-heading: "Palatino Linotype", "Book Antiqua", Palatino, "PT Serif", "Noto Serif", Georgia, "DejaVu Serif", serif;
+    --mgi-font-body: "Palatino Linotype", "Book Antiqua", Palatino, "PT Serif", "Noto Serif", Georgia, "DejaVu Serif", serif;
+
+    min-width: 440px;
+    min-height: 360px;
+
+    // Window header. Foundry's own CSS sits in cascade layers, so the system's unlayered ".mouseguard h1" and
+    // ".mouseguard button" rules (styles/mouseguard.less) would restyle the title and header buttons: restore them.
+    .window-header {
+        .window-title {
+            color: var(--color-light-1);
+            font-family: inherit;
+            font-size: inherit;
+            font-weight: inherit;
+        }
+        button.header-control {
+            color: var(--color-light-1);
+            background: none;
+            border: none;
+            box-shadow: none;
+            &:hover:not(:disabled) {
+                color: #fff;
+                background: none;
+                border: none;
+                box-shadow: none;
+                text-shadow: 0 0 8px rgba(236, 186, 133, 0.9);
+            }
+        }
+        // lock / unlock button injected left of the title (view vs edit mode)
+        button.header-control.mgi-mode-toggle {
+            flex: none;
+            &.fa-lock-open { color: #ecba85; }
+        }
+    }
+
+    .window-content {
+        padding: 0;
+        gap: 0;
+        overflow: hidden;
+        color: var(--mgi-ink);
+        font-family: var(--mgi-font-body);
+        font-size: 14px;
+        background-color: #eccda2;                                      // shown while the image loads
+        background-image: url("../assets/sheet/paper-item.webp");       // placeholder for ME paper_background_1.webp
+        background-repeat: no-repeat;
+        background-position: 0 0;
+        background-size: auto;                                          // ME: natural size, top-left crop
+    }
+
+    // ----------------------------------------------------------------------------------------------------------------
+    // Form controls on paper (theme independent)
+    // ----------------------------------------------------------------------------------------------------------------
+    input[type="text"],
+    input[type="number"],
+    select {
+        height: 26px;
+        color: var(--mgi-ink);
+        font-family: var(--mgi-font-body);
+        background: rgba(255, 250, 240, 0.65);
+        border: 1px solid #ab8f75;
+        border-radius: 2px;
+        box-shadow: inset 0 1px 2px rgba(61, 41, 22, 0.08);
+        &:focus {
+            outline: 2px solid rgba(114, 74, 50, 0.3);
+            outline-offset: 0;
+            box-shadow: none;
+        }
+    }
+    input[type="checkbox"] {
+        accent-color: var(--mgi-brown);
+    }
+
+    // ----------------------------------------------------------------------------------------------------------------
+    // Header: image, name, type line, badge, test button, separator
+    // ----------------------------------------------------------------------------------------------------------------
+    .mgi-header {
+        flex: none;
+        padding: 12px 16px 0;
+    }
+
+    .mgi-header-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px 12px;
+        min-height: 76px;
+    }
+
+    .mgi-portrait {
+        flex: 0 0 72px;
+        width: 72px;
+        height: 72px;
+        img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 4px;
+            border: 1px solid rgba(114, 74, 50, 0.6);
+            border-radius: 3px;
+            // dark backing so Foundry's white SVG icons stay visible on paper
+            background: radial-gradient(circle at 50% 40%, #6b4a35 0, #2b2016 100%);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+        }
+        img.editable {
+            cursor: pointer;
+            &:hover { box-shadow: 0 0 6px var(--mgi-brown); }
+        }
+    }
+
+    .mgi-title {
+        flex: 1 1 180px;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    .mgi-name {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font: 700 26px/1.1 var(--mgi-font-heading);
+        color: var(--mgi-brown-dark);
+        overflow-wrap: anywhere;
+    }
+
+    input.mgi-name-input {
+        height: 36px;
+        font: 700 22px var(--mgi-font-heading);
+        color: var(--mgi-brown-dark);
+    }
+
+    .mgi-subtitle {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0 6px;
+        font: 700 11px/1.4 var(--mgi-font-heading);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--mgi-brown);
+        .mgi-dot { opacity: 0.6; }
+    }
+
+    // Numbered marking circle (character sheet rank circle, larger)
+    .mgi-badge {
+        position: relative;
+        flex: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        padding: 0 4px;
+        .mgi-badge-value {
+            display: inline-grid;
+            place-items: center;
+            min-width: 44px;
+            height: 44px;
+            padding: 0 7px;
+            border-radius: 22px;
+            font: 700 22px/1 var(--mgi-font-heading);
+            color: rgba(255, 255, 255, 0.92);
+            background: rgba(0, 0, 0, 0.72);
+            border: 1.5px solid rgba(0, 0, 0, 0.5);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        .mgi-badge-label {
+            max-width: 90px;
+            font: 700 9px/1.2 var(--mgi-font-heading);
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--mgi-brown);
+        }
+        &.is-unlearned .mgi-badge-value {
+            color: rgba(0, 0, 0, 0.45);
+            background: rgba(0, 0, 0, 0.08);
+            border-color: rgba(0, 0, 0, 0.2);
+            box-shadow: none;
+        }
+        &.is-wide .mgi-badge-value { font-size: 18px; }
+        &.is-roman .mgi-badge-value { font-size: 19px; letter-spacing: 0.04em; }
+        &.is-full .mgi-badge-value { background: var(--mgi-red); }
+        // specialty: hand-drawn ring (= ME .selected::before with circle-selection.svg)
+        &.is-specialty::before {
+            content: "";
+            position: absolute;
+            inset: -8px -10px 8px;
+            pointer-events: none;
+            background: url("../assets/sheet/circle-selection.svg") no-repeat center;
+            background-size: 100% 100%;
+        }
+    }
+
+    // = ME .roll-button
+    button.mgi-roll-button {
+        flex: none;
+        width: auto;
+        height: 30px;
+        padding: 0 12px;
+        font: 14px var(--mgi-font-body);
+        color: #fff;
+        background: var(--mgi-brown);
+        border: 1px solid rgba(0, 0, 0, 0.35);
+        border-radius: 3px;
+        text-shadow: none;
+        i { color: #fff; }
+        &:hover:not(:disabled) {
+            color: #fff;
+            background: color-mix(in srgb, #724a32 82%, white);
+            border-color: rgba(0, 0, 0, 0.35);
+            box-shadow: 0 0 6px #724a32;
+        }
+        &:disabled { opacity: 0.6; }
+    }
+
+    // = ME .seperator (sic): separator.webp line with a diamond
+    .mgi-sep {
+        width: 100%;
+        height: 15px;
+        margin-top: 6px;
+        background-image: url("../assets/sheet/separator.webp");
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+
+    // ----------------------------------------------------------------------------------------------------------------
+    // Body (one per item type, scrolls)
+    // ----------------------------------------------------------------------------------------------------------------
+    .mgi-body {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        padding: 4px 16px 16px;
+    }
+
+    .mgi-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 6px;
+        align-items: stretch;
+        margin: 2px 0 4px;
+    }
+
+    // = ME .container-themebook-with-border (parchment card)
+    .mgi-card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        min-height: 110px;
+        padding-bottom: 2px;
+        color: #191813;
+        border-style: solid;
+        border-width: 10px 10px 10px 10px;
+        border-image: url("../assets/sheet/card-parchment.webp") 10 10 10 10 fill stretch stretch;  // ME litm-themebook-bg.webp
+        &--wide { grid-column: 1 / -1; min-height: 0; }
+    }
+
+    // = ME .themebook-style.<colour> h2 (ribbon = top 20 px of a 30 px h2). One colour per item type, as on the
+    // character sheet cards: skill green, ability rust, trait slate, wise black, gear orange.
+    .mgi-ribbon {
+        flex: none;
+        height: 30px;
+        margin: -7px -8px 0 -8px;
+        padding: 2px;
+        border: 0;
+        overflow: hidden;
+        font: 700 0.7rem/1.5em var(--mgi-font-heading);
+        text-align: center;
+        text-transform: uppercase;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        letter-spacing: 0.04em;
+        color: #fff;
+        -webkit-font-smoothing: antialiased;
+        background-repeat: no-repeat;
+        background-size: 100% 20px;
+        &--green  { background-image: url("../assets/sheet/header-green.webp"); }   // ME headers/header-origin.webp
+        &--rust   { background-image: url("../assets/sheet/header-rust.webp"); }    // ME headers/header-adventure.webp
+        &--slate  { background-image: url("../assets/sheet/header-slate.webp"); }   // ME headers/header-greatness.webp
+        &--orange { background-image: url("../assets/sheet/header-orange.webp"); }  // ME headers/header-backpack.webp
+        &--black  { background-image: url("../assets/sheet/header-black.webp"); }   // ME headers/header-black.webp
+    }
+
+    .mgi-card-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding: 0 4px;
+        &--row {
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-around;
+            gap: 6px 16px;
+        }
+    }
+
+    // Big number in a card
+    .mgi-stat {
+        position: relative;
+        align-self: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        padding: 2px 6px;
+        .mgi-stat-value {
+            font: 700 30px/1 var(--mgi-font-heading);
+            color: var(--mgi-brown-dark);
+            small { font-size: 18px; color: var(--mgi-brown); }
+        }
+        .mgi-stat-label {
+            font: 700 9px/1.2 var(--mgi-font-heading);
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--mgi-brown);
+        }
+        &.is-small .mgi-stat-value { font-size: 22px; }
+    }
+
+    // LitM development tracker row
+    .mgi-track {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+        min-height: 24px;
+        padding: 2px 0;
+        border-bottom: 1.5px solid var(--mgi-rule);
+        .mgi-track-label {
+            flex: none;
+            min-width: 1.4em;
+            font: 800 11px var(--mgi-font-heading);
+            text-transform: uppercase;
+            color: var(--mgi-brown);
+        }
+        .mgi-pips, .mgi-scale { flex: 1 0 auto; }
+        .mgi-track-count {
+            flex: none;
+            margin-left: auto;
+            font: italic 12px var(--mgi-font-body);
+            color: rgba(0, 0, 0, 0.55);
+        }
+    }
+
+    // Rating scale (read-only): filled = rating, ring = taxed Nature, empty = up to the cap
+    .mgi-track--scale {
+        min-height: 30px;
+        .mgi-track-count { font: 700 16px var(--mgi-font-heading); font-style: normal; color: var(--mgi-brown-dark); }
+        &.is-unlearned .mgi-track-count { color: rgba(0, 0, 0, 0.4); }
+        &.is-taxed .mgi-track-count { color: var(--mgi-red); }
+    }
+    .mgi-scale {
+        display: inline-flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 3px;
+        .mgi-pip {
+            flex: none;
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            background: var(--mgi-pip-off);
+            box-shadow: inset 0 0 0 1px rgba(114, 74, 50, 0.45);
+            &.on { background: var(--mgi-brown-dark); box-shadow: none; }
+            &.taxed { background: transparent; box-shadow: inset 0 0 0 2px var(--mgi-red); }
+        }
+    }
+
+    .mgi-pips {
+        display: inline-flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 3px;
+        min-height: 15px;
+        padding: 1px 2px;
+        border-radius: 8px;
+        user-select: none;
+        &.interactive {
+            cursor: pointer;
+            &:hover { background: rgba(114, 74, 50, 0.12); }
+        }
+        .mgi-pip {
+            flex: none;
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            background: var(--mgi-pip-off);
+            box-shadow: inset 0 0 0 1px rgba(114, 74, 50, 0.45);
+            &.on { background: var(--mgi-brown); box-shadow: none; }
+            &.on.over { background: var(--mgi-red); }                    // marks beyond what advancement needs
+            &.empty { background: transparent; box-shadow: none; border: 1px dashed rgba(114, 74, 50, 0.45); }
+        }
+    }
+
+    // Numbered counters (trait used against / checks earned)
+    .mgi-counters {
+        display: flex;
+        justify-content: space-around;
+        gap: 6px;
+    }
+    .mgi-counter {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        padding: 3px 6px;
+        border-radius: 4px;
+        user-select: none;
+        &.interactive {
+            cursor: pointer;
+            &:hover { background: rgba(114, 74, 50, 0.12); }
+        }
+        .mgi-counter-value {
+            display: inline-grid;
+            place-items: center;
+            min-width: 26px;
+            height: 26px;
+            padding: 0 4px;
+            border-radius: 13px;
+            font: 700 14px/1 var(--mgi-font-heading);
+            color: rgba(255, 255, 255, 0.92);
+            background: rgba(0, 0, 0, 0.72);
+            border: 1.5px solid rgba(0, 0, 0, 0.5);
+        }
+        .mgi-counter-label {
+            max-width: 80px;
+            font: 700 9px/1.2 var(--mgi-font-heading);
+            text-align: center;
+            text-transform: uppercase;
+            color: var(--mgi-brown);
+        }
+    }
+
+    // Edit-mode label + input rows
+    .mgi-field {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-height: 28px;
+        margin: 0;
+        > span {
+            flex: 1;
+            min-width: 0;
+            overflow-wrap: anywhere;
+            font: 700 12px/1.2 var(--mgi-font-heading);
+            color: var(--mgi-brown);
+        }
+        input[type="number"] { flex: 0 0 56px; width: 56px; text-align: center; }
+        input[type="text"], select { flex: 1.4; min-width: 0; }
+        input[type="checkbox"] { flex: none; margin: 0; width: 16px; height: 16px; }
+        &--stack {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 2px;
+            > span { flex: none; }
+            input[type="text"], select { flex: none; width: 100%; }
+        }
+    }
+
+    .mgi-line {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 2px 6px;
+        margin: 2px 0;
+        padding-bottom: 2px;
+        border-bottom: 1.5px solid var(--mgi-rule);
+        font: italic 14px var(--mgi-font-body);
+        strong { font-style: normal; color: var(--mgi-brown-dark); }
+        .mgi-line-label {
+            font: 800 11px var(--mgi-font-heading);
+            font-style: normal;
+            text-transform: uppercase;
+            color: var(--mgi-brown);
+        }
+    }
+
+    .mgi-flag {
+        margin: 2px 0 0;
+        text-align: center;
+        font: 700 12px var(--mgi-font-heading);
+        color: var(--mgi-brown);
+        i { color: #c98a1b; }
+    }
+
+    .mgi-hint {
+        margin: 4px 0 0;
+        font: italic 11.5px/1.35 var(--mgi-font-body);
+        color: rgba(0, 0, 0, 0.6);
+    }
+
+    .mgi-callout {
+        margin: 6px 0 0;
+        padding: 4px 8px;
+        font: 600 12.5px/1.35 var(--mgi-font-body);
+        color: var(--mgi-brown-dark);
+        background: fade(#efd693, 70%);
+        border-left: 3px solid var(--mgi-brown);
+        border-radius: 0 3px 3px 0;
+        i { color: #c98a1b; }
+    }
+
+    // Wise marks: P / F / D / O boxes
+    .mgi-marks {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 4px 14px;
+        margin: 2px 0 0;
+        padding: 0;
+        list-style: none;
+    }
+    .mgi-mark {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0;
+        padding: 3px 4px;
+        border-bottom: 1.5px solid var(--mgi-rule);
+        user-select: none;
+        &.interactive {
+            cursor: pointer;
+            &:hover { background: rgba(114, 74, 50, 0.1); }
+        }
+        .mgi-mark-box {
+            flex: none;
+            display: grid;
+            place-items: center;
+            width: 24px;
+            height: 24px;
+            font: 700 13px/1 var(--mgi-font-heading);
+            color: rgba(114, 74, 50, 0.55);
+            background: var(--mgi-pip-off);
+            border: 1.5px solid rgba(114, 74, 50, 0.6);
+            border-radius: 3px;
+        }
+        &.on .mgi-mark-box {
+            color: #fff;
+            background: var(--mgi-brown);
+            border-color: var(--mgi-brown-dark);
+        }
+        .mgi-mark-label { font: italic 14px/1.25 var(--mgi-font-body); }
+    }
+
+    // ----------------------------------------------------------------------------------------------------------------
+    // Rich-text sections
+    // ----------------------------------------------------------------------------------------------------------------
+    .mgi-section {
+        margin: 12px 0 0;
+        &--grow {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            prose-mirror.mgi-editor { flex: 1; }
+        }
+    }
+
+    .mgi-heading {
+        margin: 0 0 4px;
+        padding: 0;
+        border: 0;
+        font: 700 15px/1.3 var(--mgi-font-heading);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--mgi-brown);
+    }
+
+    // = ME h3.with-line::after (header-backline.webp brush stroke)
+    .mgi-with-line::after {
+        content: "";
+        display: inline-block;
+        width: 105px;
+        height: 6px;
+        margin-left: 10px;
+        vertical-align: middle;
+        background-image: url("../assets/sheet/header-backline.webp");
+        background-repeat: no-repeat;
+    }
+
+    .mgi-prose,
+    prose-mirror.mgi-editor .editor-content {
+        font: 14px/1.45 var(--mgi-font-body);
+        color: var(--mgi-ink);
+        p { margin: 0 0 0.55em; }
+        p:last-child { margin-bottom: 0; }
+        ul, ol { margin: 0 0 0.55em; padding-left: 1.3em; }
+        li { margin: 0.15em 0; }
+        h1, h2, h3, h4, h5 {
+            margin: 0.6em 0 0.25em;
+            padding: 0;
+            border: 0;
+            font: 700 1.05em/1.3 var(--mgi-font-heading);
+            color: var(--mgi-brown-dark);
+        }
+        strong, b { color: var(--mgi-brown-dark); }
+        a { color: var(--mgi-brown); text-decoration: underline dotted; }
+        blockquote {
+            margin: 0.4em 0;
+            padding: 2px 10px;
+            font-style: italic;
+            border-left: 3px solid rgba(114, 74, 50, 0.4);
+            background: rgba(255, 250, 240, 0.3);
+        }
+        table {
+            width: 100%;
+            margin: 0.4em 0;
+            border-collapse: collapse;
+            background: rgba(255, 250, 240, 0.35);
+            th, td { padding: 2px 6px; border: 1px solid rgba(114, 74, 50, 0.3); text-align: left; }
+            th { font-family: var(--mgi-font-heading); color: var(--mgi-brown-dark); }
+        }
+        mark { background: linear-gradient(to bottom, transparent 20%, #efd693 21%, #efd693 90%, transparent 91%); }
+    }
+
+    .mgi-empty {
+        margin: 0;
+        font: italic 13px var(--mgi-font-body);
+        color: rgba(0, 0, 0, 0.45);
+    }
+
+    // Toggled ProseMirror editor (edit mode). Content-sized: grows with its text, the body scrolls.
+    prose-mirror.mgi-editor {
+        --min-height: 3.2em;
+        min-height: 3.2em;
+        padding: 4px 34px 4px 8px;
+        border: 1px dashed rgba(114, 74, 50, 0.45);
+        border-radius: 3px;
+        background: rgba(255, 250, 240, 0.35);
+        &.active {
+            --min-height: 12rem;
+            min-height: 12rem;
+            padding-right: 8px;
+            border-style: solid;
+            background: rgba(255, 250, 240, 0.75);
+        }
+        // keep the edit button visible in edit mode (core shows it on hover only)
+        button.toggle:enabled {
+            display: block;
+            top: 3px;
+            right: 3px;
+            width: 26px;
+            height: 26px;
+            min-height: 0;
+            padding: 0;
+            line-height: 24px;
+            color: #fff;
+            background: var(--mgi-brown);
+            border: 1px solid rgba(0, 0, 0, 0.35);
+            border-radius: 3px;
+            i { margin: 0; color: #fff; }
+            &:hover { box-shadow: 0 0 6px #724a32; }
+        }
+    }
+
+    // Trait levels I / II / III
+    .mgi-levels {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+    .mgi-level {
+        margin: 0;
+        padding: 4px 8px 6px;
+        border-left: 3px solid rgba(114, 74, 50, 0.25);
+        border-radius: 0 3px 3px 0;
+        background: rgba(255, 250, 240, 0.25);
+        &.is-current {
+            border-left-color: var(--mgi-brown);
+            background: fade(#efd693, 45%);
+        }
+        .mgi-level-head {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+        .mgi-level-num {
+            flex: none;
+            min-width: 1.8em;
+            font: 700 15px var(--mgi-font-heading);
+            color: var(--mgi-brown-dark);
+        }
+        .mgi-level-rule {
+            font: italic 12.5px/1.35 var(--mgi-font-body);
+            color: rgba(0, 0, 0, 0.65);
+        }
+        .mgi-prose, prose-mirror { margin-top: 4px; }
+    }
+
+    // Help list (tag pills = ME floating tag look)
+    .mgi-tags {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 5px 6px;
+    }
+    .mgi-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 1px 8px;
+        font: italic 600 13px/1.5 var(--mgi-font-body);
+        color: var(--mgi-ink);
+        background: var(--mgi-tag);
+        border: 1px solid rgba(100, 55, 8, 0.65);
+        border-radius: 3px 2px 3px 2px;
+        box-shadow: inset 0 1px 2px rgba(255, 205, 90, 0.12), 0 1px 3px rgba(0, 0, 0, 0.2);
+        .mgi-tag-remove {
+            font-size: 11px;
+            color: rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+            &:hover { color: var(--mgi-red); text-shadow: none; }
+        }
+    }
+    .mgi-tag-new {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        input[type="text"] { width: 170px; height: 24px; }
+    }
+    button.mgi-icon-button {
+        display: inline-grid;
+        place-items: center;
+        flex: none;
+        width: 24px;
+        height: 24px;
+        min-height: 0;
+        margin: 0;
+        padding: 0;
+        line-height: 1;
+        color: #fff;
+        background: var(--mgi-brown);
+        border: 1px solid rgba(0, 0, 0, 0.35);
+        border-radius: 3px;
+        i { margin: 0; color: #fff; }
+        &:hover:not(:disabled) {
+            color: #fff;
+            border-color: rgba(0, 0, 0, 0.35);
+            box-shadow: 0 0 6px #724a32;
+        }
+    }
+}

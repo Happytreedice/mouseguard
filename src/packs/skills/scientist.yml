@@ -1,12 +1,31 @@
 _id: Ax8jAK09ZEtExq05
-name: Scientist
+name: Учёный
 type: skill
-img: icons/svg/item-bag.svg
+img: icons/tools/laboratory/alembic-glass-ball-blue.webp
 system:
-  description: MOUSEGUARD.SkillDescription
   rank: 0
-  pass: 0
-  fail: 0
+  learning: 0
+  beginnersLuck: will
+  specialty: false
+  advancement:
+    passed: 0
+    failed: 0
+  description: |-
+    <p>Мыши с таким навыком много знают. Этот навык объединяет знания в области астрономии, биологии, химии, физики и геологии.</p>
+    <p><strong>Помощь:</strong> При проверке этого навыка можно помочь, использовав подходящее знание.</p>
+    <p><strong>Связанные правила:</strong></p>
+    <ul>
+    <li>«Учёный» — самый частый помощник: помогает навыкам «Знаток зверей», «Корабел», «Лекарь», «Мельник», «Наблюдатель за погодой», «Оружейник», «Пекарь», «Пивовар», «Плотник», «Пчеловод», «Стекольщик»; даёт припасы (лекарствами) «Лекарю» и (красками) «Ткачу».</li>
+    </ul>
+    <p><em>Книга правил, с. 282.</em></p>
+  supplies: <p>При проведении экспериментов персонажу с навыком «Учёный» может помочь припасами (записями из архива) другой персонаж с навыком «Архивариус» или (эссенциями и экстрактами) «Насекомовод». Для создания лекарственных препаратов в качестве припасов мышь с навыком «Учёный» может использовать целебный мох из Моховяза и хвойный сок из Подъельника.</p>
+  factors: |-
+    <ul>
+    <li><strong>Область исследования:</strong> геология или минералы; химия; физика или инженерное дело; биология; астрономия.</li>
+    <li><strong>Нужный эффект:</strong> вред; польза.</li>
+    </ul>
+  help:
+    - Разнорабочий
 effects: []
 folder: null
 sort: 0
@@ -15,8 +34,3 @@ ownership:
 flags:
   mouseguard:
     originalName: Scientist
-    description:
-      description: MOUSEGUARD.Skill.scientist.Description
-      supplies: MOUSEGUARD.Skill.scientist.Supplies
-      factors: MOUSEGUARD.Skill.scientist.Factors
-      help: MOUSEGUARD.Skill.scientist.Help

@@ -1,0 +1,115 @@
+{{!-- Trait body: level / used for / used against cards, origin, description, the three levels, using it against yourself. --}}
+<section class="mgi-body mgi-body--trait">
+    <div class="mgi-cards">
+        {{!-- Level --}}
+        <article class="mgi-card">
+            <h2 class="mgi-ribbon mgi-ribbon--slate">{{localize "MOUSEGUARD.ItemSheet.Level"}}</h2>
+            <div class="mgi-card-body">
+                {{#if editMode}}
+                <label class="mgi-field">
+                    <span>{{localize "MOUSEGUARD.ItemSheet.Level"}}</span>
+                    <select name="system.level" data-dtype="Number">
+                        {{#each trait.levelOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+                    </select>
+                </label>
+                <label class="mgi-field mgi-field--stack">
+                    <span>{{localize "MOUSEGUARD.ItemSheet.Origin"}}</span>
+                    <input type="text" name="system.origin" value="{{system.origin}}" placeholder="{{localize 'MOUSEGUARD.ItemSheet.OriginPlaceholder'}}">
+                </label>
+                {{else}}
+                <div class="mgi-track mgi-track--scale">
+                    <span class="mgi-scale" aria-label="{{localize 'MOUSEGUARD.ItemSheet.Level'}}">{{#each trait.scale}}<i class="mgi-pip{{#if on}} on{{/if}}" inert></i>{{/each}}</span>
+                    <span class="mgi-track-count">{{trait.roman}}</span>
+                </div>
+                <p class="mgi-hint">{{localize "MOUSEGUARD.ItemSheet.LevelHint"}}</p>
+                {{#if trait.origin}}
+                <p class="mgi-line"><span class="mgi-line-label">{{localize "MOUSEGUARD.ItemSheet.Origin"}}</span> {{trait.origin}}</p>
+                {{/if}}
+                {{/if}}
+            </div>
+        </article>
+
+        {{!-- Used for (beneficial uses this session) --}}
+        <article class="mgi-card">
+            <h2 class="mgi-ribbon mgi-ribbon--slate">{{localize "MOUSEGUARD.ItemSheet.UsedFor"}}</h2>
+            <div class="mgi-card-body">
+                {{#if editMode}}
+                <label class="mgi-field">
+                    <span>{{localize "MOUSEGUARD.ItemSheet.UsedForShort"}}</span>
+                    <input type="number" name="system.usedFor" value="{{system.usedFor}}" min="0" max="2" step="1">
+                </label>
+                {{else}}
+                {{#if trait.usedFor.unlimited}}
+                <div class="mgi-stat is-small">
+                    <span class="mgi-stat-value">+1{{localize "MOUSEGUARD.ItemSheet.SuccessShort"}}</span>
+                    <span class="mgi-stat-label">{{localize "MOUSEGUARD.ItemSheet.Unlimited"}}</span>
+                </div>
+                {{else}}
+                <div class="mgi-track">
+                    <span class="mgi-track-label">{{localize "MOUSEGUARD.ItemSheet.UsedForShort"}}</span>
+                    {{> "systems/mouseguard/templates/item/parts/pips.hbs" pips=trait.usedFor.pips path="system.usedFor" min=0 max=2 interactive=interactive label=(localize "MOUSEGUARD.ItemSheet.UsedFor")}}
+                    <span class="mgi-track-count">{{trait.usedFor.value}}/{{trait.usedFor.max}}</span>
+                </div>
+                {{/if}}
+                {{/if}}
+                <p class="mgi-hint">{{trait.usedFor.hint}}</p>
+            </div>
+        </article>
+
+        {{!-- Used against (checks earned) --}}
+        <article class="mgi-card">
+            <h2 class="mgi-ribbon mgi-ribbon--slate">{{localize "MOUSEGUARD.ItemSheet.UsedAgainst"}}</h2>
+            <div class="mgi-card-body">
+                {{#if editMode}}
+                <label class="mgi-field">
+                    <span>{{localize "MOUSEGUARD.ItemSheet.UsedAgainstShort"}}</span>
+                    <input type="number" name="system.usedAgainst" value="{{system.usedAgainst}}" min="0" max="99" step="1">
+                </label>
+                <label class="mgi-field">
+                    <span>{{localize "MOUSEGUARD.ItemSheet.ChecksEarned"}}</span>
+                    <input type="number" name="system.checksEarned" value="{{system.checksEarned}}" min="0" max="99" step="1">
+                </label>
+                {{else}}
+                <div class="mgi-counters">
+                    <span class="mgi-counter{{#if interactive}} interactive{{/if}}"
+                          {{#if interactive}}data-action="adjust" data-path="system.usedAgainst" data-min="0" data-max="99" data-tooltip="MOUSEGUARD.ItemSheet.PipsHint"{{/if}}>
+                        <span class="mgi-counter-value">{{trait.usedAgainst}}</span>
+                        <span class="mgi-counter-label">{{localize "MOUSEGUARD.ItemSheet.UsedAgainstShort"}}</span>
+                    </span>
+                    <span class="mgi-counter{{#if interactive}} interactive{{/if}}"
+                          {{#if interactive}}data-action="adjust" data-path="system.checksEarned" data-min="0" data-max="99" data-tooltip="MOUSEGUARD.ItemSheet.PipsHint"{{/if}}>
+                        <span class="mgi-counter-value">{{trait.checksEarned}}</span>
+                        <span class="mgi-counter-label">{{localize "MOUSEGUARD.ItemSheet.ChecksEarned"}}</span>
+                    </span>
+                </div>
+                {{/if}}
+                <p class="mgi-hint">{{localize "MOUSEGUARD.ItemSheet.SessionHint"}}</p>
+            </div>
+        </article>
+    </div>
+
+    {{> "systems/mouseguard/templates/item/parts/rich-section.hbs" label=(localize "MOUSEGUARD.ItemSheet.Description") field="system.description" value=raw.description html=enriched.description hint="" hideEmpty=false cssClass="mgi-section--description"}}
+
+    {{!-- The three levels: generic rule (rulebook p. 286) + this trait's text; the current level is highlighted. --}}
+    <section class="mgi-section mgi-section--levels">
+        <h3 class="mgi-heading mgi-with-line">{{localize "MOUSEGUARD.ItemSheet.Levels"}}</h3>
+        <ol class="mgi-levels">
+            {{#each trait.levels as |lvl|}}
+            <li class="mgi-level{{#if lvl.current}} is-current{{/if}}">
+                <div class="mgi-level-head">
+                    <span class="mgi-level-num">{{lvl.roman}}</span>
+                    <span class="mgi-level-rule">{{lvl.rule}}</span>
+                </div>
+                {{#if @root.editMode}}
+                <prose-mirror class="mgi-editor content-sized" name="{{lvl.field}}" value="{{lvl.raw}}" toggled
+                              data-document-uuid="{{@root.item.uuid}}">{{{lvl.html}}}</prose-mirror>
+                {{else}}
+                {{#if lvl.html}}<div class="mgi-prose">{{{lvl.html}}}</div>{{/if}}
+                {{/if}}
+            </li>
+            {{/each}}
+        </ol>
+    </section>
+
+    {{> "systems/mouseguard/templates/item/parts/rich-section.hbs" label=(localize "MOUSEGUARD.ItemSheet.Against") field="system.against" value=raw.against html=enriched.against hint=(localize "MOUSEGUARD.ItemSheet.AgainstRule") hideEmpty=false noEmptyNote=true cssClass="mgi-section--against"}}
+</section>

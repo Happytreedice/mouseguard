@@ -1,256 +1,130 @@
+:root {
+  --mg-ink: #30251b;
+  --mg-paper: #eee1c6;
+  --mg-panel: #f8f1e3;
+  --mg-card: #fffaf0;
+  --mg-border: #b8a27f;
+  --mg-accent: #704227;
+  --mg-muted: #756754;
+  --mg-heading: "Germania One", "Palatino Linotype", serif;
+  --mg-body: "Khula", "Palatino Linotype", serif;
+}
 .mouseguard {
-  /* Sheet Tabs */
-  /* Items List */
-  /* Attributes */
+  color: var(--mg-ink);
+  font-family: var(--mg-body);
 }
 .mouseguard .window-content {
   height: 100%;
-  padding: 5px;
-  overflow-y: hidden;
+  min-height: 0;
+  padding: 10px;
+  overflow: hidden;
+  color: var(--mg-ink);
+  background-color: var(--mg-paper);
+  background-image: linear-gradient(135deg, rgba(255, 250, 240, 0.72), rgba(232, 216, 186, 0.83));
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
-.mouseguard form {
-  height: 100%;
+.mouseguard .mouseguard-sheet {
+  color: var(--mg-ink);
+  font-family: var(--mg-body);
+}
+.mouseguard :where(.window-content) h1,
+.mouseguard :where(.window-content) h2,
+.mouseguard :where(.window-content) h3,
+.mouseguard :where(.window-content) h4,
+.mouseguard :where(.window-content) .sheet-navigation,
+.mouseguard :where(.window-content) .section-heading,
+.mouseguard :where(.window-content) .skill-roll {
+  font-family: var(--mg-heading);
+}
+.mouseguard :where(.window-content) h1,
+.mouseguard :where(.window-content) h2,
+.mouseguard :where(.window-content) h3 {
+  color: var(--mg-accent);
+}
+.mouseguard :where(.window-content) input,
+.mouseguard :where(.window-content) textarea,
+.mouseguard :where(.window-content) select {
+  color: var(--mg-ink);
+  border: 1px solid var(--mg-border);
+  border-radius: 2px;
+  background: rgba(255, 252, 244, 0.88);
+  box-shadow: inset 0 1px 2px rgba(61, 41, 22, 0.08);
+}
+.mouseguard :where(.window-content) input:focus,
+.mouseguard :where(.window-content) textarea:focus,
+.mouseguard :where(.window-content) select:focus {
+  outline: 2px solid rgba(112, 66, 39, 0.28);
+  outline-offset: 1px;
+  box-shadow: none;
+}
+.mouseguard :where(.window-content) button {
+  color: var(--mg-ink);
+  border-color: var(--mg-border);
+  background: var(--mg-panel);
+}
+.mouseguard :where(.window-content) button:hover:not(:disabled) {
+  color: var(--mg-accent);
+  border-color: var(--mg-accent);
+  box-shadow: 0 0 5px rgba(112, 66, 39, 0.22);
 }
 .mouseguard .sheet-header {
-  flex: 0 0 100px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  margin-bottom: 10px;
-}
-.mouseguard .sheet-header .profile-img {
-  flex: 0 0 100px;
-  height: 100px;
-  margin-right: 10px;
-}
-.mouseguard .sheet-header .header-fields {
-  flex: 1;
-  height: 100px;
-}
-.mouseguard .sheet-header h1.charname {
-  height: 50px;
-  padding: 0px;
-  margin: 5px 0;
-  border-bottom: 0;
-}
-.mouseguard .sheet-header h1.charname input {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-}
-.mouseguard .resource {
-  width: 50%;
-  height: 40px;
-  margin-top: 10px;
-  float: left;
-  text-align: center;
-}
-.mouseguard .resource input {
-  width: 100px;
-  height: 28px;
-}
-.mouseguard .tabs {
-  flex: 0 0 40px;
-  border-top: 1px solid #aaa;
-  border-bottom: 1px solid #aaa;
-}
-.mouseguard .tabs .item {
-  line-height: 40px;
-  font-weight: bold;
-}
-.mouseguard .tabs .item.active {
-  text-shadow: none;
-  text-shadow: 0 0 10px var(--color-shadow-primary);
-  border-bottom: 3px solid #58180d;
-}
-.mouseguard .sheet-body {
-  overflow: hidden;
-}
-.mouseguard .sheet-body .tab {
-  height: 100%;
-  overflow-y: auto;
-}
-.mouseguard .editor,
-.mouseguard .editor-content {
-  height: 100%;
-}
-.mouseguard .item-list {
-  list-style: none;
-  margin: 7px 0;
-  padding: 0;
-  overflow-y: auto;
-}
-.mouseguard .item-list .item {
-  min-height: 30px;
-  line-height: 24px;
-  padding: 3px 0;
-  border-bottom: 1px solid #bbb;
-  align-items: stretch;
-}
-.mouseguard .item-list .item img {
-  flex: 0 0 24px;
-  margin-right: 5px;
-}
-.mouseguard .item-list .item-name {
-  margin: 0;
-}
-.mouseguard .item-list .item-controls {
-  flex: 0 0 36px;
-}
-.mouseguard .item-list .item-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
-  align-items: center;
-  flex: 2;
-  justify-content: flex-start;
-}
-.mouseguard .item-list .item-button {
-  line-height: 1;
-  font-size: 11px;
-  flex: none;
-  width: auto;
-}
-.mouseguard .attributes {
-  position: relative;
-}
-.mouseguard .attributes .attribute-control,
-.mouseguard .attributes .group-control {
-  flex: 0 0 20px;
-  text-align: center;
-  line-height: 28px;
-  border: none;
-}
-.mouseguard .attributes .attribute-roll {
-  flex: 0 0 20px;
-  text-align: center;
-  border-bottom: none;
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 14px;
+  min-height: 114px;
+  padding: 8px 12px;
+  border: 1px solid var(--mg-border);
+  border-radius: 4px;
+  background: rgba(248, 241, 227, 0.82);
 }
-.mouseguard .attributes .group-prefix {
-  height: 31px;
-  margin-right: 10px;
-}
-.mouseguard .attributes .button {
-  width: 100%;
-  flex: 1;
-  margin: 0;
-  background: rgba(0, 0, 0, 0.1);
-  border: 2px groove #f0f0e0;
+.mouseguard .profile-img {
+  width: 104px;
+  height: 104px;
+  flex: 0 0 104px;
+  object-fit: cover;
+  border: 2px solid var(--mg-border);
   border-radius: 3px;
-  font-size: 14px;
-  line-height: 28px;
-  display: block;
+  cursor: pointer;
 }
-.mouseguard .attributes .attribute-key {
-  background: transparent;
-  border: none;
+.mouseguard .profile-img:hover {
+  border-color: var(--mg-accent);
 }
-.mouseguard .attributes-header {
-  position: sticky;
-  top: 0;
-  left: 0;
-  align-items: center;
-  padding: 0 5px;
-  margin: 5px 0;
-  background: #cfcdc2;
-  border: 1px solid #aaa;
-  border-radius: 2px;
-  text-align: left;
-  font-weight: bold;
+.mouseguard .sheet-body,
+.mouseguard .tab {
+  min-height: 0;
 }
-.mouseguard .attributes-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.mouseguard .attributes-list li > * {
-  margin: 0 3px;
-  height: 28px;
-  line-height: 24px;
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  border-bottom: 1px solid #aaa;
-}
-.mouseguard .attributes-list .attribute-col label {
-  font-size: 10px;
-  text-align: center;
-  line-height: 1;
-}
-.mouseguard .attributes-list .attribute-col input {
-  font-size: 11px;
-  text-align: center;
-  line-height: 1;
-  height: 50%;
-}
-.mouseguard .attribute input[type="text"]::placeholder,
-.mouseguard .group-header input[type="text"]::placeholder {
-  opacity: 0;
-  transition: opacity 0.25s ease-in-out;
-}
-.mouseguard .attribute input[type="text"]:focus::placeholder,
-.mouseguard .group-header input[type="text"]:focus::placeholder {
-  opacity: 1;
-}
-.mouseguard .group-controls {
-  margin: 5px;
-}
-.mouseguard .groups-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.mouseguard .group {
-  margin: 5px 0 0;
-  padding: 0;
-}
-.mouseguard .group-header {
-  align-items: center;
-  background: rgba(0, 0, 0, 0.05);
-  border: 1px solid #aaa;
-  border-radius: 2px;
-  padding: 2px 5px;
-}
-.mouseguard .group-key,
-.mouseguard .group-label {
-  font-weight: bold;
-  border: none;
-  border-bottom: 1px solid #aaa;
-  background: transparent;
-  border-radius: 0;
-  margin-right: 6px;
-}
-.mouseguard .group-key {
-  opacity: 0.75;
-}
-.mouseguard .group-label {
-  flex: 2;
-}
-.mouseguard .group-dtype {
-  height: 24px;
-  flex: 0 0 116px;
-  margin: 0 5px;
+.mouseguard .item-create,
+.mouseguard .item-controls {
+  color: var(--mg-accent);
 }
 .mouseguard.sheet.actor {
-  min-width: 560px;
-  min-height: 420px;
+  min-width: 600px;
+  min-height: 480px;
 }
 .mouseguard.sheet.item {
-  min-width: 460px;
-  min-height: 400px;
+  min-width: 440px;
+  min-height: 360px;
 }
-.mouse_dice_button {
+.mouseguard.sheet.item .window-content {
+  overflow-y: auto;
+}
+@media (max-width: 640px) {
+  .mouseguard.sheet.actor {
+    min-width: 0;
+  }
+  .mouseguard .sheet-header {
+    align-items: flex-start;
+  }
+}
+.mouse-tray .mouse_dice_button {
   flex: 1 1 0;
 }
-.mouse_roll_button {
+.mouse-tray .mouse_roll_button {
   flex: 2 1 0;
 }
-.dice {
+.mouse-tray .dice {
   min-height: 40px;
 }
 /* Effects Panel ApplicationV2 */
@@ -441,4 +315,2626 @@
   padding: 2px 6px;
   margin: 0 2px;
   border-radius: 3px;
+}
+@font-face {
+  font-family: "MG Caveat";
+  src: url("../assets/fonts/Caveat-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+.mouseguard.sheet.actor.character {
+  --mgs-font-heading: "Palatino Linotype", "Book Antiqua", Palatino, "PT Serif", "Noto Serif", Georgia, "DejaVu Serif", serif;
+  --mgs-font-body: "Palatino Linotype", "Book Antiqua", Palatino, "PT Serif", "Noto Serif", Georgia, "DejaVu Serif", serif;
+  --mgs-font-hand: "MG Caveat", "Segoe Print", "Comic Sans MS", cursive;
+  --mgs-rule: rgba(0, 0, 0, 0.1);
+  min-width: 640px;
+  min-height: 520px;
+  color: #191813;
+  font-family: var(--mgs-font-body);
+  background: #07060b;
+}
+.mouseguard.sheet.actor.character > .window-header {
+  background: #07060b;
+  color: #efe6d6;
+  border-bottom: 1px solid rgba(225, 211, 193, 0.12);
+  font-family: var(--mgs-font-heading);
+}
+.mouseguard.sheet.actor.character > .window-header .window-title {
+  color: #efe6d6;
+}
+.mouseguard.sheet.actor.character > .window-header button.header-control {
+  --button-text-color: #efe6d6;
+  color: #efe6d6;
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+.mouseguard.sheet.actor.character > .window-header button.header-control:hover,
+.mouseguard.sheet.actor.character > .window-header button.header-control:focus-visible {
+  color: #fff;
+  background: none;
+  border: none;
+  text-shadow: 0 0 8px rgba(236, 186, 133, 0.8);
+  box-shadow: none;
+}
+.mouseguard.sheet.actor.character > .window-header .mgs-mode-toggle {
+  flex: none;
+}
+.mouseguard.sheet.actor.character > .window-header .mgs-mode-toggle.fa-lock-open {
+  --button-text-color: #ecba85;
+  color: #ecba85;
+}
+.mouseguard.sheet.actor.character > .window-content {
+  position: relative;
+  display: grid;
+  grid-template-columns: clamp(160px, 27%, 300px) minmax(0, 1fr);
+  grid-template-rows: auto auto minmax(0, 1fr);
+  height: auto;
+  min-height: 0;
+  padding: 0;
+  gap: 0;
+  overflow: hidden;
+  color: #191813;
+  font-family: var(--mgs-font-body);
+  font-size: 14px;
+  background-color: #1f1c15;
+  background-image: url("../assets/sheet/sheet-background.webp");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+.mouseguard.sheet.actor.character > .window-content > [data-application-part="portrait"] {
+  grid-column: 1;
+  grid-row: 1 / -1;
+}
+.mouseguard.sheet.actor.character > .window-content > [data-application-part="header"] {
+  grid-column: 2;
+  grid-row: 1;
+  container: mgs-header / inline-size;
+}
+.mouseguard.sheet.actor.character > .window-content > [data-application-part="tabs"] {
+  grid-column: 2;
+  grid-row: 2;
+}
+.mouseguard.sheet.actor.character > .window-content > .tab {
+  grid-column: 2;
+  grid-row: 3;
+}
+.mouseguard.sheet.actor.character input[type="text"],
+.mouseguard.sheet.actor.character input[type="number"],
+.mouseguard.sheet.actor.character textarea,
+.mouseguard.sheet.actor.character select {
+  color: #191813;
+  font-family: var(--mgs-font-body);
+  background: rgba(255, 250, 240, 0.6);
+  border: 1px solid rgba(114, 74, 50, 0.45);
+  border-radius: 2px;
+  box-shadow: none;
+}
+.mouseguard.sheet.actor.character input[type="text"]:focus,
+.mouseguard.sheet.actor.character input[type="number"]:focus,
+.mouseguard.sheet.actor.character textarea:focus,
+.mouseguard.sheet.actor.character select:focus {
+  outline: 2px solid rgba(114, 74, 50, 0.35);
+  outline-offset: 0;
+  box-shadow: none;
+}
+.mouseguard.sheet.actor.character input[type="number"] {
+  text-align: center;
+}
+.mouseguard.sheet.actor.character textarea {
+  resize: vertical;
+}
+.mouseguard.sheet.actor.character a[role="button"] {
+  cursor: pointer;
+}
+.mouseguard.sheet.actor.character a[role="button"]:focus-visible,
+.mouseguard.sheet.actor.character .mgs-pip:focus-visible {
+  outline: 2px solid rgba(114, 74, 50, 0.55);
+  outline-offset: 1px;
+  border-radius: 2px;
+}
+.mouseguard.sheet.actor.character .mgs-portrait-col {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  isolation: isolate;
+}
+.mouseguard.sheet.actor.character .mgs-portrait-col::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  z-index: 2;
+  background: var(--mgs-cloak, transparent);
+  box-shadow: 1px 0 4px rgba(0, 0, 0, 0.5);
+  opacity: 0.9;
+}
+.mouseguard.sheet.actor.character .mgs-portrait-col::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(ellipse 85% 70% at 50% 32%, transparent 48%, rgba(7, 6, 5, 0.55) 100%), linear-gradient(to bottom, transparent 52%, rgba(16, 13, 10, 0.88) 86%);
+}
+.mouseguard.sheet.actor.character .mgs-portrait-frame {
+  position: absolute;
+  inset: 0;
+}
+.mouseguard.sheet.actor.character .mgs-portrait {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  border: 0;
+  border-radius: 0;
+  object-fit: cover;
+  object-position: 50% 15%;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 94%), linear-gradient(to left, transparent 0, #000 48px);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 94%), linear-gradient(to left, transparent 0, #000 48px);
+  mask-composite: intersect;
+}
+.mouseguard.sheet.actor.character .mgs-portrait.is-icon {
+  object-fit: contain;
+  object-position: 50% 22%;
+  padding: 40px 34px 48%;
+  opacity: 0.5;
+  filter: sepia(0.7) brightness(0.95);
+}
+.mouseguard.sheet.actor.character .mgs-portrait[data-action] {
+  cursor: pointer;
+}
+.mouseguard.sheet.actor.character .mgs-portrait[data-action]:hover {
+  filter: brightness(1.08);
+}
+.mouseguard.sheet.actor.character .mgs-portrait.is-icon[data-action]:hover {
+  opacity: 0.7;
+}
+.mouseguard.sheet.actor.character .mgs-namecard {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 13%;
+  z-index: 3;
+  padding: 0 18px;
+  text-align: center;
+  color: #fcf5df;
+}
+.mouseguard.sheet.actor.character .mgs-name {
+  margin: 0 0 6px;
+  padding: 0;
+  border: 0;
+  font-family: var(--mgs-font-heading);
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.05;
+  color: #fcf5df;
+  overflow-wrap: anywhere;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.85), 0 0 2px rgba(0, 0, 0, 0.9);
+}
+.mouseguard.sheet.actor.character .mgs-subtitle,
+.mouseguard.sheet.actor.character .mgs-cloak,
+.mouseguard.sheet.actor.character .mgs-player {
+  font-family: var(--mgs-font-body);
+  font-size: 13px;
+  line-height: 1.3;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #fcf5df;
+  opacity: 0.9;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+  overflow-wrap: anywhere;
+}
+.mouseguard.sheet.actor.character .mgs-cloak {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  font-size: 11px;
+}
+.mouseguard.sheet.actor.character .mgs-cloak .mgs-cloak-swatch {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  border-radius: 2px 2px 7px 7px;
+  background: var(--mgs-cloak, transparent);
+  border: 1px solid rgba(252, 245, 223, 0.65);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+.mouseguard.sheet.actor.character .mgs-cloak .mgs-cloak-swatch.is-unknown {
+  background: repeating-linear-gradient(45deg, rgba(252, 245, 223, 0.35) 0 2px, transparent 2px 4px);
+}
+.mouseguard.sheet.actor.character .mgs-player {
+  margin-top: 4px;
+  font-size: 11px;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  opacity: 0.75;
+}
+.mouseguard.sheet.actor.character .mgs-portrait-col.is-editing .mgs-namecard {
+  bottom: 10px;
+  padding: 0 10px;
+}
+.mouseguard.sheet.actor.character .mgs-identity-form {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 10px;
+  text-align: left;
+  background: rgba(7, 6, 5, 0.62);
+  border: 1px solid rgba(252, 245, 223, 0.18);
+  border-radius: 3px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+}
+.mouseguard.sheet.actor.character .mgs-identity-form input[type="text"],
+.mouseguard.sheet.actor.character .mgs-identity-form input[type="number"] {
+  width: 100%;
+  height: 24px;
+  color: #fcf5df;
+  background: rgba(0, 0, 0, 0.4);
+  border-color: rgba(252, 245, 223, 0.3);
+}
+.mouseguard.sheet.actor.character .mgs-identity-form input[type="text"]:focus,
+.mouseguard.sheet.actor.character .mgs-identity-form input[type="number"]:focus {
+  outline-color: rgba(236, 186, 133, 0.6);
+}
+.mouseguard.sheet.actor.character .mgs-identity-form .mgs-subtitle {
+  text-align: center;
+}
+.mouseguard.sheet.actor.character .mgs-identity-form .mgs-name-input {
+  height: 34px;
+  font-family: var(--mgs-font-heading);
+  font-size: 22px;
+  font-weight: 700;
+  text-align: center;
+}
+.mouseguard.sheet.actor.character .mgs-ident-hint {
+  font-size: 10px;
+  line-height: 1.3;
+  text-align: center;
+  color: rgba(252, 245, 223, 0.6);
+}
+.mouseguard.sheet.actor.character .mgs-header {
+  padding: 10px 14px 8px 12px;
+}
+.mouseguard.sheet.actor.character .mgs-header-grid {
+  display: grid;
+  grid-template-columns: 164px minmax(0, 1fr) minmax(190px, 0.72fr);
+  align-items: stretch;
+  gap: 8px 10px;
+}
+.mouseguard.sheet.actor.character .mgs-actions {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+}
+.mouseguard.sheet.actor.character .mgs-roll-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  height: 30px;
+  margin: 0;
+  padding: 0 8px;
+  font-family: var(--mgs-font-body);
+  font-size: 14px;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #fff;
+  background: #724a32;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  border-radius: 3px;
+  text-shadow: none;
+  box-shadow: none;
+}
+.mouseguard.sheet.actor.character .mgs-roll-button i {
+  color: #fff;
+  margin: 0;
+}
+.mouseguard.sheet.actor.character .mgs-roll-button:hover:not(:disabled),
+.mouseguard.sheet.actor.character .mgs-roll-button:focus-visible {
+  color: #fff;
+  background: color-mix(in srgb, #724a32 82%, white);
+  border-color: rgba(0, 0, 0, 0.35);
+  box-shadow: 0 0 6px #724a32;
+}
+.mouseguard.sheet.actor.character .mgs-roll-button:disabled {
+  opacity: 0.6;
+}
+.mouseguard.sheet.actor.character .mgs-roll-button.active {
+  background: color-mix(in srgb, #724a32 70%, #c9822f);
+  box-shadow: inset 0 0 0 1px rgba(255, 220, 160, 0.55), 0 0 6px rgba(236, 186, 133, 0.55);
+}
+.mouseguard.sheet.actor.character .mgs-note {
+  position: relative;
+  min-width: 0;
+  padding: 8px 14px;
+  color: #191813;
+  font-family: var(--mgs-font-body);
+  border-style: solid;
+  border-width: 5px;
+  border-image: url("../assets/sheet/paper-note-300.webp") 5 5 5 5 fill stretch stretch;
+}
+.mouseguard.sheet.actor.character .mgs-subhead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 6px;
+  padding: 0;
+  border: 0;
+  font-family: var(--mgs-font-heading);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #724a32;
+  white-space: nowrap;
+}
+.mouseguard.sheet.actor.character .mgs-subhead::before,
+.mouseguard.sheet.actor.character .mgs-subhead::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+}
+.mouseguard.sheet.actor.character .mgs-subhead::before {
+  background: linear-gradient(to right, transparent, rgba(107, 91, 77, 0.65));
+}
+.mouseguard.sheet.actor.character .mgs-subhead::after {
+  background: linear-gradient(to left, transparent, rgba(107, 91, 77, 0.65));
+}
+.mouseguard.sheet.actor.character .mgs-chips {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+  gap: 5px 6px;
+}
+.mouseguard.sheet.actor.character .mgs-chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+  min-height: 22px;
+  padding: 1px 4px;
+  font-size: 12px;
+  line-height: 1.1;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(100, 55, 8, 0.3);
+  border-radius: 3px 2px 3px 2px;
+  user-select: none;
+}
+.mouseguard.sheet.actor.character .mgs-chip .mgs-chip-icon {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  border: 0;
+  filter: brightness(0);
+  opacity: 0.45;
+}
+.mouseguard.sheet.actor.character .mgs-chip:hover {
+  color: rgba(0, 0, 0, 0.75);
+}
+.mouseguard.sheet.actor.character .mgs-chip.active {
+  color: #2b2016;
+  background: #ecba85;
+  border-color: rgba(100, 55, 8, 0.65);
+  box-shadow: inset 0 1px 2px rgba(255, 205, 90, 0.12), 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+.mouseguard.sheet.actor.character .mgs-chip.active .mgs-chip-icon {
+  opacity: 0.85;
+}
+.mouseguard.sheet.actor.character .mgs-chip.mgs-chip--healthy {
+  cursor: default;
+}
+.mouseguard.sheet.actor.character .mgs-chip.mgs-chip--healthy i {
+  font-size: 11px;
+}
+.mouseguard.sheet.actor.character .mgs-chip.mgs-chip--healthy.active {
+  background: #bccdaf;
+  border-color: rgba(20, 60, 18, 0.55);
+}
+.mouseguard.sheet.actor.character .mgs-reward-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  text-align: center;
+}
+.mouseguard.sheet.actor.character .mgs-reward {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+}
+.mouseguard.sheet.actor.character .mgs-reward-value,
+.mouseguard.sheet.actor.character .mgs-reward-input {
+  display: block;
+  width: 46px;
+  height: 30px;
+  font-family: var(--mgs-font-heading);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 30px;
+  text-align: center;
+  color: #4f3322;
+}
+.mouseguard.sheet.actor.character .mgs-reward-value {
+  border-radius: 50%;
+  user-select: none;
+}
+.mouseguard.sheet.actor.character .mgs-reward-value:hover {
+  color: #724a32;
+  text-shadow: 0 0 6px rgba(236, 186, 133, 0.9);
+}
+.mouseguard.sheet.actor.character .mgs-reward-input {
+  padding: 0;
+  font-size: 18px;
+}
+.mouseguard.sheet.actor.character .mgs-reward-label {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #724a32;
+}
+.mouseguard.sheet.actor.character .mgs-dispo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 4px;
+  padding-top: 3px;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  font-size: 12px;
+  color: #4f3322;
+}
+.mouseguard.sheet.actor.character .mgs-dispo .mgs-dispo-label {
+  margin-right: 4px;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #724a32;
+}
+.mouseguard.sheet.actor.character .mgs-dispo .mgs-dispo-value {
+  font-weight: 700;
+  font-size: 14px;
+}
+.mouseguard.sheet.actor.character .mgs-dispo .mgs-dispo-value:hover {
+  text-shadow: 0 0 6px rgba(236, 186, 133, 0.9);
+}
+.mouseguard.sheet.actor.character .mgs-dispo input[type="number"] {
+  width: 36px;
+  height: 20px;
+  padding: 0;
+}
+.mouseguard.sheet.actor.character nav.mgs-tabs {
+  margin: 0 14px 0 12px;
+  gap: 0;
+  line-height: 2.2;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-top: 1px solid rgba(225, 211, 193, 0.28);
+  border-bottom: 1px solid rgba(225, 211, 193, 0.28);
+}
+.mouseguard.sheet.actor.character nav.mgs-tabs [data-tab] {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-family: var(--mgs-font-heading);
+  font-size: 15px;
+  font-weight: 700;
+  color: #e1d3c1;
+  text-shadow: none;
+}
+.mouseguard.sheet.actor.character nav.mgs-tabs [data-tab]:hover {
+  color: #fff;
+  text-shadow: 0 0 10px rgba(236, 186, 133, 0.6);
+}
+.mouseguard.sheet.actor.character nav.mgs-tabs [data-tab].active {
+  color: #fff;
+  text-shadow: 0 0 10px rgba(236, 186, 133, 0.85);
+}
+.mouseguard.sheet.actor.character .mgs-tab-body {
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 8px 14px 14px 12px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(114, 74, 50, 0.9) transparent;
+}
+.mouseguard.sheet.actor.character .mgs-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(176px, 1fr));
+  gap: 4px;
+  align-items: stretch;
+}
+.mouseguard.sheet.actor.character .mgs-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 404px;
+  padding: 0 0 8px;
+  color: #191813;
+  border-style: solid;
+  border-width: 10px;
+  border-image: url("../assets/sheet/card-parchment.webp") 10 10 10 10 fill stretch stretch;
+}
+.mouseguard.sheet.actor.character .mgs-ribbon {
+  position: relative;
+  flex: none;
+  height: 30px;
+  margin: -7px -8px 0 -8px;
+  padding: 2px 26px 0;
+  border: 0;
+  font-family: var(--mgs-font-heading);
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1.5em;
+  letter-spacing: 0.04em;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #fff;
+  -webkit-font-smoothing: antialiased;
+  background-repeat: no-repeat;
+  background-size: 100% 20px;
+}
+.mouseguard.sheet.actor.character .mgs-ribbon--green {
+  background-image: url("../assets/sheet/header-green.webp");
+}
+.mouseguard.sheet.actor.character .mgs-ribbon--rust {
+  background-image: url("../assets/sheet/header-rust.webp");
+}
+.mouseguard.sheet.actor.character .mgs-ribbon--slate {
+  background-image: url("../assets/sheet/header-slate.webp");
+}
+.mouseguard.sheet.actor.character .mgs-ribbon--orange {
+  background-image: url("../assets/sheet/header-orange.webp");
+}
+.mouseguard.sheet.actor.character .mgs-ribbon--black {
+  background-image: url("../assets/sheet/header-black.webp");
+}
+.mouseguard.sheet.actor.character .mgs-ribbon .mgs-ribbon-icon {
+  position: absolute;
+  top: 4px;
+  right: 7px;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.85);
+}
+.mouseguard.sheet.actor.character .mgs-ribbon .mgs-ribbon-tools {
+  position: absolute;
+  top: 3px;
+  right: 6px;
+  display: flex;
+  gap: 6px;
+}
+.mouseguard.sheet.actor.character .mgs-ribbon .mgs-ribbon-btn {
+  color: #fff;
+  font-size: 10px;
+  line-height: 14px;
+}
+.mouseguard.sheet.actor.character .mgs-ribbon .mgs-ribbon-btn:hover {
+  color: #efd693;
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
+}
+.mouseguard.sheet.actor.character .mgs-lines {
+  flex: 1;
+  margin: 2px 0 0;
+  padding: 0 2px;
+  list-style: none;
+}
+.mouseguard.sheet.actor.character .mgs-line {
+  margin: 0 3px;
+  padding: 4px 0 3px;
+  list-style: none;
+  border-bottom: 1.5px solid var(--mgs-rule);
+  color: #000;
+}
+.mouseguard.sheet.actor.character .mgs-line:last-child {
+  border-bottom-color: transparent;
+}
+.mouseguard.sheet.actor.character .mgs-line.draggable {
+  cursor: grab;
+}
+.mouseguard.sheet.actor.character .mgs-line-main {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 22px;
+  padding: 0 25px;
+}
+.mouseguard.sheet.actor.character .mgs-line-name {
+  position: relative;
+  flex: 0 1 auto;
+  min-width: 0;
+  margin: 0 auto;
+  font-family: var(--mgs-font-body);
+  font-size: 14.5px;
+  font-style: italic;
+  line-height: 1.2;
+  text-align: center;
+  color: #000;
+  overflow-wrap: break-word;
+}
+.mouseguard.sheet.actor.character .mgs-line-name:hover {
+  color: #724a32;
+  text-shadow: 0 0 6px rgba(236, 186, 133, 0.9);
+}
+.mouseguard.sheet.actor.character .mgs-line--ability .mgs-line-name,
+.mouseguard.sheet.actor.character .mgs-line--skill .mgs-line-name {
+  cursor: pointer;
+}
+.mouseguard.sheet.actor.character .mgs-rank {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 4px;
+  border-radius: 11px;
+  font-family: var(--mgs-font-heading);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.92);
+  background: rgba(0, 0, 0, 0.72);
+  border: 1.5px solid rgba(0, 0, 0, 0.5);
+}
+.mouseguard.sheet.actor.character .mgs-rank small {
+  font-size: 9px;
+  font-weight: 400;
+  opacity: 0.8;
+}
+.mouseguard.sheet.actor.character .mgs-rank--roman {
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  background: rgba(79, 51, 34, 0.85);
+}
+.mouseguard.sheet.actor.character .mgs-line.is-unlearned .mgs-line-name {
+  color: rgba(0, 0, 0, 0.5);
+}
+.mouseguard.sheet.actor.character .mgs-line.is-unlearned .mgs-rank {
+  color: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.15);
+}
+.mouseguard.sheet.actor.character .mgs-line--ability.is-taxed .mgs-rank {
+  background: rgba(116, 42, 43, 0.85);
+}
+.mouseguard.sheet.actor.character .mgs-line.is-specialty .mgs-line-name::before {
+  content: "";
+  position: absolute;
+  inset: -7px -10px;
+  z-index: 1;
+  pointer-events: none;
+  background-image: url("../assets/sheet/circle-selection.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+}
+.mouseguard.sheet.actor.character .mgs-specialty-mark {
+  position: absolute;
+  right: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 10px;
+  color: #b8862f;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+}
+.mouseguard.sheet.actor.character .mgs-line.is-ready .mgs-line-name {
+  color: #3a2414;
+  text-shadow: 0 0 5px rgba(232, 170, 40, 0.65), 0 0 12px rgba(232, 170, 40, 0.5);
+}
+.mouseguard.sheet.actor.character .mgs-line.is-spent .mgs-line-name {
+  color: rgba(0, 0, 0, 0.6);
+}
+.mouseguard.sheet.actor.character .mgs-dev {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 2px 10px;
+  margin-top: 2px;
+  min-height: 12px;
+}
+.mouseguard.sheet.actor.character .mgs-track {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  user-select: none;
+}
+.mouseguard.sheet.actor.character .mgs-track-label {
+  margin-right: 3px;
+  font-family: var(--mgs-font-heading);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #724a32;
+}
+.mouseguard.sheet.actor.character .mgs-pip {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #f6eeea;
+  box-shadow: inset 0 0 0 1px rgba(114, 74, 50, 0.45);
+  transition: transform 0.1s ease, background-color 0.15s ease;
+}
+.mouseguard.sheet.actor.character .mgs-pip.on {
+  background: #724a32;
+  box-shadow: none;
+}
+.mouseguard.sheet.actor.character .mgs-pip:hover {
+  transform: scale(1.3);
+}
+.mouseguard.sheet.actor.character .mgs-track.is-full .mgs-track-label {
+  color: #2f6b34;
+}
+.mouseguard.sheet.actor.character .mgs-track.is-full .mgs-pip.on {
+  background: #3f6b3a;
+}
+.mouseguard.sheet.actor.character .mgs-track--learning .mgs-pip.on {
+  background: #5c5c92;
+}
+.mouseguard.sheet.actor.character .mgs-badge {
+  padding: 0 4px;
+  font-family: var(--mgs-font-heading);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  background: #724a32;
+  border-radius: 2px;
+}
+.mouseguard.sheet.actor.character .mgs-against {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(114, 74, 50, 0.75);
+  user-select: none;
+}
+.mouseguard.sheet.actor.character .mgs-against i {
+  font-size: 9px;
+}
+.mouseguard.sheet.actor.character .mgs-against:hover {
+  color: #724a32;
+}
+.mouseguard.sheet.actor.character .mgs-against.on {
+  color: #8f4024;
+  text-shadow: 0 0 5px rgba(220, 107, 0, 0.5), 0 0 10px rgba(220, 107, 0, 0.4);
+}
+.mouseguard.sheet.actor.character .mgs-wise-marks {
+  gap: 3px;
+}
+.mouseguard.sheet.actor.character .mgs-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 16px;
+  padding: 0 2px;
+  font-family: var(--mgs-font-heading);
+  font-size: 9px;
+  font-weight: 700;
+  color: rgba(114, 74, 50, 0.8);
+  background: rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(114, 74, 50, 0.45);
+  border-radius: 2px;
+  user-select: none;
+}
+.mouseguard.sheet.actor.character .mgs-mark:hover {
+  border-color: #724a32;
+}
+.mouseguard.sheet.actor.character .mgs-mark.on {
+  color: #fff;
+  background: #724a32;
+  border-color: #724a32;
+}
+.mouseguard.sheet.actor.character .mgs-line--wise.is-ready .mgs-mark.on {
+  background: #3f6b3a;
+  border-color: #3f6b3a;
+}
+.mouseguard.sheet.actor.character .mgs-empty {
+  margin: 10px 6px;
+  list-style: none;
+  font-size: 13px;
+  font-style: italic;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.5);
+}
+.mouseguard.sheet.actor.character .is-editing .mgs-line-main {
+  justify-content: flex-start;
+  padding: 0;
+}
+.mouseguard.sheet.actor.character .is-editing .mgs-line-name {
+  margin: 0 auto 0 2px;
+  text-align: left;
+}
+.mouseguard.sheet.actor.character .is-editing .mgs-dev {
+  position: relative;
+  min-height: 16px;
+  padding: 0 36px 0 0;
+}
+.mouseguard.sheet.actor.character .is-editing .mgs-dev > .mgs-line-tools {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0;
+}
+.mouseguard.sheet.actor.character .mgs-num-inputs {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  flex: none;
+}
+.mouseguard.sheet.actor.character .mgs-num-inputs input[type="number"] {
+  width: 30px;
+  height: 20px;
+  padding: 0;
+  font-size: 12px;
+}
+.mouseguard.sheet.actor.character .mgs-num-inputs .mgs-num-sep {
+  font-size: 11px;
+  color: #724a32;
+}
+.mouseguard.sheet.actor.character .mgs-line-tools {
+  display: inline-flex;
+  gap: 6px;
+  flex: none;
+  margin-left: 4px;
+}
+.mouseguard.sheet.actor.character .mgs-tool {
+  font-size: 11px;
+  color: rgba(114, 74, 50, 0.7);
+}
+.mouseguard.sheet.actor.character .mgs-tool:hover {
+  color: #724a32;
+  text-shadow: 0 0 4px rgba(236, 186, 133, 0.9);
+}
+.mouseguard.sheet.actor.character .mgs-star {
+  color: rgba(114, 74, 50, 0.35);
+}
+.mouseguard.sheet.actor.character .mgs-star.on {
+  color: #b8862f;
+}
+.mouseguard.sheet.actor.character .mgs-quests {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 4px;
+  margin-top: 6px;
+}
+.mouseguard.sheet.actor.character .mgs-quest {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 0 2px 2px;
+  border-style: solid;
+  border-width: 10px;
+  border-image: url("../assets/sheet/card-parchment.webp") 10 10 10 10 fill stretch stretch;
+}
+.mouseguard.sheet.actor.character .mgs-quest textarea {
+  width: 100%;
+  min-height: 54px;
+  margin: 2px 0;
+  font-family: var(--mgs-font-hand);
+  font-size: 18px;
+  line-height: 1.15;
+}
+.mouseguard.sheet.actor.character .mgs-quest-title {
+  margin: 0 2px 3px;
+  padding: 2px;
+  border: 0;
+  font-family: var(--mgs-font-heading);
+  font-size: 0.8rem;
+  font-weight: 800;
+  line-height: 1.3;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: #724a32;
+  background-color: rgba(114, 74, 50, 0.2);
+}
+.mouseguard.sheet.actor.character .mgs-hand {
+  margin: 0;
+  padding: 2px 10px;
+  font-family: var(--mgs-font-hand);
+  font-size: 20px;
+  line-height: 1.15;
+  text-align: center;
+  color: #4f3322;
+  overflow-wrap: anywhere;
+  -webkit-font-smoothing: antialiased;
+}
+.mouseguard.sheet.actor.character .mgs-hand.is-empty {
+  color: rgba(79, 51, 34, 0.45);
+}
+.mouseguard.sheet.actor.character .mgs-quest-hint {
+  margin: auto 0 0;
+  padding-top: 2px;
+  overflow: hidden;
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  text-align: center;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: rgba(114, 74, 50, 0.8);
+}
+.mouseguard.sheet.actor.character .mgs-paper {
+  min-width: 0;
+  padding: 6px 12px 14px;
+  font-family: var(--mgs-font-body);
+  font-size: 14px;
+  color: #4e432d;
+  border-style: solid;
+  border-width: 10px;
+  border-image: url("../assets/sheet/paper-dialog.webp") 10 10 10 10 fill stretch stretch;
+}
+.mouseguard.sheet.actor.character .mgs-paper h1,
+.mouseguard.sheet.actor.character .mgs-paper h2,
+.mouseguard.sheet.actor.character .mgs-paper h3,
+.mouseguard.sheet.actor.character .mgs-paper h4,
+.mouseguard.sheet.actor.character .mgs-paper h5,
+.mouseguard.sheet.actor.character .mgs-paper h6 {
+  font-family: var(--mgs-font-heading);
+  color: #742a2b;
+  border: 0;
+}
+.mouseguard.sheet.actor.character .mgs-with-line {
+  display: flex;
+  align-items: center;
+  margin: 2px 0 8px;
+  font-size: 15px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+.mouseguard.sheet.actor.character .mgs-with-line::after {
+  content: "";
+  display: inline-block;
+  flex: none;
+  width: 105px;
+  height: 6px;
+  margin-left: 10px;
+  background-image: url("../assets/sheet/header-backline.webp");
+  background-repeat: no-repeat;
+}
+.mouseguard.sheet.actor.character .mgs-bio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 6px;
+  align-items: start;
+}
+.mouseguard.sheet.actor.character .mgs-detail-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 3px 16px;
+  margin: 0;
+}
+.mouseguard.sheet.actor.character .mgs-detail {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  min-height: 26px;
+  border-bottom: 1px solid var(--mgs-rule);
+}
+.mouseguard.sheet.actor.character .mgs-detail dt {
+  flex: 0 0 42%;
+  min-width: 0;
+  margin: 0;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #724a32;
+}
+.mouseguard.sheet.actor.character .mgs-detail dt label {
+  cursor: inherit;
+}
+.mouseguard.sheet.actor.character .mgs-detail dd {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+}
+.mouseguard.sheet.actor.character .mgs-detail dd input {
+  width: 100%;
+  height: 22px;
+}
+.mouseguard.sheet.actor.character .mgs-detail-value {
+  display: block;
+  font-style: italic;
+  color: #191813;
+  overflow-wrap: anywhere;
+}
+.mouseguard.sheet.actor.character .mgs-detail-value.is-empty {
+  color: rgba(0, 0, 0, 0.35);
+}
+.mouseguard.sheet.actor.character .mgs-card--contacts {
+  min-height: 0;
+  height: 100%;
+}
+.mouseguard.sheet.actor.character .mgs-contact {
+  margin: 0 3px;
+  padding: 4px 0;
+  list-style: none;
+  border-bottom: 1.5px solid var(--mgs-rule);
+}
+.mouseguard.sheet.actor.character .mgs-contact:last-child {
+  border-bottom-color: transparent;
+}
+.mouseguard.sheet.actor.character .mgs-contact.draggable {
+  cursor: grab;
+}
+.mouseguard.sheet.actor.character .mgs-contact-main {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.mouseguard.sheet.actor.character .mgs-contact-main .mgs-line-name {
+  margin: 0 auto;
+}
+.mouseguard.sheet.actor.character .mgs-excerpt {
+  margin: 1px 0 0;
+  font-size: 11px;
+  line-height: 1.25;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.55);
+}
+.mouseguard.sheet.actor.character .mgs-biography,
+.mouseguard.sheet.actor.character .mgs-notes {
+  margin-top: 6px;
+  min-height: 240px;
+}
+.mouseguard.sheet.actor.character .mgs-tab-notes .mgs-notes {
+  margin-top: 0;
+  min-height: 100%;
+}
+.mouseguard.sheet.actor.character .mgs-prose prose-mirror,
+.mouseguard.sheet.actor.character .mgs-prose .mgs-prose-content {
+  display: block;
+  min-height: 180px;
+  color: #4e432d;
+  font-size: 14px;
+  line-height: 1.45;
+}
+.mouseguard.sheet.actor.character .mgs-prose prose-mirror .editor-content {
+  min-height: 160px;
+}
+.mouseguard.sheet.actor.character .mgs-prose prose-mirror.active {
+  min-height: 260px;
+}
+.mouseguard.sheet.actor.character .mgs-card--gear,
+.mouseguard.sheet.actor.character .mgs-card--others {
+  min-height: 0;
+  margin-bottom: 6px;
+}
+.mouseguard.sheet.actor.character .mgs-card-hint {
+  margin: 4px 8px 6px;
+  font-size: 12px;
+  font-style: italic;
+  line-height: 1.3;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.55);
+}
+.mouseguard.sheet.actor.character .mgs-gear-list {
+  margin: 0;
+  padding: 0 4px;
+  list-style: none;
+}
+.mouseguard.sheet.actor.character .mgs-gear-head,
+.mouseguard.sheet.actor.character .mgs-gear-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 72px 72px 52px;
+  align-items: center;
+  gap: 6px;
+}
+.mouseguard.sheet.actor.character .mgs-card--others .mgs-gear-row {
+  grid-template-columns: minmax(0, 1fr) auto 52px;
+}
+.mouseguard.sheet.actor.character .mgs-gear-head {
+  margin: 0 4px;
+  padding: 0 0 2px;
+  font-family: var(--mgs-font-heading);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #724a32;
+  border-bottom: 1px solid rgba(114, 74, 50, 0.35);
+}
+.mouseguard.sheet.actor.character .mgs-gear-row {
+  min-height: 30px;
+  padding: 3px 0;
+  list-style: none;
+  border-bottom: 1.5px solid var(--mgs-rule);
+}
+.mouseguard.sheet.actor.character .mgs-gear-row.draggable {
+  cursor: grab;
+}
+.mouseguard.sheet.actor.character .mgs-gear-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.mouseguard.sheet.actor.character .mgs-gear-name .mgs-line-name {
+  margin: 0;
+  text-align: left;
+}
+.mouseguard.sheet.actor.character .mgs-gear-img {
+  width: 24px;
+  height: 24px;
+  flex: none;
+  border: 0;
+  object-fit: contain;
+}
+.mouseguard.sheet.actor.character .mgs-gear-num {
+  text-align: center;
+  font-size: 13px;
+}
+.mouseguard.sheet.actor.character .mgs-gear-num input[type="number"] {
+  width: 100%;
+  height: 22px;
+}
+.mouseguard.sheet.actor.character .mgs-gear-type {
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #724a32;
+}
+.mouseguard.sheet.actor.character .mgs-gear-tools {
+  display: flex;
+  justify-content: flex-end;
+}
+.mouseguard.sheet.actor.character .mgs-gear-tools .mgs-line-tools {
+  margin: 0;
+}
+.mouseguard.sheet.actor.character .mgs-gear-total {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 8px 0;
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #724a32;
+}
+.mouseguard.sheet.actor.character .mgs-gear-total strong {
+  font-size: 15px;
+  color: #4f3322;
+}
+@container mgs-header (max-width: 600px) {
+  .mouseguard.sheet.actor.character .mgs-header-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .mouseguard.sheet.actor.character .mgs-actions {
+    grid-column: 1 / -1;
+    flex-direction: row;
+  }
+  .mouseguard.sheet.actor.character .mgs-roll-button {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+}
+@container mgs-header (max-width: 380px) {
+  .mouseguard.sheet.actor.character .mgs-header-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .mouseguard.sheet.actor.character .mgs-actions {
+    flex-direction: column;
+  }
+}
+.mouseguard.sheet.item {
+  --mgi-ink: #2b2016;
+  --mgi-brown: #724a32;
+  --mgi-brown-dark: #4f3322;
+  --mgi-red: #8c1f14;
+  --mgi-cream: #fcf5df;
+  --mgi-pip-off: #f6eeea;
+  --mgi-tag: #efd693;
+  --mgi-rule: rgba(0, 0, 0, 0.1);
+  --mgi-font-heading: "Palatino Linotype", "Book Antiqua", Palatino, "PT Serif", "Noto Serif", Georgia, "DejaVu Serif", serif;
+  --mgi-font-body: "Palatino Linotype", "Book Antiqua", Palatino, "PT Serif", "Noto Serif", Georgia, "DejaVu Serif", serif;
+  min-width: 440px;
+  min-height: 360px;
+}
+.mouseguard.sheet.item .window-header .window-title {
+  color: var(--color-light-1);
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+}
+.mouseguard.sheet.item .window-header button.header-control {
+  color: var(--color-light-1);
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+.mouseguard.sheet.item .window-header button.header-control:hover:not(:disabled) {
+  color: #fff;
+  background: none;
+  border: none;
+  box-shadow: none;
+  text-shadow: 0 0 8px rgba(236, 186, 133, 0.9);
+}
+.mouseguard.sheet.item .window-header button.header-control.mgi-mode-toggle {
+  flex: none;
+}
+.mouseguard.sheet.item .window-header button.header-control.mgi-mode-toggle.fa-lock-open {
+  color: #ecba85;
+}
+.mouseguard.sheet.item .window-content {
+  padding: 0;
+  gap: 0;
+  overflow: hidden;
+  color: var(--mgi-ink);
+  font-family: var(--mgi-font-body);
+  font-size: 14px;
+  background-color: #eccda2;
+  background-image: url("../assets/sheet/paper-item.webp");
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  background-size: auto;
+}
+.mouseguard.sheet.item input[type="text"],
+.mouseguard.sheet.item input[type="number"],
+.mouseguard.sheet.item select {
+  height: 26px;
+  color: var(--mgi-ink);
+  font-family: var(--mgi-font-body);
+  background: rgba(255, 250, 240, 0.65);
+  border: 1px solid #ab8f75;
+  border-radius: 2px;
+  box-shadow: inset 0 1px 2px rgba(61, 41, 22, 0.08);
+}
+.mouseguard.sheet.item input[type="text"]:focus,
+.mouseguard.sheet.item input[type="number"]:focus,
+.mouseguard.sheet.item select:focus {
+  outline: 2px solid rgba(114, 74, 50, 0.3);
+  outline-offset: 0;
+  box-shadow: none;
+}
+.mouseguard.sheet.item input[type="checkbox"] {
+  accent-color: var(--mgi-brown);
+}
+.mouseguard.sheet.item .mgi-header {
+  flex: none;
+  padding: 12px 16px 0;
+}
+.mouseguard.sheet.item .mgi-header-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 12px;
+  min-height: 76px;
+}
+.mouseguard.sheet.item .mgi-portrait {
+  flex: 0 0 72px;
+  width: 72px;
+  height: 72px;
+}
+.mouseguard.sheet.item .mgi-portrait img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 4px;
+  border: 1px solid rgba(114, 74, 50, 0.6);
+  border-radius: 3px;
+  background: radial-gradient(circle at 50% 40%, #6b4a35 0, #2b2016 100%);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+.mouseguard.sheet.item .mgi-portrait img.editable {
+  cursor: pointer;
+}
+.mouseguard.sheet.item .mgi-portrait img.editable:hover {
+  box-shadow: 0 0 6px var(--mgi-brown);
+}
+.mouseguard.sheet.item .mgi-title {
+  flex: 1 1 180px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.mouseguard.sheet.item .mgi-name {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: 700 26px/1.1 var(--mgi-font-heading);
+  color: var(--mgi-brown-dark);
+  overflow-wrap: anywhere;
+}
+.mouseguard.sheet.item input.mgi-name-input {
+  height: 36px;
+  font: 700 22px var(--mgi-font-heading);
+  color: var(--mgi-brown-dark);
+}
+.mouseguard.sheet.item .mgi-subtitle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 6px;
+  font: 700 11px/1.4 var(--mgi-font-heading);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--mgi-brown);
+}
+.mouseguard.sheet.item .mgi-subtitle .mgi-dot {
+  opacity: 0.6;
+}
+.mouseguard.sheet.item .mgi-badge {
+  position: relative;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 0 4px;
+}
+.mouseguard.sheet.item .mgi-badge .mgi-badge-value {
+  display: inline-grid;
+  place-items: center;
+  min-width: 44px;
+  height: 44px;
+  padding: 0 7px;
+  border-radius: 22px;
+  font: 700 22px/1 var(--mgi-font-heading);
+  color: rgba(255, 255, 255, 0.92);
+  background: rgba(0, 0, 0, 0.72);
+  border: 1.5px solid rgba(0, 0, 0, 0.5);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+.mouseguard.sheet.item .mgi-badge .mgi-badge-label {
+  max-width: 90px;
+  font: 700 9px/1.2 var(--mgi-font-heading);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--mgi-brown);
+}
+.mouseguard.sheet.item .mgi-badge.is-unlearned .mgi-badge-value {
+  color: rgba(0, 0, 0, 0.45);
+  background: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.2);
+  box-shadow: none;
+}
+.mouseguard.sheet.item .mgi-badge.is-wide .mgi-badge-value {
+  font-size: 18px;
+}
+.mouseguard.sheet.item .mgi-badge.is-roman .mgi-badge-value {
+  font-size: 19px;
+  letter-spacing: 0.04em;
+}
+.mouseguard.sheet.item .mgi-badge.is-full .mgi-badge-value {
+  background: var(--mgi-red);
+}
+.mouseguard.sheet.item .mgi-badge.is-specialty::before {
+  content: "";
+  position: absolute;
+  inset: -8px -10px 8px;
+  pointer-events: none;
+  background: url("../assets/sheet/circle-selection.svg") no-repeat center;
+  background-size: 100% 100%;
+}
+.mouseguard.sheet.item button.mgi-roll-button {
+  flex: none;
+  width: auto;
+  height: 30px;
+  padding: 0 12px;
+  font: 14px var(--mgi-font-body);
+  color: #fff;
+  background: var(--mgi-brown);
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  border-radius: 3px;
+  text-shadow: none;
+}
+.mouseguard.sheet.item button.mgi-roll-button i {
+  color: #fff;
+}
+.mouseguard.sheet.item button.mgi-roll-button:hover:not(:disabled) {
+  color: #fff;
+  background: color-mix(in srgb, #724a32 82%, white);
+  border-color: rgba(0, 0, 0, 0.35);
+  box-shadow: 0 0 6px #724a32;
+}
+.mouseguard.sheet.item button.mgi-roll-button:disabled {
+  opacity: 0.6;
+}
+.mouseguard.sheet.item .mgi-sep {
+  width: 100%;
+  height: 15px;
+  margin-top: 6px;
+  background-image: url("../assets/sheet/separator.webp");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.mouseguard.sheet.item .mgi-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 4px 16px 16px;
+}
+.mouseguard.sheet.item .mgi-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 6px;
+  align-items: stretch;
+  margin: 2px 0 4px;
+}
+.mouseguard.sheet.item .mgi-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 110px;
+  padding-bottom: 2px;
+  color: #191813;
+  border-style: solid;
+  border-width: 10px 10px 10px 10px;
+  border-image: url("../assets/sheet/card-parchment.webp") 10 10 10 10 fill stretch stretch;
+}
+.mouseguard.sheet.item .mgi-card--wide {
+  grid-column: -1;
+  min-height: 0;
+}
+.mouseguard.sheet.item .mgi-ribbon {
+  flex: none;
+  height: 30px;
+  margin: -7px -8px 0 -8px;
+  padding: 2px;
+  border: 0;
+  overflow: hidden;
+  font: 700 0.7rem/1.5em var(--mgi-font-heading);
+  text-align: center;
+  text-transform: uppercase;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  letter-spacing: 0.04em;
+  color: #fff;
+  -webkit-font-smoothing: antialiased;
+  background-repeat: no-repeat;
+  background-size: 100% 20px;
+}
+.mouseguard.sheet.item .mgi-ribbon--green {
+  background-image: url("../assets/sheet/header-green.webp");
+}
+.mouseguard.sheet.item .mgi-ribbon--rust {
+  background-image: url("../assets/sheet/header-rust.webp");
+}
+.mouseguard.sheet.item .mgi-ribbon--slate {
+  background-image: url("../assets/sheet/header-slate.webp");
+}
+.mouseguard.sheet.item .mgi-ribbon--orange {
+  background-image: url("../assets/sheet/header-orange.webp");
+}
+.mouseguard.sheet.item .mgi-ribbon--black {
+  background-image: url("../assets/sheet/header-black.webp");
+}
+.mouseguard.sheet.item .mgi-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 4px;
+}
+.mouseguard.sheet.item .mgi-card-body--row {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-around;
+  gap: 6px 16px;
+}
+.mouseguard.sheet.item .mgi-stat {
+  position: relative;
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 6px;
+}
+.mouseguard.sheet.item .mgi-stat .mgi-stat-value {
+  font: 700 30px/1 var(--mgi-font-heading);
+  color: var(--mgi-brown-dark);
+}
+.mouseguard.sheet.item .mgi-stat .mgi-stat-value small {
+  font-size: 18px;
+  color: var(--mgi-brown);
+}
+.mouseguard.sheet.item .mgi-stat .mgi-stat-label {
+  font: 700 9px/1.2 var(--mgi-font-heading);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--mgi-brown);
+}
+.mouseguard.sheet.item .mgi-stat.is-small .mgi-stat-value {
+  font-size: 22px;
+}
+.mouseguard.sheet.item .mgi-track {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-height: 24px;
+  padding: 2px 0;
+  border-bottom: 1.5px solid var(--mgi-rule);
+}
+.mouseguard.sheet.item .mgi-track .mgi-track-label {
+  flex: none;
+  min-width: 1.4em;
+  font: 800 11px var(--mgi-font-heading);
+  text-transform: uppercase;
+  color: var(--mgi-brown);
+}
+.mouseguard.sheet.item .mgi-track .mgi-pips,
+.mouseguard.sheet.item .mgi-track .mgi-scale {
+  flex: 1 0 auto;
+}
+.mouseguard.sheet.item .mgi-track .mgi-track-count {
+  flex: none;
+  margin-left: auto;
+  font: italic 12px var(--mgi-font-body);
+  color: rgba(0, 0, 0, 0.55);
+}
+.mouseguard.sheet.item .mgi-track--scale {
+  min-height: 30px;
+}
+.mouseguard.sheet.item .mgi-track--scale .mgi-track-count {
+  font: 700 16px var(--mgi-font-heading);
+  font-style: normal;
+  color: var(--mgi-brown-dark);
+}
+.mouseguard.sheet.item .mgi-track--scale.is-unlearned .mgi-track-count {
+  color: rgba(0, 0, 0, 0.4);
+}
+.mouseguard.sheet.item .mgi-track--scale.is-taxed .mgi-track-count {
+  color: var(--mgi-red);
+}
+.mouseguard.sheet.item .mgi-scale {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 3px;
+}
+.mouseguard.sheet.item .mgi-scale .mgi-pip {
+  flex: none;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--mgi-pip-off);
+  box-shadow: inset 0 0 0 1px rgba(114, 74, 50, 0.45);
+}
+.mouseguard.sheet.item .mgi-scale .mgi-pip.on {
+  background: var(--mgi-brown-dark);
+  box-shadow: none;
+}
+.mouseguard.sheet.item .mgi-scale .mgi-pip.taxed {
+  background: transparent;
+  box-shadow: inset 0 0 0 2px var(--mgi-red);
+}
+.mouseguard.sheet.item .mgi-pips {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 3px;
+  min-height: 15px;
+  padding: 1px 2px;
+  border-radius: 8px;
+  user-select: none;
+}
+.mouseguard.sheet.item .mgi-pips.interactive {
+  cursor: pointer;
+}
+.mouseguard.sheet.item .mgi-pips.interactive:hover {
+  background: rgba(114, 74, 50, 0.12);
+}
+.mouseguard.sheet.item .mgi-pips .mgi-pip {
+  flex: none;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--mgi-pip-off);
+  box-shadow: inset 0 0 0 1px rgba(114, 74, 50, 0.45);
+}
+.mouseguard.sheet.item .mgi-pips .mgi-pip.on {
+  background: var(--mgi-brown);
+  box-shadow: none;
+}
+.mouseguard.sheet.item .mgi-pips .mgi-pip.on.over {
+  background: var(--mgi-red);
+}
+.mouseguard.sheet.item .mgi-pips .mgi-pip.empty {
+  background: transparent;
+  box-shadow: none;
+  border: 1px dashed rgba(114, 74, 50, 0.45);
+}
+.mouseguard.sheet.item .mgi-counters {
+  display: flex;
+  justify-content: space-around;
+  gap: 6px;
+}
+.mouseguard.sheet.item .mgi-counter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 6px;
+  border-radius: 4px;
+  user-select: none;
+}
+.mouseguard.sheet.item .mgi-counter.interactive {
+  cursor: pointer;
+}
+.mouseguard.sheet.item .mgi-counter.interactive:hover {
+  background: rgba(114, 74, 50, 0.12);
+}
+.mouseguard.sheet.item .mgi-counter .mgi-counter-value {
+  display: inline-grid;
+  place-items: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 4px;
+  border-radius: 13px;
+  font: 700 14px/1 var(--mgi-font-heading);
+  color: rgba(255, 255, 255, 0.92);
+  background: rgba(0, 0, 0, 0.72);
+  border: 1.5px solid rgba(0, 0, 0, 0.5);
+}
+.mouseguard.sheet.item .mgi-counter .mgi-counter-label {
+  max-width: 80px;
+  font: 700 9px/1.2 var(--mgi-font-heading);
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--mgi-brown);
+}
+.mouseguard.sheet.item .mgi-field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  margin: 0;
+}
+.mouseguard.sheet.item .mgi-field > span {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font: 700 12px/1.2 var(--mgi-font-heading);
+  color: var(--mgi-brown);
+}
+.mouseguard.sheet.item .mgi-field input[type="number"] {
+  flex: 0 0 56px;
+  width: 56px;
+  text-align: center;
+}
+.mouseguard.sheet.item .mgi-field input[type="text"],
+.mouseguard.sheet.item .mgi-field select {
+  flex: 1.4;
+  min-width: 0;
+}
+.mouseguard.sheet.item .mgi-field input[type="checkbox"] {
+  flex: none;
+  margin: 0;
+  width: 16px;
+  height: 16px;
+}
+.mouseguard.sheet.item .mgi-field--stack {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 2px;
+}
+.mouseguard.sheet.item .mgi-field--stack > span {
+  flex: none;
+}
+.mouseguard.sheet.item .mgi-field--stack input[type="text"],
+.mouseguard.sheet.item .mgi-field--stack select {
+  flex: none;
+  width: 100%;
+}
+.mouseguard.sheet.item .mgi-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 2px 6px;
+  margin: 2px 0;
+  padding-bottom: 2px;
+  border-bottom: 1.5px solid var(--mgi-rule);
+  font: italic 14px var(--mgi-font-body);
+}
+.mouseguard.sheet.item .mgi-line strong {
+  font-style: normal;
+  color: var(--mgi-brown-dark);
+}
+.mouseguard.sheet.item .mgi-line .mgi-line-label {
+  font: 800 11px var(--mgi-font-heading);
+  font-style: normal;
+  text-transform: uppercase;
+  color: var(--mgi-brown);
+}
+.mouseguard.sheet.item .mgi-flag {
+  margin: 2px 0 0;
+  text-align: center;
+  font: 700 12px var(--mgi-font-heading);
+  color: var(--mgi-brown);
+}
+.mouseguard.sheet.item .mgi-flag i {
+  color: #c98a1b;
+}
+.mouseguard.sheet.item .mgi-hint {
+  margin: 4px 0 0;
+  font: italic 11.5px/1.35 var(--mgi-font-body);
+  color: rgba(0, 0, 0, 0.6);
+}
+.mouseguard.sheet.item .mgi-callout {
+  margin: 6px 0 0;
+  padding: 4px 8px;
+  font: 600 12.5px/1.35 var(--mgi-font-body);
+  color: var(--mgi-brown-dark);
+  background: rgba(239, 214, 147, 0.7);
+  border-left: 3px solid var(--mgi-brown);
+  border-radius: 0 3px 3px 0;
+}
+.mouseguard.sheet.item .mgi-callout i {
+  color: #c98a1b;
+}
+.mouseguard.sheet.item .mgi-marks {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 4px 14px;
+  margin: 2px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.mouseguard.sheet.item .mgi-mark {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 3px 4px;
+  border-bottom: 1.5px solid var(--mgi-rule);
+  user-select: none;
+}
+.mouseguard.sheet.item .mgi-mark.interactive {
+  cursor: pointer;
+}
+.mouseguard.sheet.item .mgi-mark.interactive:hover {
+  background: rgba(114, 74, 50, 0.1);
+}
+.mouseguard.sheet.item .mgi-mark .mgi-mark-box {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  font: 700 13px/1 var(--mgi-font-heading);
+  color: rgba(114, 74, 50, 0.55);
+  background: var(--mgi-pip-off);
+  border: 1.5px solid rgba(114, 74, 50, 0.6);
+  border-radius: 3px;
+}
+.mouseguard.sheet.item .mgi-mark.on .mgi-mark-box {
+  color: #fff;
+  background: var(--mgi-brown);
+  border-color: var(--mgi-brown-dark);
+}
+.mouseguard.sheet.item .mgi-mark .mgi-mark-label {
+  font: italic 14px/1.25 var(--mgi-font-body);
+}
+.mouseguard.sheet.item .mgi-section {
+  margin: 12px 0 0;
+}
+.mouseguard.sheet.item .mgi-section--grow {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.mouseguard.sheet.item .mgi-section--grow prose-mirror.mgi-editor {
+  flex: 1;
+}
+.mouseguard.sheet.item .mgi-heading {
+  margin: 0 0 4px;
+  padding: 0;
+  border: 0;
+  font: 700 15px/1.3 var(--mgi-font-heading);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--mgi-brown);
+}
+.mouseguard.sheet.item .mgi-with-line::after {
+  content: "";
+  display: inline-block;
+  width: 105px;
+  height: 6px;
+  margin-left: 10px;
+  vertical-align: middle;
+  background-image: url("../assets/sheet/header-backline.webp");
+  background-repeat: no-repeat;
+}
+.mouseguard.sheet.item .mgi-prose,
+.mouseguard.sheet.item prose-mirror.mgi-editor .editor-content {
+  font: 14px/1.45 var(--mgi-font-body);
+  color: var(--mgi-ink);
+}
+.mouseguard.sheet.item .mgi-prose p,
+.mouseguard.sheet.item prose-mirror.mgi-editor .editor-content p {
+  margin: 0 0 0.55em;
+}
+.mouseguard.sheet.item .mgi-prose p:last-child,
+.mouseguard.sheet.item prose-mirror.mgi-editor .editor-content p:last-child {
+  margin-bottom: 0;
+}
+.mouseguard.sheet.item .mgi-prose ul,
+.mouseguard.sheet.item prose-mirror.mgi-editor .editor-content ul,
+.mouseguard.sheet.item .mgi-prose ol,
+.mouseguard.sheet.item prose-mirror.mgi-editor .editor-content ol {
+  margin: 0 0 0.55em;
+  padding-left: 1.3em;
+}
+.mouseguard.sheet.item .mgi-prose li,
+.mouseguard.sheet.item prose-mirror.mgi-editor .editor-content li {
+  margin: 0.15em 0;
+}
+.mouseguard.sheet.item .mgi-prose h1,
+.mouseguard.sheet.item prose-mirror.mgi-editor .editor-content h1,
+.mouseguard.sheet.item .mgi-prose h2,
+.mouseguard.sheet.item prose-mirror.mgi-editor .editor-content h2,
+.mouseguard.sheet.item .mgi-prose h3,
+.mouseguard.sheet.item prose-mirror.mgi-editor .editor-content h3,
+.mouseguard.sheet.item .mgi-prose h4,
+.mouseguard.sheet.item prose-mirror.mgi-editor .editor-content h4,
+.mouseguard.sheet.item .mgi-prose h5,
+.mouseguard.sheet.item prose-mirror.mgi-editor .editor-content h5 {
+  margin: 0.6em 0 0.25em;
+  padding: 0;
+  border: 0;
+  font: 700 1.05em/1.3 var(--mgi-font-heading);
+  color: var(--mgi-brown-dark);
+}
+.mouseguard.sheet.item .mgi-prose strong,
+.mouseguard.sheet.item prose-mirror.mgi-editor .editor-content strong,
+.mouseguard.sheet.item .mgi-prose b,
+.mouseguard.sheet.item prose-mirror.mgi-editor .editor-content b {
+  color: var(--mgi-brown-dark);
+}
+.mouseguard.sheet.item .mgi-prose a,
+.mouseguard.sheet.item prose-mirror.mgi-editor .editor-content a {
+  color: var(--mgi-brown);
+  text-decoration: underline dotted;
+}
+.mouseguard.sheet.item .mgi-prose blockquote,
+.mouseguard.sheet.item prose-mirror.mgi-editor .editor-content blockquote {
+  margin: 0.4em 0;
+  padding: 2px 10px;
+  font-style: italic;
+  border-left: 3px solid rgba(114, 74, 50, 0.4);
+  background: rgba(255, 250, 240, 0.3);
+}
+.mouseguard.sheet.item .mgi-prose table,
+.mouseguard.sheet.item prose-mirror.mgi-editor .editor-content table {
+  width: 100%;
+  margin: 0.4em 0;
+  border-collapse: collapse;
+  background: rgba(255, 250, 240, 0.35);
+}
+.mouseguard.sheet.item .mgi-prose table th,
+.mouseguard.sheet.item prose-mirror.mgi-editor .editor-content table th,
+.mouseguard.sheet.item .mgi-prose table td,
+.mouseguard.sheet.item prose-mirror.mgi-editor .editor-content table td {
+  padding: 2px 6px;
+  border: 1px solid rgba(114, 74, 50, 0.3);
+  text-align: left;
+}
+.mouseguard.sheet.item .mgi-prose table th,
+.mouseguard.sheet.item prose-mirror.mgi-editor .editor-content table th {
+  font-family: var(--mgi-font-heading);
+  color: var(--mgi-brown-dark);
+}
+.mouseguard.sheet.item .mgi-prose mark,
+.mouseguard.sheet.item prose-mirror.mgi-editor .editor-content mark {
+  background: linear-gradient(to bottom, transparent 20%, #efd693 21%, #efd693 90%, transparent 91%);
+}
+.mouseguard.sheet.item .mgi-empty {
+  margin: 0;
+  font: italic 13px var(--mgi-font-body);
+  color: rgba(0, 0, 0, 0.45);
+}
+.mouseguard.sheet.item prose-mirror.mgi-editor {
+  --min-height: 3.2em;
+  min-height: 3.2em;
+  padding: 4px 34px 4px 8px;
+  border: 1px dashed rgba(114, 74, 50, 0.45);
+  border-radius: 3px;
+  background: rgba(255, 250, 240, 0.35);
+}
+.mouseguard.sheet.item prose-mirror.mgi-editor.active {
+  --min-height: 12rem;
+  min-height: 12rem;
+  padding-right: 8px;
+  border-style: solid;
+  background: rgba(255, 250, 240, 0.75);
+}
+.mouseguard.sheet.item prose-mirror.mgi-editor button.toggle:enabled {
+  display: block;
+  top: 3px;
+  right: 3px;
+  width: 26px;
+  height: 26px;
+  min-height: 0;
+  padding: 0;
+  line-height: 24px;
+  color: #fff;
+  background: var(--mgi-brown);
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  border-radius: 3px;
+}
+.mouseguard.sheet.item prose-mirror.mgi-editor button.toggle:enabled i {
+  margin: 0;
+  color: #fff;
+}
+.mouseguard.sheet.item prose-mirror.mgi-editor button.toggle:enabled:hover {
+  box-shadow: 0 0 6px #724a32;
+}
+.mouseguard.sheet.item .mgi-levels {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.mouseguard.sheet.item .mgi-level {
+  margin: 0;
+  padding: 4px 8px 6px;
+  border-left: 3px solid rgba(114, 74, 50, 0.25);
+  border-radius: 0 3px 3px 0;
+  background: rgba(255, 250, 240, 0.25);
+}
+.mouseguard.sheet.item .mgi-level.is-current {
+  border-left-color: var(--mgi-brown);
+  background: rgba(239, 214, 147, 0.45);
+}
+.mouseguard.sheet.item .mgi-level .mgi-level-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.mouseguard.sheet.item .mgi-level .mgi-level-num {
+  flex: none;
+  min-width: 1.8em;
+  font: 700 15px var(--mgi-font-heading);
+  color: var(--mgi-brown-dark);
+}
+.mouseguard.sheet.item .mgi-level .mgi-level-rule {
+  font: italic 12.5px/1.35 var(--mgi-font-body);
+  color: rgba(0, 0, 0, 0.65);
+}
+.mouseguard.sheet.item .mgi-level .mgi-prose,
+.mouseguard.sheet.item .mgi-level prose-mirror {
+  margin-top: 4px;
+}
+.mouseguard.sheet.item .mgi-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px 6px;
+}
+.mouseguard.sheet.item .mgi-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 1px 8px;
+  font: italic 600 13px/1.5 var(--mgi-font-body);
+  color: var(--mgi-ink);
+  background: var(--mgi-tag);
+  border: 1px solid rgba(100, 55, 8, 0.65);
+  border-radius: 3px 2px 3px 2px;
+  box-shadow: inset 0 1px 2px rgba(255, 205, 90, 0.12), 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+.mouseguard.sheet.item .mgi-tag .mgi-tag-remove {
+  font-size: 11px;
+  color: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+.mouseguard.sheet.item .mgi-tag .mgi-tag-remove:hover {
+  color: var(--mgi-red);
+  text-shadow: none;
+}
+.mouseguard.sheet.item .mgi-tag-new {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.mouseguard.sheet.item .mgi-tag-new input[type="text"] {
+  width: 170px;
+  height: 24px;
+}
+.mouseguard.sheet.item button.mgi-icon-button {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+  color: #fff;
+  background: var(--mgi-brown);
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  border-radius: 3px;
+}
+.mouseguard.sheet.item button.mgi-icon-button i {
+  margin: 0;
+  color: #fff;
+}
+.mouseguard.sheet.item button.mgi-icon-button:hover:not(:disabled) {
+  color: #fff;
+  border-color: rgba(0, 0, 0, 0.35);
+  box-shadow: 0 0 6px #724a32;
+}
+/* -------------------------------------------- */
+/*  Test dialog                                 */
+/* -------------------------------------------- */
+.application.mg-test-dialog {
+  min-width: 380px;
+  font-family: "Palatino Linotype", "Book Antiqua", Palatino, "PT Serif", "Noto Serif", Georgia, "DejaVu Serif", serif;
+}
+.application.mg-test-dialog > .window-content {
+  display: flex;
+  flex-direction: column;
+  padding: 6px 10px 8px;
+  color: #724a32;
+  font-family: "Palatino Linotype", "Book Antiqua", Palatino, "PT Serif", "Noto Serif", Georgia, "DejaVu Serif", serif;
+  background-color: #e2dcce;
+  border-style: solid;
+  border-width: 10px;
+  border-image: url("../assets/sheet/paper-dialog.webp") 10 10 10 10 fill stretch stretch;
+  overflow: hidden;
+}
+.application.mg-test-dialog .mg-test-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+}
+.application.mg-test-dialog .mg-test-body {
+  flex: 1;
+  min-height: 0;
+  max-height: 66vh;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.application.mg-test-dialog .mg-test-label,
+.application.mg-test-dialog .form-group > label {
+  font-weight: 700;
+  font-size: 15px;
+  color: #593f2e;
+}
+.application.mg-test-dialog .form-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0;
+}
+.application.mg-test-dialog .form-group > label {
+  flex: 1 1 45%;
+  line-height: 1.25;
+}
+.application.mg-test-dialog .form-group > select,
+.application.mg-test-dialog .form-group > .mg-stepper {
+  flex: 1 1 55%;
+  min-width: 0;
+}
+.application.mg-test-dialog .mg-test-subject > label {
+  flex: 0 0 auto;
+}
+.application.mg-test-dialog .mg-test-subject > select {
+  flex: 1;
+}
+.application.mg-test-dialog input,
+.application.mg-test-dialog select {
+  color: #2b2016;
+  font-family: "Palatino Linotype", "Book Antiqua", Palatino, "PT Serif", "Noto Serif", Georgia, "DejaVu Serif", serif;
+  background: rgba(255, 250, 240, 0.65);
+  border: 1px solid #ab8f75;
+  border-radius: 2px;
+}
+.application.mg-test-dialog select {
+  height: 28px;
+}
+.application.mg-test-dialog .mg-test-kind {
+  margin: 2px 0 4px;
+  text-align: center;
+  font-style: italic;
+  color: #4f3322;
+}
+.application.mg-test-dialog .mg-test-hint,
+.application.mg-test-dialog .mg-test-muted {
+  margin: 2px 0 4px;
+  font-size: 12px;
+  font-style: italic;
+  color: rgba(79, 51, 34, 0.8);
+}
+.application.mg-test-dialog .mg-test-muted {
+  font-weight: 400;
+  font-size: 11px;
+}
+.application.mg-test-dialog .mg-test-blocked,
+.application.mg-test-dialog .mg-test-warning {
+  margin: 4px 0;
+  padding: 4px 8px;
+  font-weight: 700;
+  border-radius: 3px;
+}
+.application.mg-test-dialog .mg-test-blocked {
+  color: #fff;
+  background: rgba(140, 31, 20, 0.85);
+}
+.application.mg-test-dialog .mg-test-warning {
+  color: #4f3322;
+  background: rgba(236, 186, 133, 0.55);
+}
+.application.mg-test-dialog .mg-pills {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin: 2px 0 6px;
+  padding: 0;
+  list-style: none;
+}
+.application.mg-test-dialog .mg-pills .mg-pill {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0;
+  padding: 2px 8px;
+  font: italic 700 14px/1.35 "Palatino Linotype", "Book Antiqua", Palatino, "PT Serif", "Noto Serif", Georgia, "DejaVu Serif", serif;
+  color: #724a32;
+  background: #efd693;
+  border-radius: 3px 2px 3px 2px;
+  border: 1px solid rgba(100, 55, 8, 0.45);
+  box-shadow: inset 0 1px 2px rgba(255, 205, 90, 0.12), 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+.application.mg-test-dialog .mg-pills .mg-pill .mg-pill-label {
+  flex: 1;
+  text-align: center;
+}
+.application.mg-test-dialog .mg-pills .mg-pill .mg-pill-value {
+  flex: 0 0 auto;
+  font-style: normal;
+  white-space: nowrap;
+}
+.application.mg-test-dialog .mg-pills .mg-pill.base,
+.application.mg-test-dialog .mg-pills .mg-pill.positive {
+  background: #efd693;
+}
+.application.mg-test-dialog .mg-pills .mg-pill.negative {
+  background: #ecba85;
+}
+.application.mg-test-dialog .mg-pills .mg-pill.neutral {
+  background: #d8cbb5;
+}
+.application.mg-test-dialog .mg-pills .mg-pill.off {
+  background: #a9a9a9;
+  opacity: 0.75;
+}
+.application.mg-test-dialog .mg-test-subtitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0 4px;
+  padding: 0;
+  border: none;
+  font: 700 0.8rem/1.2 "Palatino Linotype", "Book Antiqua", Palatino, "PT Serif", "Noto Serif", Georgia, "DejaVu Serif", serif;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #724a32;
+}
+.application.mg-test-dialog .mg-test-subtitle::before,
+.application.mg-test-dialog .mg-test-subtitle::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+}
+.application.mg-test-dialog .mg-test-subtitle::before {
+  background: linear-gradient(to right, transparent, rgba(107, 91, 77, 0.65));
+}
+.application.mg-test-dialog .mg-test-subtitle::after {
+  background: linear-gradient(to left, transparent, rgba(107, 91, 77, 0.65));
+}
+.application.mg-test-dialog .mg-stepper {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+.application.mg-test-dialog .mg-stepper > button {
+  flex: 1 1 33%;
+  height: 26px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  color: #724a32;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  cursor: pointer;
+}
+.application.mg-test-dialog .mg-stepper > button:hover {
+  color: #4f3322;
+  text-shadow: 0 0 4px rgba(114, 74, 50, 0.45);
+}
+.application.mg-test-dialog .mg-stepper > input {
+  flex: 1 1 33%;
+  width: 3.5em;
+  height: 26px;
+  text-align: center;
+  font-weight: 700;
+}
+.application.mg-test-dialog .mg-check {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 3px 0;
+  font-size: 14px;
+  cursor: pointer;
+}
+.application.mg-test-dialog .mg-check input {
+  flex: 0 0 auto;
+  margin: 0;
+}
+.application.mg-test-dialog .mg-check-row,
+.application.mg-test-dialog .mg-radio-row {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 14px;
+}
+.application.mg-test-dialog .mg-wise-helpers {
+  margin: 2px 0 4px 8px;
+  padding-left: 6px;
+  border-left: 2px solid rgba(107, 91, 77, 0.65);
+}
+.application.mg-test-dialog .mg-test-summary {
+  display: block;
+  margin: 8px 0 2px;
+  text-align: center;
+  font-size: large;
+  font-weight: 700;
+  color: #4f3322;
+}
+.application.mg-test-dialog .mg-test-footer {
+  display: flex;
+  gap: 6px;
+}
+.application.mg-test-dialog .mg-roll-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  margin: 5px 0 0;
+  padding: 4px 8px;
+  font-family: "Palatino Linotype", "Book Antiqua", Palatino, "PT Serif", "Noto Serif", Georgia, "DejaVu Serif", serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #fff;
+  text-shadow: none;
+  background: #724a32;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  border-radius: 3px;
+  cursor: pointer;
+}
+.application.mg-test-dialog .mg-roll-button:hover:not(:disabled) {
+  background: color-mix(in srgb, #724a32 82%, white);
+  box-shadow: 0 0 6px #724a32;
+}
+.application.mg-test-dialog .mg-roll-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.application.mg-test-pick-dialog .mg-test-pick p {
+  margin: 0 0 6px;
+}
+.application.mg-test-pick-dialog select {
+  width: 100%;
+}
+/* -------------------------------------------- */
+/*  Chat card                                   */
+/* -------------------------------------------- */
+.mouseguard-chat.mg-test-card {
+  font-family: "Palatino Linotype", "Book Antiqua", Palatino, "PT Serif", "Noto Serif", Georgia, "DejaVu Serif", serif;
+  color: #4f3322;
+}
+.mouseguard-chat.mg-test-card .mg-card-header {
+  margin-bottom: 4px;
+  text-align: center;
+}
+.mouseguard-chat.mg-test-card .mg-card-title {
+  font-size: 1.25em;
+  font-weight: 700;
+  color: #724a32;
+}
+.mouseguard-chat.mg-test-card .mg-card-kind {
+  font-size: 12px;
+  font-style: italic;
+  color: rgba(79, 51, 34, 0.85);
+}
+.mouseguard-chat.mg-test-card .mg-pills {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin: 2px 0 6px;
+  padding: 0;
+  list-style: none;
+}
+.mouseguard-chat.mg-test-card .mg-pills .mg-pill {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0;
+  padding: 2px 8px;
+  font: italic 700 14px/1.35 "Palatino Linotype", "Book Antiqua", Palatino, "PT Serif", "Noto Serif", Georgia, "DejaVu Serif", serif;
+  color: #724a32;
+  background: #efd693;
+  border-radius: 3px 2px 3px 2px;
+  border: 1px solid rgba(100, 55, 8, 0.45);
+  box-shadow: inset 0 1px 2px rgba(255, 205, 90, 0.12), 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+.mouseguard-chat.mg-test-card .mg-pills .mg-pill .mg-pill-label {
+  flex: 1;
+  text-align: center;
+}
+.mouseguard-chat.mg-test-card .mg-pills .mg-pill .mg-pill-value {
+  flex: 0 0 auto;
+  font-style: normal;
+  white-space: nowrap;
+}
+.mouseguard-chat.mg-test-card .mg-pills .mg-pill.base,
+.mouseguard-chat.mg-test-card .mg-pills .mg-pill.positive {
+  background: #efd693;
+}
+.mouseguard-chat.mg-test-card .mg-pills .mg-pill.negative {
+  background: #ecba85;
+}
+.mouseguard-chat.mg-test-card .mg-pills .mg-pill.neutral {
+  background: #d8cbb5;
+}
+.mouseguard-chat.mg-test-card .mg-pills .mg-pill.off {
+  background: #a9a9a9;
+  opacity: 0.75;
+}
+.mouseguard-chat.mg-test-card .mg-pills .mg-pill {
+  font-size: 12px;
+}
+.mouseguard-chat.mg-test-card .mg-card-pool {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0 4px;
+  padding: 0;
+  border: none;
+  font: 700 0.8rem/1.2 "Palatino Linotype", "Book Antiqua", Palatino, "PT Serif", "Noto Serif", Georgia, "DejaVu Serif", serif;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #724a32;
+  margin: 6px 0 2px;
+}
+.mouseguard-chat.mg-test-card .mg-card-pool::before,
+.mouseguard-chat.mg-test-card .mg-card-pool::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+}
+.mouseguard-chat.mg-test-card .mg-card-pool::before {
+  background: linear-gradient(to right, transparent, rgba(107, 91, 77, 0.65));
+}
+.mouseguard-chat.mg-test-card .mg-card-pool::after {
+  background: linear-gradient(to left, transparent, rgba(107, 91, 77, 0.65));
+}
+.mouseguard-chat.mg-test-card .mg-dice {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+  margin: 4px 0 6px;
+  padding: 0;
+  list-style: none;
+}
+.mouseguard-chat.mg-test-card .mg-die {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin: 0;
+  background: #fffaf0;
+  border: 1px solid #ab8f75;
+  border-radius: 5px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+.mouseguard-chat.mg-test-card .mg-die img {
+  width: 26px;
+  height: 26px;
+  border: none;
+}
+.mouseguard-chat.mg-test-card .mg-die.success {
+  border-color: #724a32;
+  background: #f6ecd2;
+}
+.mouseguard-chat.mg-test-card .mg-die.axe {
+  box-shadow: 0 0 0 1px #724a32, 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+.mouseguard-chat.mg-test-card .mg-die.src-fate {
+  outline: 2px solid #c9a227;
+  outline-offset: 1px;
+}
+.mouseguard-chat.mg-test-card .mg-die.src-deeper,
+.mouseguard-chat.mg-test-card .mg-die.src-ofCourse {
+  outline: 2px solid #5c5c92;
+  outline-offset: 1px;
+}
+.mouseguard-chat.mg-test-card .mg-die.exploded::after {
+  content: "";
+  position: absolute;
+  right: -3px;
+  top: -3px;
+  width: 8px;
+  height: 8px;
+  background: #c9a227;
+  border-radius: 50%;
+  border: 1px solid #fff;
+}
+.mouseguard-chat.mg-test-card .mg-die.replaced {
+  opacity: 0.35;
+}
+.mouseguard-chat.mg-test-card .mg-die.replaced::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  top: 50%;
+  height: 2px;
+  background: #8c1f14;
+  transform: rotate(-35deg);
+}
+.mouseguard-chat.mg-test-card .mg-outcome {
+  padding: 6px 10px;
+  margin: 4px 0;
+  background-color: #ead9c1;
+  background-repeat: no-repeat;
+  background-size: cover;
+  border-radius: 3px;
+}
+.mouseguard-chat.mg-test-card .mg-outcome.success {
+  background-color: #f1dcac;
+  background-image: url("../assets/sheet/outcome-success.webp");
+}
+.mouseguard-chat.mg-test-card .mg-outcome.partial {
+  background-color: #ead9c1;
+  background-image: url("../assets/sheet/outcome-partial.webp");
+}
+.mouseguard-chat.mg-test-card .mg-outcome.failure {
+  background-color: #e3d8db;
+  background-image: url("../assets/sheet/outcome-failure.webp");
+}
+.mouseguard-chat.mg-test-card .mg-outcome .heading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 2px;
+  font-size: 1.6em;
+  font-weight: 700;
+  color: #4f3322;
+}
+.mouseguard-chat.mg-test-card .mg-outcome .mg-outcome-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  margin-right: 6px;
+  font-size: 0.6em;
+  transform: rotate(45deg);
+  background: #fff;
+  border: 2px solid #2b2016;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+.mouseguard-chat.mg-test-card .mg-outcome .mg-outcome-icon > i {
+  transform: rotate(-45deg);
+}
+.mouseguard-chat.mg-test-card .mg-outcome.failure .mg-outcome-icon {
+  color: #8c1f14;
+}
+.mouseguard-chat.mg-test-card .mg-outcome .mg-outcome-label {
+  margin: 0;
+  text-align: center;
+  font-weight: 700;
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
+  padding-top: 2px;
+}
+.mouseguard-chat.mg-test-card .mg-card-notes,
+.mouseguard-chat.mg-test-card .mg-card-hints {
+  margin: 4px 0;
+  padding-left: 16px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.mouseguard-chat.mg-test-card .mg-card-hints {
+  list-style: none;
+  padding-left: 0;
+  font-style: italic;
+  color: rgba(79, 51, 34, 0.85);
+}
+.mouseguard-chat.mg-test-card .mg-card-hints i {
+  color: #724a32;
+}
+.mouseguard-chat.mg-test-card .mg-test-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.mouseguard-chat.mg-test-card .mg-test-actions .mg-roll-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  margin: 5px 0 0;
+  padding: 4px 8px;
+  font-family: "Palatino Linotype", "Book Antiqua", Palatino, "PT Serif", "Noto Serif", Georgia, "DejaVu Serif", serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #fff;
+  text-shadow: none;
+  background: #724a32;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  border-radius: 3px;
+  cursor: pointer;
+  flex: 1 1 45%;
+  width: auto;
+  font-size: 12px;
+}
+.mouseguard-chat.mg-test-card .mg-test-actions .mg-roll-button:hover:not(:disabled) {
+  background: color-mix(in srgb, #724a32 82%, white);
+  box-shadow: 0 0 6px #724a32;
+}
+.mouseguard-chat.mg-test-card .mg-test-actions .mg-roll-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }

@@ -1,0 +1,490 @@
+// Test dialog + test chat card (ROLLS agent).
+// Layout and format follow the mist-engine "Detailed Dice Roll" app: torn parchment body (border-image),
+// brown ink, pill list of the dice pool, steppers, ruled sub-headings, a large live summary and a full-width
+// roll button. Raster art comes from the placeholders in assets/sheet/ (see assets/sheet/README.md).
+
+@mgt-ink: #724a32;          // ME $c-brown
+@mgt-ink-dark: #4f3322;
+@mgt-label: #593f2e;
+@mgt-rule: rgba(107, 91, 77, .65);
+@mgt-pill-positive: #efd693;
+@mgt-pill-negative: #ecba85;
+@mgt-pill-neutral: #d8cbb5;
+@mgt-pill-off: #a9a9a9;
+@mgt-paper: #e2dcce;
+@mgt-red: #8c1f14;
+@mgt-font: "Palatino Linotype", "Book Antiqua", Palatino, "PT Serif", "Noto Serif", Georgia, "DejaVu Serif", serif;
+
+.mgt-roll-button() {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    margin: 5px 0 0;
+    padding: 4px 8px;
+    font-family: @mgt-font;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #fff;
+    text-shadow: none;
+    background: @mgt-ink;
+    border: 1px solid rgba(0, 0, 0, .35);
+    border-radius: 3px;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+        background: color-mix(in srgb, @mgt-ink 82%, white);
+        box-shadow: 0 0 6px @mgt-ink;
+    }
+
+    &:disabled {
+        opacity: .6;
+        cursor: not-allowed;
+    }
+}
+
+.mgt-pills() {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin: 2px 0 6px;
+    padding: 0;
+    list-style: none;
+
+    .mg-pill {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 8px;
+        margin: 0;
+        padding: 2px 8px;
+        font: italic 700 14px/1.35 @mgt-font;
+        color: @mgt-ink;
+        background: @mgt-pill-positive;
+        border-radius: 3px 2px 3px 2px;
+        border: 1px solid rgba(100, 55, 8, .45);
+        box-shadow: inset 0 1px 2px rgba(255, 205, 90, .12), 0 1px 3px rgba(0, 0, 0, .2);
+
+        .mg-pill-label {
+            flex: 1;
+            text-align: center;
+        }
+
+        .mg-pill-value {
+            flex: 0 0 auto;
+            font-style: normal;
+            white-space: nowrap;
+        }
+
+        &.base,
+        &.positive { background: @mgt-pill-positive; }
+        &.negative { background: @mgt-pill-negative; }
+        &.neutral { background: @mgt-pill-neutral; }
+        &.off {
+            background: @mgt-pill-off;
+            opacity: .75;
+        }
+    }
+}
+
+.mgt-subtitle() {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 10px 0 4px;
+    padding: 0;
+    border: none;
+    font: 700 .8rem/1.2 @mgt-font;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: @mgt-ink;
+
+    &::before,
+    &::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+    }
+
+    &::before { background: linear-gradient(to right, transparent, @mgt-rule); }
+    &::after { background: linear-gradient(to left, transparent, @mgt-rule); }
+}
+
+/* -------------------------------------------- */
+/*  Test dialog                                 */
+/* -------------------------------------------- */
+
+.application.mg-test-dialog {
+    min-width: 380px;
+    font-family: @mgt-font;
+
+    > .window-content {
+        // = ME #dice-roll-app > section.window-content (bg2-litm.webp -> paper-dialog.webp placeholder)
+        display: flex;
+        flex-direction: column;
+        padding: 6px 10px 8px;
+        color: @mgt-ink;
+        font-family: @mgt-font;
+        background-color: @mgt-paper;
+        border-style: solid;
+        border-width: 10px;
+        border-image: url("../assets/sheet/paper-dialog.webp") 10 10 10 10 fill stretch stretch;
+        overflow: hidden;
+    }
+
+    .mg-test-root {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        flex: 1;
+    }
+
+    .mg-test-body {
+        flex: 1;
+        min-height: 0;
+        max-height: 66vh;
+        overflow-y: auto;
+        padding-right: 4px;
+    }
+
+    .mg-test-label,
+    .form-group > label {
+        font-weight: 700;
+        font-size: 15px;
+        color: @mgt-label;
+    }
+
+    .form-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 4px 0;
+
+        > label {
+            flex: 1 1 45%;
+            line-height: 1.25;
+        }
+
+        > select,
+        > .mg-stepper {
+            flex: 1 1 55%;
+            min-width: 0;
+        }
+    }
+
+    .mg-test-subject {
+        > label { flex: 0 0 auto; }
+        > select { flex: 1; }
+    }
+
+    input,
+    select {
+        color: #2b2016;
+        font-family: @mgt-font;
+        background: rgba(255, 250, 240, .65);
+        border: 1px solid #ab8f75;
+        border-radius: 2px;
+    }
+
+    select { height: 28px; }
+
+    .mg-test-kind {
+        margin: 2px 0 4px;
+        text-align: center;
+        font-style: italic;
+        color: @mgt-ink-dark;
+    }
+
+    .mg-test-hint,
+    .mg-test-muted {
+        margin: 2px 0 4px;
+        font-size: 12px;
+        font-style: italic;
+        color: rgba(79, 51, 34, .8);
+    }
+
+    .mg-test-muted {
+        font-weight: 400;
+        font-size: 11px;
+    }
+
+    .mg-test-blocked,
+    .mg-test-warning {
+        margin: 4px 0;
+        padding: 4px 8px;
+        font-weight: 700;
+        border-radius: 3px;
+    }
+
+    .mg-test-blocked {
+        color: #fff;
+        background: fade(@mgt-red, 85%);
+    }
+
+    .mg-test-warning {
+        color: @mgt-ink-dark;
+        background: rgba(236, 186, 133, .55);
+    }
+
+    .mg-pills { .mgt-pills(); }
+
+    .mg-test-subtitle { .mgt-subtitle(); }
+
+    // LitM "Positive/Negative Mods" row: icon | number | icon, a third each
+    .mg-stepper {
+        display: flex;
+        align-items: center;
+        gap: 0;
+
+        > button {
+            flex: 1 1 33%;
+            height: 26px;
+            min-height: 0;
+            margin: 0;
+            padding: 0;
+            color: @mgt-ink;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            cursor: pointer;
+
+            &:hover { color: @mgt-ink-dark; text-shadow: 0 0 4px rgba(114, 74, 50, .45); }
+        }
+
+        > input {
+            flex: 1 1 33%;
+            width: 3.5em;
+            height: 26px;
+            text-align: center;
+            font-weight: 700;
+        }
+    }
+
+    .mg-check {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin: 3px 0;
+        font-size: 14px;
+        cursor: pointer;
+
+        input {
+            flex: 0 0 auto;
+            margin: 0;
+        }
+    }
+
+    .mg-check-row,
+    .mg-radio-row {
+        display: flex;
+        flex-wrap: wrap;
+        column-gap: 14px;
+    }
+
+    .mg-wise-helpers {
+        margin: 2px 0 4px 8px;
+        padding-left: 6px;
+        border-left: 2px solid @mgt-rule;
+    }
+
+    .mg-test-summary {
+        display: block;
+        margin: 8px 0 2px;
+        text-align: center;
+        font-size: large;
+        font-weight: 700;
+        color: @mgt-ink-dark;
+    }
+
+    .mg-test-footer {
+        display: flex;
+        gap: 6px;
+    }
+
+    .mg-roll-button { .mgt-roll-button(); }
+}
+
+// Wise / trait picker after a roll
+.application.mg-test-pick-dialog {
+    .mg-test-pick p { margin: 0 0 6px; }
+    select { width: 100%; }
+}
+
+/* -------------------------------------------- */
+/*  Chat card                                   */
+/* -------------------------------------------- */
+
+.mouseguard-chat.mg-test-card {
+    font-family: @mgt-font;
+    color: @mgt-ink-dark;
+
+    .mg-card-header {
+        margin-bottom: 4px;
+        text-align: center;
+    }
+
+    .mg-card-title {
+        font-size: 1.25em;
+        font-weight: 700;
+        color: @mgt-ink;
+    }
+
+    .mg-card-kind {
+        font-size: 12px;
+        font-style: italic;
+        color: rgba(79, 51, 34, .85);
+    }
+
+    .mg-pills {
+        .mgt-pills();
+
+        .mg-pill { font-size: 12px; }
+    }
+
+    .mg-card-pool {
+        .mgt-subtitle();
+        margin: 6px 0 2px;
+    }
+
+    .mg-dice {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 4px;
+        margin: 4px 0 6px;
+        padding: 0;
+        list-style: none;
+    }
+
+    .mg-die {
+        position: relative;
+        display: grid;
+        place-items: center;
+        width: 32px;
+        height: 32px;
+        margin: 0;
+        background: #fffaf0;
+        border: 1px solid #ab8f75;
+        border-radius: 5px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, .25);
+
+        img {
+            width: 26px;
+            height: 26px;
+            border: none;
+        }
+
+        &.success { border-color: @mgt-ink; background: #f6ecd2; }
+        &.axe { box-shadow: 0 0 0 1px @mgt-ink, 0 1px 3px rgba(0, 0, 0, .35); }
+        &.src-fate { outline: 2px solid #c9a227; outline-offset: 1px; }
+        &.src-deeper,
+        &.src-ofCourse { outline: 2px solid #5c5c92; outline-offset: 1px; }
+        &.exploded::after {
+            content: "";
+            position: absolute;
+            right: -3px;
+            top: -3px;
+            width: 8px;
+            height: 8px;
+            background: #c9a227;
+            border-radius: 50%;
+            border: 1px solid #fff;
+        }
+
+        &.replaced {
+            opacity: .35;
+
+            &::before {
+                content: "";
+                position: absolute;
+                left: 2px;
+                right: 2px;
+                top: 50%;
+                height: 2px;
+                background: @mgt-red;
+                transform: rotate(-35deg);
+            }
+        }
+    }
+
+    // = ME .consequence-result-* (outcome-bg-litm-*.webp -> outcome-*.webp placeholders)
+    .mg-outcome {
+        padding: 6px 10px;
+        margin: 4px 0;
+        background-color: #ead9c1;
+        background-repeat: no-repeat;
+        background-size: cover;
+        border-radius: 3px;
+
+        &.success { background-color: #f1dcac; background-image: url("../assets/sheet/outcome-success.webp"); }
+        &.partial { background-color: #ead9c1; background-image: url("../assets/sheet/outcome-partial.webp"); }
+        &.failure { background-color: #e3d8db; background-image: url("../assets/sheet/outcome-failure.webp"); }
+
+        .heading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            margin-bottom: 2px;
+            font-size: 1.6em;
+            font-weight: 700;
+            color: @mgt-ink-dark;
+        }
+
+        .mg-outcome-icon {
+            display: inline-grid;
+            place-items: center;
+            width: 26px;
+            height: 26px;
+            margin-right: 6px;
+            font-size: .6em;
+            transform: rotate(45deg);
+            background: #fff;
+            border: 2px solid #2b2016;
+            box-shadow: 2px 2px 4px rgba(0, 0, 0, .5);
+
+            > i { transform: rotate(-45deg); }
+        }
+
+        &.failure .mg-outcome-icon { color: @mgt-red; }
+
+        .mg-outcome-label {
+            margin: 0;
+            text-align: center;
+            font-weight: 700;
+            border-top: 1px solid rgba(0, 0, 0, .2);
+            padding-top: 2px;
+        }
+    }
+
+    .mg-card-notes,
+    .mg-card-hints {
+        margin: 4px 0;
+        padding-left: 16px;
+        font-size: 12px;
+        line-height: 1.4;
+    }
+
+    .mg-card-hints {
+        list-style: none;
+        padding-left: 0;
+        font-style: italic;
+        color: rgba(79, 51, 34, .85);
+
+        i { color: @mgt-ink; }
+    }
+
+    .mg-test-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+
+        .mg-roll-button {
+            .mgt-roll-button();
+            flex: 1 1 45%;
+            width: auto;
+            font-size: 12px;
+        }
+    }
+}

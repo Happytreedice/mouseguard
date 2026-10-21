@@ -96,12 +96,12 @@ export default class MouseCombat extends Combat {
         const CC2 = this.getFlag("mouseguard", "ConflictCaptain2");
 
         if (!CC) {
-            ui.notifications.error("A Conflict Captain Must be set for team 1");
+            ui.notifications.error(game.i18n.localize("MOUSEGUARD.Conflict.NeedCaptainTeam1"));
             return false;
         }
 
         if (!CC2) {
-            ui.notifications.error("A Conflict Captain Must be set for team 2");
+            ui.notifications.error(game.i18n.localize("MOUSEGUARD.Conflict.NeedCaptainTeam2"));
             return false;
         }
 

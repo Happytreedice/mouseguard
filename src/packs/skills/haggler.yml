@@ -1,12 +1,30 @@
 _id: qBBpCViHbpGOgJqy
-name: Haggler
+name: Торгаш
 type: skill
-img: icons/svg/item-bag.svg
+img: icons/tools/hand/scale-balances-merchant-brown.webp
 system:
-  description: MOUSEGUARD.SkillDescription
   rank: 0
-  pass: 0
-  fail: 0
+  learning: 0
+  beginnersLuck: will
+  specialty: false
+  advancement:
+    passed: 0
+    failed: 0
+  description: |-
+    <p>«Торгаш» — это особый социальный навык, который можно использовать, чтобы торговаться о цене товаров и услуг. Этот навык можно использовать, чтобы снизить сложность препятствия при проверке способности «Ресурсы», а также чтобы набить цену себе или завысить цену своего товара.</p>
+    <p><strong>Связанные правила:</strong></p>
+    <ul>
+    <li>Таблица «Типы конфликта» (с.110): «Переговоры» — проверяемый навык «Торгаш», основа диспозиции «Воля».</li>
+    <li>Конфликты (с.118–119): «Переговоры» — Атака и Защита «Торгаш», Финт и Манёвр — «Манипулятор» или «Переговорщик».</li>
+    </ul>
+    <p><em>Книга правил, с. 282.</em></p>
+  supplies: ''
+  factors: |-
+    <p>Навык «Торгаш» почти всегда используется при встречных проверках против навыка «Торгаш» или способности «Воля» противника. Этот навык также можно использовать при переговорах.</p>
+    <p>Если вы прошли проверку навыка «Торгаш», вы можете понизить или повысить (в зависимости от того, чего вы хотели добиться) на единицу сложность препятствия при проверке способности «Ресурсы».</p>
+    <p>Если вы не прошли проверку навыка «Торгаш», ваш противник также может повысить или понизить (в зависимости от того, чего он хочет) на единицу сложность препятствия при проверке способности «Ресурсы». Но делать это он будет в свою, а не в вашу пользу.</p>
+  help:
+    - Переговорщик
 effects: []
 folder: null
 sort: 0
@@ -15,8 +33,3 @@ ownership:
 flags:
   mouseguard:
     originalName: Haggler
-    description:
-      description: MOUSEGUARD.Skill.haggler.Description
-      supplies: MOUSEGUARD.Skill.haggler.Supplies
-      factors: MOUSEGUARD.Skill.haggler.Factors
-      help: MOUSEGUARD.Skill.haggler.Help

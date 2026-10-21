@@ -1,0 +1,12 @@
+{{!--
+  Pip tracker (LitM "development" dots).
+  Params: pips (array of {on, over}), path, min, max, advance ("passed"|"failed", optional), learn (Beginner's Luck
+  learning marks, optional), interactive, label (optional).
+  Interactive trackers: left click +1, right click -1 (action "adjust").
+--}}
+<span class="mgi-pips{{#if interactive}} interactive{{/if}}"
+      {{#if interactive}}data-action="adjust" data-path="{{path}}" data-min="{{min}}" data-max="{{max}}"
+      {{#if advance}}data-advance="{{advance}}"{{/if}} {{#if learn}}data-learn="true"{{/if}} data-tooltip="MOUSEGUARD.ItemSheet.PipsHint"{{/if}}
+      {{#if label}}aria-label="{{label}}"{{/if}}>
+    {{#each pips}}<i class="mgi-pip{{#if on}} on{{/if}}{{#if over}} over{{/if}}" inert></i>{{else}}<i class="mgi-pip empty" inert></i>{{/each}}
+</span>

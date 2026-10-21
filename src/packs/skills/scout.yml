@@ -1,12 +1,35 @@
 _id: h6FSPyF7GDGcoM7V
-name: Scout
+name: Разведчик
 type: skill
-img: icons/svg/item-bag.svg
+img: icons/tools/scribal/magnifying-glass.webp
 system:
-  description: MOUSEGUARD.SkillDescription
   rank: 0
-  pass: 0
-  fail: 0
+  learning: 0
+  beginnersLuck: health
+  specialty: false
+  advancement:
+    passed: 0
+    failed: 0
+  description: |-
+    <p>Персонажи с таким навыком специализируются на обнаружении рыскающих хищников, проникновении в тыл врага, выслеживании и захвате целей, а также поиске спрятанных предметов.</p>
+    <p><strong>Связанные правила:</strong></p>
+    <ul>
+    <li>Таблица «Типы конфликта» (с.110): «Погоня» — проверяемый навык «Разведчик», основа диспозиции «Здоровье» или «Природа».</li>
+    <li>Вещь с качеством «Неудобный» (см. Оружейник) даёт −1К к «Разведчику», когда надо красться или прятаться.</li>
+    <li>Конфликты (с.118–119): «Погоня» — Атака и Манёвр «Разведчик».</li>
+    </ul>
+    <p><em>Книга правил, с. 278.</em></p>
+  supplies: ''
+  factors: |-
+    <p>Этот навык почти всегда используется только для встречных проверок против навыка «Разведчик» или способности «Природа». Исключение составляют случаи, когда персонаж ищет улики или кого-нибудь, кто об этом не подозревает. В таких ситуациях используется обычная проверка навыка «Разведчик» против сложности, складывающейся из следующих факторов:</p>
+    <ul>
+    <li><strong>Размер цели:</strong> большая; размером с мышь; маленькая; крошечная.</li>
+    <li><strong>Местоположение:</strong> известное; примерно известное; находится «где-то в том направлении».</li>
+    <li><strong>Время:</strong> оставлено в этом сезоне; оставлено в прошлом сезоне; оставлено в прошлом году.</li>
+    </ul>
+  help:
+    - Следопыт
+    - Охотник
 effects: []
 folder: null
 sort: 0
@@ -15,8 +38,3 @@ ownership:
 flags:
   mouseguard:
     originalName: Scout
-    description:
-      description: MOUSEGUARD.Skill.scout.Description
-      supplies: MOUSEGUARD.Skill.scout.Supplies
-      factors: MOUSEGUARD.Skill.scout.Factors
-      help: MOUSEGUARD.Skill.scout.Help

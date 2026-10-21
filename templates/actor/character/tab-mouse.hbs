@@ -1,0 +1,186 @@
+{{!-- Mouse tab: a row of parchment cards (Legend in the Mist theme cards) and the Belief / Goal / Instinct quest boxes. --}}
+<section class="tab mgs-tab-body mgs-tab-mouse {{tab.cssClass}} {{#if editMode}}is-editing{{/if}}" data-tab="mouse" data-group="primary">
+    <div class="mgs-cards">
+
+        {{!-- Abilities --}}
+        <article class="mgs-card mgs-card--abilities">
+            <h2 class="mgs-ribbon mgs-ribbon--rust">
+                <span class="mgs-ribbon-title">{{localize "MOUSEGUARD.Sheet.Abilities"}}</span>
+                {{#if editMode}}
+                {{> "systems/mouseguard/templates/actor/character/parts/ribbon-tools.hbs" type="ability"
+                    create="MOUSEGUARD.Sheet.CreateAbility"}}
+                {{else}}<i class="mgs-ribbon-icon fa-solid fa-shield-halved" inert></i>{{/if}}
+            </h2>
+            <ol class="mgs-lines" data-item-type="ability">
+                {{#each abilities as |ability|}}
+                <li class="mgs-line mgs-line--ability {{#if ability.ready}}is-ready{{/if}} {{#if ability.taxed}}is-taxed{{/if}}"
+                    data-item-id="{{ability.id}}" {{#if ability.key}}data-ability-key="{{ability.key}}"{{/if}}>
+                    <div class="mgs-line-main">
+                        {{#if @root.editMode}}
+                        <span class="mgs-num-inputs">
+                            <input type="number" id="{{@root.partId}}-{{ability.id}}-rating" data-item-field="system.rating" value="{{ability.rating}}" min="0" max="20" step="1"
+                                   aria-label="{{localize "MOUSEGUARD.Sheet.Rating"}}" data-tooltip="MOUSEGUARD.Sheet.Rating">
+                            {{#if ability.isNature}}
+                            <span class="mgs-num-sep">/</span>
+                            <input type="number" id="{{@root.partId}}-{{ability.id}}-max" data-item-field="system.max" value="{{ability.max}}" min="0" max="20" step="1"
+                                   aria-label="{{localize "MOUSEGUARD.Sheet.NatureMax"}}" data-tooltip="MOUSEGUARD.Sheet.NatureMax">
+                            {{/if}}
+                        </span>
+                        {{else}}
+                        <span class="mgs-rank {{#if ability.isNature}}mgs-rank--wide{{/if}}"
+                              {{#if ability.isNature}}data-tooltip="MOUSEGUARD.Sheet.NatureHint"{{/if}}>{{ability.rating}}{{#if ability.isNature}}<small>/{{ability.max}}</small>{{/if}}</span>
+                        {{/if}}
+                        <a class="mgs-line-name" data-action="roll" role="button" tabindex="0"
+                           data-tooltip="MOUSEGUARD.Sheet.RollHint">{{ability.label}}</a>
+                    </div>
+                    <div class="mgs-dev">
+                        {{> "systems/mouseguard/templates/actor/character/parts/track.hbs" track=ability.passTrack}}
+                        {{#if ability.failTrack}}{{> "systems/mouseguard/templates/actor/character/parts/track.hbs" track=ability.failTrack}}{{/if}}
+                        {{#if @root.editMode}}{{> "systems/mouseguard/templates/actor/character/parts/line-tools.hbs"}}{{/if}}
+                    </div>
+                </li>
+                {{else}}
+                <li class="mgs-empty">{{localize "MOUSEGUARD.Sheet.EmptyAbilities"}}</li>
+                {{/each}}
+            </ol>
+        </article>
+
+        {{!-- Skills --}}
+        <article class="mgs-card mgs-card--skills">
+            <h2 class="mgs-ribbon mgs-ribbon--green">
+                <span class="mgs-ribbon-title">{{localize "MOUSEGUARD.Sheet.Skills"}}</span>
+                {{#if editMode}}
+                {{> "systems/mouseguard/templates/actor/character/parts/ribbon-tools.hbs" type="skill" pack="mouseguard.skills"
+                    hasPack=packs.skill browse="MOUSEGUARD.Sheet.BrowseSkills" create="MOUSEGUARD.Sheet.CreateSkill"}}
+                {{else}}<i class="mgs-ribbon-icon fa-solid fa-feather" inert></i>{{/if}}
+            </h2>
+            <ol class="mgs-lines" data-item-type="skill">
+                {{#each skills as |skill|}}
+                <li class="mgs-line mgs-line--skill draggable {{#if skill.specialty}}is-specialty{{/if}} {{#unless skill.learned}}is-unlearned{{/unless}} {{#if skill.ready}}is-ready{{/if}}"
+                    data-item-id="{{skill.id}}">
+                    <div class="mgs-line-main">
+                        {{#if @root.editMode}}
+                        <span class="mgs-num-inputs">
+                            <input type="number" id="{{@root.partId}}-{{skill.id}}-rank" data-item-field="system.rank" value="{{skill.rank}}" min="0" max="6" step="1"
+                                   aria-label="{{localize "MOUSEGUARD.Sheet.Rank"}}" data-tooltip="MOUSEGUARD.Sheet.Rank">
+                        </span>
+                        {{else}}
+                        <span class="mgs-rank" {{#if skill.blTooltip}}data-tooltip-text="{{skill.blTooltip}}"{{else}}data-tooltip="MOUSEGUARD.Sheet.Rank"{{/if}}>{{#if skill.learned}}{{skill.rank}}{{else}}&ndash;{{/if}}</span>
+                        {{/if}}
+                        <a class="mgs-line-name" data-action="roll" role="button" tabindex="0"
+                           data-tooltip="MOUSEGUARD.Sheet.RollHint">{{skill.name}}</a>
+                        {{#if @root.editMode}}
+                        <a class="mgs-tool mgs-star {{#if skill.specialty}}on{{/if}}" data-action="toggleSpecialty" role="button" tabindex="0"
+                           data-tooltip="MOUSEGUARD.Sheet.SpecialtyHint" aria-label="{{localize "MOUSEGUARD.Sheet.Specialty"}}"
+                           aria-pressed="{{#if skill.specialty}}true{{else}}false{{/if}}"><i class="fa-solid fa-star" inert></i></a>
+                        {{else if skill.specialty}}
+                        <i class="mgs-specialty-mark fa-solid fa-star" data-tooltip="MOUSEGUARD.Sheet.SpecialtyHint"></i>
+                        {{/if}}
+                    </div>
+                    <div class="mgs-dev">
+                        {{#if skill.learned}}
+                        {{> "systems/mouseguard/templates/actor/character/parts/track.hbs" track=skill.passTrack}}
+                        {{#if skill.failTrack}}{{> "systems/mouseguard/templates/actor/character/parts/track.hbs" track=skill.failTrack}}{{/if}}
+                        {{else}}
+                        {{> "systems/mouseguard/templates/actor/character/parts/track.hbs" track=skill.learnTrack}}
+                        {{/if}}
+                        {{#if @root.editMode}}{{> "systems/mouseguard/templates/actor/character/parts/line-tools.hbs"}}{{/if}}
+                    </div>
+                </li>
+                {{else}}
+                <li class="mgs-empty">{{localize "MOUSEGUARD.Sheet.EmptySkills"}}</li>
+                {{/each}}
+            </ol>
+        </article>
+
+        {{!-- Traits --}}
+        <article class="mgs-card mgs-card--traits">
+            <h2 class="mgs-ribbon mgs-ribbon--slate">
+                <span class="mgs-ribbon-title">{{localize "MOUSEGUARD.Sheet.Traits"}}</span>
+                {{#if editMode}}
+                {{> "systems/mouseguard/templates/actor/character/parts/ribbon-tools.hbs" type="trait" pack="mouseguard.traits"
+                    hasPack=packs.trait browse="MOUSEGUARD.Sheet.BrowseTraits" create="MOUSEGUARD.Sheet.CreateTrait"}}
+                {{else}}<i class="mgs-ribbon-icon fa-solid fa-paw" inert></i>{{/if}}
+            </h2>
+            <ol class="mgs-lines" data-item-type="trait">
+                {{#each traits as |trait|}}
+                <li class="mgs-line mgs-line--trait draggable {{#if trait.spent}}is-spent{{/if}}" data-item-id="{{trait.id}}">
+                    <div class="mgs-line-main">
+                        {{#if @root.editMode}}
+                        <span class="mgs-num-inputs">
+                            <input type="number" id="{{@root.partId}}-{{trait.id}}-level" data-item-field="system.level" value="{{trait.level}}" min="1" max="3" step="1"
+                                   aria-label="{{localize "MOUSEGUARD.Sheet.Level"}}" data-tooltip="MOUSEGUARD.Sheet.Level">
+                        </span>
+                        {{else}}
+                        <span class="mgs-rank mgs-rank--roman" data-tooltip="MOUSEGUARD.Sheet.TraitLevelHint">{{trait.roman}}</span>
+                        {{/if}}
+                        <a class="mgs-line-name" data-action="itemEdit" role="button" tabindex="0"
+                           data-tooltip="MOUSEGUARD.Sheet.OpenHint">{{trait.name}}</a>
+                    </div>
+                    <div class="mgs-dev">
+                        {{#if trait.unlimited}}
+                        <span class="mgs-badge" data-tooltip="MOUSEGUARD.Sheet.TraitLevel3Hint">{{localize "MOUSEGUARD.Sheet.TraitLevel3Short"}}</span>
+                        {{else}}
+                        {{> "systems/mouseguard/templates/actor/character/parts/track.hbs" track=trait.forTrack}}
+                        {{/if}}
+                        <a class="mgs-against {{#if trait.usedAgainst}}on{{/if}}" data-action="traitUse" data-mode="against" role="button" tabindex="0"
+                           data-tooltip="MOUSEGUARD.Sheet.TraitAgainstHint">
+                            <span class="mgs-track-label">{{localize "MOUSEGUARD.Sheet.TraitAgainstShort"}}</span>
+                            <i class="fa-solid fa-angles-down" inert></i>{{trait.usedAgainst}}
+                        </a>
+                        {{#if @root.editMode}}{{> "systems/mouseguard/templates/actor/character/parts/line-tools.hbs"}}{{/if}}
+                    </div>
+                </li>
+                {{else}}
+                <li class="mgs-empty">{{localize "MOUSEGUARD.Sheet.EmptyTraits"}}</li>
+                {{/each}}
+            </ol>
+        </article>
+
+        {{!-- Wises --}}
+        <article class="mgs-card mgs-card--wises">
+            <h2 class="mgs-ribbon mgs-ribbon--black">
+                <span class="mgs-ribbon-title">{{localize "MOUSEGUARD.Sheet.Wises"}}</span>
+                {{#if editMode}}
+                {{> "systems/mouseguard/templates/actor/character/parts/ribbon-tools.hbs" type="wise" create="MOUSEGUARD.Sheet.CreateWise"}}
+                {{else}}<i class="mgs-ribbon-icon fa-solid fa-book-open" inert></i>{{/if}}
+            </h2>
+            <ol class="mgs-lines" data-item-type="wise">
+                {{#each wises as |wise|}}
+                <li class="mgs-line mgs-line--wise draggable {{#if wise.ready}}is-ready{{/if}}" data-item-id="{{wise.id}}">
+                    <div class="mgs-line-main">
+                        <a class="mgs-line-name" data-action="itemEdit" role="button" tabindex="0"
+                           data-tooltip="MOUSEGUARD.Sheet.OpenHint">{{wise.name}}</a>
+                    </div>
+                    <div class="mgs-dev mgs-wise-marks" {{#if wise.ready}}data-tooltip="MOUSEGUARD.Sheet.WiseReadyHint"{{/if}}>
+                        {{#each wise.marks as |mark|}}
+                        <a class="mgs-mark {{#if mark.on}}on{{/if}}" data-action="wiseMark" data-mark="{{mark.key}}" role="button" tabindex="0"
+                           data-tooltip="{{mark.tooltip}}" aria-pressed="{{#if mark.on}}true{{else}}false{{/if}}">{{localize mark.short}}</a>
+                        {{/each}}
+                        {{#if @root.editMode}}{{> "systems/mouseguard/templates/actor/character/parts/line-tools.hbs"}}{{/if}}
+                    </div>
+                </li>
+                {{else}}
+                <li class="mgs-empty">{{localize "MOUSEGUARD.Sheet.EmptyWises"}}</li>
+                {{/each}}
+            </ol>
+        </article>
+    </div>
+
+    {{!-- Belief / Goal / Instinct: the Legend in the Mist QUEST band + handwritten text --}}
+    <div class="mgs-quests">
+        {{#each quests as |quest|}}
+        <article class="mgs-quest mgs-quest--{{quest.key}}">
+            <h3 class="mgs-quest-title" data-tooltip="{{quest.hint}}">{{localize quest.label}}</h3>
+            {{#if @root.editMode}}
+            <textarea name="{{quest.path}}" rows="3" placeholder="{{localize quest.hint}}">{{quest.value}}</textarea>
+            {{else if quest.value}}
+            <p class="mgs-hand">«{{quest.value}}»</p>
+            {{else}}
+            <p class="mgs-hand is-empty">{{localize "MOUSEGUARD.Sheet.QuestEmpty"}}</p>
+            {{/if}}
+            <p class="mgs-quest-hint" data-tooltip="{{quest.hint}}">{{localize quest.hint}}</p>
+        </article>
+        {{/each}}
+    </div>
+</section>

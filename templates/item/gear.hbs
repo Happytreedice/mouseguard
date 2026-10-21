@@ -1,0 +1,31 @@
+{{!-- Gear ("item" type) body: quantity, weight, description. --}}
+<section class="mgi-body mgi-body--item">
+    <div class="mgi-cards">
+        <article class="mgi-card mgi-card--wide">
+            <h2 class="mgi-ribbon mgi-ribbon--orange">{{localize "MOUSEGUARD.ItemSheet.Gear"}}</h2>
+            <div class="mgi-card-body mgi-card-body--row">
+                {{#if editMode}}
+                <label class="mgi-field">
+                    <span>{{localize "MOUSEGUARD.ItemSheet.Quantity"}}</span>
+                    <input type="number" name="system.quantity" value="{{system.quantity}}" min="0" step="1">
+                </label>
+                <label class="mgi-field">
+                    <span>{{localize "MOUSEGUARD.ItemSheet.Weight"}}</span>
+                    <input type="number" name="system.weight" value="{{system.weight}}" min="0" step="any">
+                </label>
+                {{else}}
+                <div class="mgi-stat is-small">
+                    <span class="mgi-stat-value">{{gear.quantity}}</span>
+                    <span class="mgi-stat-label">{{localize "MOUSEGUARD.ItemSheet.Quantity"}}</span>
+                </div>
+                <div class="mgi-stat is-small">
+                    <span class="mgi-stat-value">{{gear.weight}}</span>
+                    <span class="mgi-stat-label">{{localize "MOUSEGUARD.ItemSheet.Weight"}}</span>
+                </div>
+                {{/if}}
+            </div>
+        </article>
+    </div>
+
+    {{> "systems/mouseguard/templates/item/parts/rich-section.hbs" label=(localize "MOUSEGUARD.ItemSheet.Description") field="system.description" value=raw.description html=enriched.description hint="" hideEmpty=false cssClass="mgi-section--description"}}
+</section>

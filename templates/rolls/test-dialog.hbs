@@ -1,0 +1,229 @@
+<div class="mg-test-root">
+    <div class="mg-test-body">
+
+        {{!-- What is tested --}}
+        <div class="form-group mg-test-subject">
+            <label class="mg-test-label" for="{{partId}}-subject">{{localize "MOUSEGUARD.Test.Dialog.Subject"}}</label>
+            <select id="{{partId}}-subject" name="subjectId">
+                <option value="" {{#unless hasSubject}}selected{{/unless}}>{{localize "MOUSEGUARD.Test.Dialog.ChooseSubject"}}</option>
+                {{#each subjectGroups}}
+                <optgroup label="{{label}}">
+                    {{#each options}}
+                    <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+                    {{/each}}
+                </optgroup>
+                {{/each}}
+            </select>
+        </div>
+        {{#if kindLabel}}<p class="mg-test-kind">{{kindLabel}}</p>{{/if}}
+        {{#if beginnersLuckHint}}<p class="mg-test-hint">{{beginnersLuckHint}}</p>{{/if}}
+
+        {{!-- Dice pool, LitM "You selected:" pill list --}}
+        <div class="mg-test-label">{{localize "MOUSEGUARD.Test.Dialog.Pool"}}</div>
+        <ul class="mg-pills">
+            {{#each parts}}
+            <li class="mg-pill {{cls}}"><span class="mg-pill-label">{{label}}</span><span class="mg-pill-value">{{value}}</span></li>
+            {{else}}
+            <li class="mg-pill off"><span class="mg-pill-label">{{localize "MOUSEGUARD.Test.Dialog.NoPool"}}</span></li>
+            {{/each}}
+        </ul>
+        {{#if ctx.blocked}}<p class="mg-test-blocked"><i class="fa-solid fa-ban"></i> {{ctx.blocked}}</p>{{/if}}
+        {{#each ctx.warnings}}<p class="mg-test-warning"><i class="fa-solid fa-triangle-exclamation"></i> {{this}}</p>{{/each}}
+
+        {{#if hasSubject}}
+        {{#if ctx.canNatureInstead}}
+        <label class="mg-check">
+            <input type="checkbox" name="natureInstead" {{#if state.natureInstead}}checked{{/if}}>
+            <span>{{localize "MOUSEGUARD.Test.Dialog.NatureInstead"}}</span>
+        </label>
+        {{/if}}
+        {{#if ctx.canRecovery}}
+        <label class="mg-check" data-tooltip="{{localize "MOUSEGUARD.Test.Dialog.RecoveryHint"}}">
+            <input type="checkbox" name="recovery" {{#if state.recovery}}checked{{/if}}>
+            <span>{{localize "MOUSEGUARD.Test.Dialog.Recovery"}}</span>
+        </label>
+        {{/if}}
+
+        {{!-- Obstacle --}}
+        <h4 class="mg-test-subtitle"><span>{{localize "MOUSEGUARD.Test.Dialog.Obstacle"}}</span></h4>
+        <label class="mg-check">
+            <input type="checkbox" name="versus" {{#if state.versus}}checked{{/if}}>
+            <span>{{localize "MOUSEGUARD.Test.Dialog.Versus"}}</span>
+        </label>
+        {{#if state.versus}}
+        <div class="form-group mg-stepper-row">
+            <label>{{localize "MOUSEGUARD.Test.Dialog.Opponent"}}</label>
+            <div class="mg-stepper">
+                <button type="button" data-action="step" data-field="opponent" data-delta="-1" aria-label="-1"><i class="fa-solid fa-minus"></i></button>
+                <input type="number" name="opponent" value="{{state.opponent}}" min="0" max="30" step="1">
+                <button type="button" data-action="step" data-field="opponent" data-delta="1" aria-label="+1"><i class="fa-solid fa-plus"></i></button>
+            </div>
+        </div>
+        {{else}}
+        <div class="form-group mg-stepper-row">
+            <label>{{localize "MOUSEGUARD.Test.Dialog.Ob"}}</label>
+            <div class="mg-stepper">
+                <button type="button" data-action="step" data-field="ob" data-delta="-1" aria-label="-1"><i class="fa-solid fa-minus"></i></button>
+                <input type="number" name="ob" value="{{state.ob}}" min="0" max="10" step="1">
+                <button type="button" data-action="step" data-field="ob" data-delta="1" aria-label="+1"><i class="fa-solid fa-plus"></i></button>
+            </div>
+        </div>
+        {{/if}}
+
+        {{!-- Help, wises, gear --}}
+        <h4 class="mg-test-subtitle"><span>{{localize "MOUSEGUARD.Test.Dialog.Help"}}</span></h4>
+        {{#if ctx.canHelp}}
+        <div class="form-group mg-stepper-row" data-tooltip="{{localize "MOUSEGUARD.Test.Dialog.HelpersHint"}}">
+            <label>{{localize "MOUSEGUARD.Test.Part.Helpers"}}</label>
+            <div class="mg-stepper">
+                <button type="button" data-action="step" data-field="helpers" data-delta="-1" aria-label="-1"><i class="fa-solid fa-minus"></i></button>
+                <input type="number" name="helpers" value="{{ctx.helpers}}" min="0" max="10" step="1">
+                <button type="button" data-action="step" data-field="helpers" data-delta="1" aria-label="+1"><i class="fa-solid fa-plus"></i></button>
+            </div>
+        </div>
+        <div class="form-group mg-stepper-row" data-tooltip="{{localize "MOUSEGUARD.Test.Dialog.WiseHelpHint"}}">
+            <label>{{localize "MOUSEGUARD.Test.Part.WiseHelp"}}</label>
+            <div class="mg-stepper">
+                <button type="button" data-action="step" data-field="wiseHelp" data-delta="-1" aria-label="-1"><i class="fa-solid fa-minus"></i></button>
+                <input type="number" name="wiseHelp" value="{{state.wiseHelp}}" min="0" max="10" step="1">
+                <button type="button" data-action="step" data-field="wiseHelp" data-delta="1" aria-label="+1"><i class="fa-solid fa-plus"></i></button>
+            </div>
+        </div>
+        {{#if wiseHelpers.length}}
+        <div class="mg-wise-helpers">
+            {{#each wiseHelpers}}
+            <label class="mg-check">
+                <input type="checkbox" name="wiseHelpers" value="{{uuid}}" {{#if checked}}checked{{/if}}>
+                <span>{{label}}</span>
+            </label>
+            {{/each}}
+        </div>
+        {{/if}}
+        {{else}}
+        <p class="mg-test-hint">{{localize "MOUSEGUARD.Test.Dialog.NoHelp"}}</p>
+        {{/if}}
+        <div class="mg-check-row">
+            <label class="mg-check">
+                <input type="checkbox" name="gear" {{#if state.gear}}checked{{/if}}>
+                <span>{{localize "MOUSEGUARD.Test.Part.Gear"}}</span>
+            </label>
+            <label class="mg-check" data-tooltip="{{localize "MOUSEGUARD.Test.Dialog.SuppliesHint"}}">
+                <input type="checkbox" name="supplies" {{#if state.supplies}}checked{{/if}}>
+                <span>{{localize "MOUSEGUARD.Test.Part.Supplies"}}</span>
+            </label>
+            {{#if showHomeTown}}
+            <label class="mg-check">
+                <input type="checkbox" name="homeTown" {{#if state.homeTown}}checked{{/if}}>
+                <span>{{localize "MOUSEGUARD.Test.Part.HomeTown"}}</span>
+            </label>
+            {{/if}}
+            {{#if showContact}}
+            <label class="mg-check">
+                <input type="checkbox" name="contact" {{#if state.contact}}checked{{/if}}>
+                <span>{{localize "MOUSEGUARD.Test.Part.Contact"}}</span>
+            </label>
+            {{/if}}
+        </div>
+
+        {{!-- Traits --}}
+        {{#if hasTraits}}
+        <h4 class="mg-test-subtitle"><span>{{localize "MOUSEGUARD.Traits"}}</span></h4>
+        <div class="form-group">
+            <label>{{localize "MOUSEGUARD.Test.Dialog.TraitFor"}}</label>
+            <select name="traitFor">
+                <option value="">{{localize "MOUSEGUARD.Test.Dialog.None"}}</option>
+                {{#each traitsFor}}
+                <option value="{{value}}" {{#if selected}}selected{{/if}} {{#if disabled}}disabled{{/if}}>{{label}}</option>
+                {{/each}}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>{{localize "MOUSEGUARD.Test.Dialog.TraitAgainst"}}</label>
+            <select name="traitAgainst">
+                <option value="">{{localize "MOUSEGUARD.Test.Dialog.None"}}</option>
+                {{#each traitsAgainst}}
+                <option value="{{value}}" {{#if selected}}selected{{/if}} {{#if disabled}}disabled{{/if}}>{{label}}</option>
+                {{/each}}
+            </select>
+        </div>
+        {{#if state.traitAgainst}}
+        <div class="mg-radio-row">
+            <label class="mg-check">
+                <input type="radio" name="againstMode" value="self" {{#if againstSelf}}checked{{/if}}>
+                <span>{{localize "MOUSEGUARD.Test.Dialog.AgainstSelf"}}</span>
+            </label>
+            {{#if state.versus}}
+            <label class="mg-check">
+                <input type="radio" name="againstMode" value="opponent" {{#if againstOpponent}}checked{{/if}}>
+                <span>{{localize "MOUSEGUARD.Test.Dialog.AgainstOpponent"}}</span>
+            </label>
+            {{/if}}
+        </div>
+        {{/if}}
+        {{/if}}
+
+        {{!-- Persona and Nature --}}
+        {{#if hasRewards}}
+        <h4 class="mg-test-subtitle"><span>{{localize "MOUSEGUARD.Test.Dialog.PersonaNature"}}</span></h4>
+        {{#if ctx.canPersona}}
+        <div class="form-group mg-stepper-row">
+            <label>{{localize "MOUSEGUARD.Test.Dialog.PersonaDice"}} <span class="mg-test-muted">({{localize "MOUSEGUARD.Test.Dialog.Available" n=personaAvailable}})</span></label>
+            <div class="mg-stepper">
+                <button type="button" data-action="step" data-field="persona" data-delta="-1" aria-label="-1"><i class="fa-solid fa-minus"></i></button>
+                <input type="number" name="persona" value="{{ctx.personaDice}}" min="0" max="{{personaMax}}" step="1">
+                <button type="button" data-action="step" data-field="persona" data-delta="1" aria-label="+1"><i class="fa-solid fa-plus"></i></button>
+            </div>
+        </div>
+        {{#if ctx.canTapNature}}
+        <label class="mg-check" data-tooltip="{{localize "MOUSEGUARD.Test.Dialog.TapNatureHint"}}">
+            <input type="checkbox" name="tapNature" {{#if state.tapNature}}checked{{/if}}>
+            <span>{{localize "MOUSEGUARD.Test.Dialog.TapNature" n=ctx.natureRating}}</span>
+        </label>
+        {{/if}}
+        {{else}}
+        <p class="mg-test-hint">{{localize "MOUSEGUARD.Test.Dialog.NoPersona"}}</p>
+        {{/if}}
+        {{/if}}
+        {{#if showInNature}}
+        <label class="mg-check" data-tooltip="{{localize "MOUSEGUARD.Test.Dialog.InNatureHint"}}">
+            <input type="checkbox" name="inNature" {{#if state.inNature}}checked{{/if}}>
+            <span>{{localize "MOUSEGUARD.Test.Dialog.InNature"}}</span>
+        </label>
+        {{/if}}
+
+        {{!-- Other options --}}
+        <h4 class="mg-test-subtitle"><span>{{localize "MOUSEGUARD.Test.Dialog.Options"}}</span></h4>
+        <div class="form-group mg-stepper-row">
+            <label>{{localize "MOUSEGUARD.Test.Part.Modifier"}}</label>
+            <div class="mg-stepper">
+                <button type="button" data-action="step" data-field="modifier" data-delta="-1" aria-label="-1"><i class="fa-solid fa-minus"></i></button>
+                <input type="number" name="modifier" value="{{state.modifier}}" min="-10" max="10" step="1">
+                <button type="button" data-action="step" data-field="modifier" data-delta="1" aria-label="+1"><i class="fa-solid fa-plus"></i></button>
+            </div>
+        </div>
+        {{#if canMark}}
+        <label class="mg-check">
+            <input type="checkbox" name="markAdvancement" {{#if markAdvancement}}checked{{/if}}>
+            <span>{{localize "MOUSEGUARD.Test.Dialog.MarkAdvancement"}}</span>
+        </label>
+        {{/if}}
+        {{#if messageModes.length}}
+        <div class="form-group">
+            <label>{{localize "MOUSEGUARD.Test.Dialog.Visibility"}}</label>
+            <select name="messageMode">
+                {{#each messageModes}}
+                <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+                {{/each}}
+            </select>
+        </div>
+        {{/if}}
+        {{/if}}
+    </div>
+
+    <div class="mg-test-summary">{{summary}}</div>
+    <footer class="mg-test-footer">
+        <button type="submit" class="mg-roll-button" {{#unless canRoll}}disabled{{/unless}}>
+            <i class="fa-solid fa-dice-d6"></i> {{localize "MOUSEGUARD.Test.Dialog.Roll"}}
+        </button>
+    </footer>
+</div>

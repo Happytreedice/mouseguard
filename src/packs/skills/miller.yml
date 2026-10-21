@@ -1,12 +1,32 @@
 _id: rhwRm5gnCjhYtzUn
-name: Miller
+name: Мельник
 type: skill
-img: icons/svg/item-bag.svg
+img: icons/svg/windmill.svg
 system:
-  description: MOUSEGUARD.SkillDescription
   rank: 0
-  pass: 0
-  fail: 0
+  learning: 0
+  beginnersLuck: health
+  specialty: false
+  advancement:
+    passed: 0
+    failed: 0
+  description: |-
+    <p>С помощью жерновов персонажи с таким навыком превращают твёрдые субстанции в порошки и муку, чтобы затем их можно было использовать для приготовления пищи, в пивоварении и промышленном производстве.</p>
+    <p><strong>Связанные правила:</strong></p>
+    <ul>
+    <li>«Мельник» сам даёт припасы: бумагу — «Архивариусу» и «Картографу», солод — «Пивовару», а также «Пекарю» и «Повару».</li>
+    <li>С.204 (засуха и голод): сложность обычных проверок «Сборщик» +3, что также увеличивает на 3 сложность проверок «Пекарь» и «Мельник».</li>
+    </ul>
+    <p><em>Книга правил, с. 272.</em></p>
+  supplies: ''
+  factors: |-
+    <ul>
+    <li><strong>Тип действия:</strong> помол зерна; изготовление порошка для строительных растворов; изготовление бумаги.</li>
+    <li><strong>Для кого:</strong> патруль; хозяйство; бизнес или большая постройка; городок; большой город.</li>
+    </ul>
+  help:
+    - Учёный
+    - Разнорабочий
 effects: []
 folder: null
 sort: 0
@@ -15,8 +35,3 @@ ownership:
 flags:
   mouseguard:
     originalName: Miller
-    description:
-      description: MOUSEGUARD.Skill.miller.Description
-      supplies: MOUSEGUARD.Skill.miller.Supplies
-      factors: MOUSEGUARD.Skill.miller.Factors
-      help: MOUSEGUARD.Skill.miller.Help
