@@ -40,14 +40,20 @@
             "label": "MOUSEGUARD.CompendiumSkills",
             "path": "packs/skills",
             "type": "Item",
-            "system": "mouseguard"
+            "system": "mouseguard",
+            "ownership": {
+                "PLAYER": "OBSERVER"
+            }
         },
         {
             "name": "traits",
             "label": "MOUSEGUARD.CompendiumTraits",
             "path": "packs/traits",
             "type": "Item",
-            "system": "mouseguard"
+            "system": "mouseguard",
+            "ownership": {
+                "PLAYER": "OBSERVER"
+            }
         }
     ],
     "languages": [

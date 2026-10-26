@@ -1,13 +1,14 @@
 /**
- * Compile the YAML compendium sources (src/packs/<pack>/*.yml) into Foundry LevelDB packs (packs/<pack>).
+ * Compile YAML compendium sources into Foundry's LevelDB compendium directories.
  *
  * Every source file must be a complete Item document matching the system data models
  * (module/data-models.js: SkillData / TraitData). The build validates each document strictly
  * and refuses to write anything if a single file is invalid. Each pack database is cleared before
  * it is rewritten, so documents whose source file was deleted disappear from the compendium.
  *
- * Usage: node scripts/build_packs.js            (build all packs)
- *        node scripts/build_packs.js --check    (validate only, write nothing)
+ * Usage: node scripts/build_packs.js                         (build all packs)
+ *        node scripts/build_packs.js --check                 (validate only, write nothing)
+ *        node scripts/build_packs.js --install <system-path> (also replace installed packs)
  */
 const fs = require('fs');
 const path = require('path');
@@ -28,6 +29,9 @@ const PACKS = [
         type: 'trait'
     }
 ];
+
+const installArg = process.argv.indexOf('--install');
+const INSTALL_DIR = installArg >= 0 ? path.resolve(process.argv[installArg + 1] ?? '') : null;
 
 const ID_PATTERN = /^[A-Za-z0-9]{16}$/;
 const TOP_LEVEL_KEYS = new Set(['_id', 'name', 'type', 'img', 'system', 'effects', 'folder', 'sort', 'ownership', 'flags', '_stats']);
@@ -230,8 +234,13 @@ async function compilePack(pack, { check = false } = {}) {
         return items.length;
     }
 
-    fs.mkdirSync(pack.outDir, { recursive: true });
-    const db = new ClassicLevel(pack.outDir, { valueEncoding: 'json' });
+    const outDir = pack.installDir ?? pack.outDir;
+    fs.mkdirSync(outDir, { recursive: true });
+    const legacyFile = `${outDir}.db`;
+    if (pack.installDir && fs.existsSync(legacyFile)) {
+        throw new Error(`Legacy compendium file exists at ${legacyFile}; move it out of the way before installing the LevelDB pack`);
+    }
+    const db = new ClassicLevel(outDir, { valueEncoding: 'json' });
     await db.open();
     try {
         // Start from an empty database so deleted/renamed sources do not linger in the compendium.
@@ -249,11 +258,20 @@ async function compilePack(pack, { check = false } = {}) {
 
 async function buildAll(options = {}) {
     // Validate everything first so an invalid source never leaves packs half-written.
-    for (const pack of PACKS) loadPack(pack);
+    for (const pack of PACKS) {
+        loadPack(pack);
+        if (INSTALL_DIR) {
+            pack.installDir = path.join(INSTALL_DIR, pack.name);
+        }
+    }
     for (const pack of PACKS) await compilePack(pack, options);
 }
 
 if (require.main === module) {
+    if (installArg >= 0 && (!process.argv[installArg + 1] || process.argv[installArg + 1].startsWith('--'))) {
+        console.error('Usage: node scripts/build_packs.js --install <system-path>');
+        process.exit(1);
+    }
     buildAll({ check: process.argv.includes('--check') }).catch((err) => {
         console.error('Error compiling compendiums:', err.message ?? err);
         process.exit(1);
