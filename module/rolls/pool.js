@@ -61,11 +61,16 @@ export function hasRewards(actor) {
 }
 
 /**
- * Ability items ordered by key, then skills by name.
+ * Ability items ordered by key, then skills by name. An animal offers its Nature only (book: "such animals have one
+ * ability"; Nature is rolled for every test, versus test and tiebreaker).
  * @param {Actor} actor
  * @returns {{abilities: Item[], skills: Item[]}}
  */
 export function listSubjects(actor) {
+    if (actor?.type === "animal") {
+        const nature = actor.getAbility?.("nature");
+        return { abilities: nature ? [nature] : [], skills: [] };
+    }
     const order = (item) => {
         const i = ABILITY_ORDER.indexOf(item.system?.key);
         return i === -1 ? ABILITY_ORDER.length : i;
@@ -121,7 +126,10 @@ export function computeTest(actor, state) {
         canRecovery: false, recovery: false, canNatureInstead: false, natureInstead: false,
         resCirc: false, natureTest: false, beginnersLuck: null, rewards: hasRewards(actor)
     };
-    const subject = actor.items.get(state.subjectId);
+    // Animals test Nature whatever was asked for
+    const subject = actor.type === "animal"
+        ? (actor.getAbility?.("nature") ?? null)
+        : actor.items.get(state.subjectId);
     if (!subject || !["skill", "ability"].includes(subject.type)) {
         ctx.blocked = loc("MOUSEGUARD.Test.Error.NoSubject");
         return ctx;

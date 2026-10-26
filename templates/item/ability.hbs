@@ -12,26 +12,27 @@
                     </select>
                 </label>
                 <label class="mgi-field">
-                    <span>{{#if ability.isNature}}{{localize "MOUSEGUARD.ItemSheet.Current"}}{{else}}{{localize "MOUSEGUARD.ItemSheet.Rating"}}{{/if}}</span>
+                    <span>{{#if ability.isNature}}{{#if ability.fixedNature}}{{localize "MOUSEGUARD.ItemSheet.Rating"}}{{else}}{{localize "MOUSEGUARD.ItemSheet.Current"}}{{/if}}{{else}}{{localize "MOUSEGUARD.ItemSheet.Rating"}}{{/if}}</span>
                     <input type="number" name="system.rating" value="{{system.rating}}" min="0" max="20" step="1">
                 </label>
-                {{#if ability.isNature}}
+                {{#if ability.isNature}}{{#unless ability.fixedNature}}
                 <label class="mgi-field">
                     <span>{{localize "MOUSEGUARD.ItemSheet.Max"}}</span>
                     <input type="number" name="system.max" value="{{ability.max}}" min="0" max="20" step="1">
                 </label>
-                {{/if}}
+                {{/unless}}{{/if}}
                 {{else}}
                 <div class="mgi-track mgi-track--scale{{#if ability.taxed}} is-taxed{{/if}}">
                     <span class="mgi-scale" aria-label="{{localize 'MOUSEGUARD.ItemSheet.Rating'}}">{{#each ability.scale}}<i class="mgi-pip{{#if on}} on{{/if}}{{#if taxed}} taxed{{/if}}" inert></i>{{/each}}</span>
-                    <span class="mgi-track-count">{{#if ability.isNature}}{{ability.rating}}/{{ability.max}}{{else}}{{ability.rating}}/{{ability.cap}}{{/if}}</span>
+                    <span class="mgi-track-count">{{#if ability.isNature}}{{#if ability.fixedNature}}{{ability.rating}}/{{ability.cap}}{{else}}{{ability.rating}}/{{ability.max}}{{/if}}{{else if ability.npc}}{{ability.rating}}{{else}}{{ability.rating}}/{{ability.cap}}{{/if}}</span>
                 </div>
-                {{#unless ability.isNature}}<p class="mgi-hint">{{localize "MOUSEGUARD.ItemSheet.AbilityCapHint"}}</p>{{/unless}}
+                {{#unless ability.isNature}}{{#unless ability.npc}}<p class="mgi-hint">{{localize "MOUSEGUARD.ItemSheet.AbilityCapHint"}}</p>{{/unless}}{{/unless}}
                 {{/if}}
-                {{#if ability.isNature}}<p class="mgi-hint">{{localize "MOUSEGUARD.ItemSheet.NatureHint"}}</p>{{/if}}
+                {{#if ability.isNature}}<p class="mgi-hint">{{#if ability.fixedNature}}{{localize "MOUSEGUARD.ItemSheet.FixedNatureHint"}}{{else}}{{localize "MOUSEGUARD.ItemSheet.NatureHint"}}{{/if}}</p>{{/if}}
             </div>
         </article>
 
+        {{#if ability.showAdvancement}}
         <article class="mgi-card">
             <h2 class="mgi-ribbon mgi-ribbon--rust">{{localize "MOUSEGUARD.ItemSheet.Advancement"}}</h2>
             <div class="mgi-card-body">
@@ -59,6 +60,7 @@
                 <p class="mgi-hint">{{ability.advancement.hint}}</p>
             </div>
         </article>
+        {{/if}}
     </div>
 
     {{> "systems/mouseguard/templates/item/parts/rich-section.hbs" label=(localize "MOUSEGUARD.ItemSheet.Description") field="system.description" value=raw.description html=enriched.description hint="" hideEmpty=false cssClass="mgi-section--description"}}

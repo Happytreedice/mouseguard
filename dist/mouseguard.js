@@ -176,18 +176,85 @@ var CharacterData = class extends TypeDataModel {
   set itemTypes(_) {
   }
 };
+var natureAspectsSchema = () => new fields.ArrayField(new fields.StringField({ blank: true }));
+function migrateNatureAspects(source) {
+  if (!("natureAspects" in source)) return;
+  const value = source.natureAspects;
+  if (typeof value === "string") source.natureAspects = value.split(/[,;\n]/).map((s) => s.trim()).filter(Boolean);
+  else if (Array.isArray(value)) {
+    source.natureAspects = value.filter((s) => typeof s === "string" && s.trim()).map((s) => s.trim());
+  }
+}
 var NPCActorData = class extends TypeDataModel {
   static defineSchema() {
     return {
       biography: new fields.HTMLField({ required: false, blank: true, initial: "" }),
+      notes: new fields.HTMLField({ required: false, blank: true, initial: "" }),
       player: new fields.StringField({ blank: true, initial: "" }),
+      details: new fields.SchemaField({
+        role: new fields.StringField({ blank: true, initial: "" }),
+        home: new fields.StringField({ blank: true, initial: "" }),
+        age: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
+        fur_color: new fields.StringField({ blank: true, initial: "" }),
+        cloak_color: new fields.StringField({ blank: true, initial: "" })
+      }),
+      keyCharacter: new fields.BooleanField({ initial: false }),
+      motivation: new fields.SchemaField({
+        belief: new fields.StringField({ blank: true, initial: "" }),
+        goal: new fields.StringField({ blank: true, initial: "" }),
+        instinct: new fields.StringField({ blank: true, initial: "" })
+      }),
+      natureAspects: natureAspectsSchema(),
       conditions: conditionsSchema(),
       disposition: dispositionSchema()
     };
   }
   /** @inheritdoc */
   static migrateData(source, options) {
-    if (isObject(source)) migrateLegacyHTML(source, "biography");
+    if (isObject(source)) {
+      migrateLegacyHTML(source, "biography");
+      migrateLegacyHTML(source, "notes");
+      migrateNatureAspects(source);
+    }
+    return super.migrateData(source, options);
+  }
+  get itemTypes() {
+    return this.parent?.itemTypes ?? {};
+  }
+  set itemTypes(_) {
+  }
+};
+var NATURAL_ORDER_MAX = 9;
+var NATURAL_ORDER_MOUSE = 3;
+var AnimalData = class extends TypeDataModel {
+  static defineSchema() {
+    return {
+      biography: new fields.HTMLField({ required: false, blank: true, initial: "" }),
+      notes: new fields.HTMLField({ required: false, blank: true, initial: "" }),
+      species: new fields.StringField({ blank: true, initial: "" }),
+      naturalOrder: new fields.NumberField({
+        required: true,
+        nullable: false,
+        initial: 0,
+        integer: true,
+        min: 0,
+        max: NATURAL_ORDER_MAX
+      }),
+      natureAspects: natureAspectsSchema(),
+      disposition: dispositionSchema()
+    };
+  }
+  /** @inheritdoc */
+  static migrateData(source, options) {
+    if (isObject(source)) {
+      migrateLegacyHTML(source, "biography");
+      migrateLegacyHTML(source, "notes");
+      migrateNatureAspects(source);
+      if ("naturalOrder" in source) {
+        const level = Math.trunc(toNumber(source.naturalOrder));
+        source.naturalOrder = Math.clamp(level, 0, NATURAL_ORDER_MAX);
+      }
+    }
     return super.migrateData(source, options);
   }
   get itemTypes() {
@@ -203,15 +270,25 @@ var MouseGuardItemDataBase = class extends TypeDataModel {
     return super.migrateData(source, options);
   }
 };
+var GEAR_CATEGORIES = Object.freeze(["gear", "weapon", "armor", "natural"]);
 var ItemData = class extends MouseGuardItemDataBase {
   static defineSchema() {
     return {
       description: new fields.HTMLField({ required: false, blank: true, initial: "" }),
       quantity: new fields.NumberField({ initial: 1, integer: true }),
       weight: new fields.NumberField({ initial: 0 }),
+      category: new fields.StringField({ required: true, blank: false, initial: "gear", choices: [...GEAR_CATEGORIES] }),
+      effect: new fields.StringField({ blank: true, initial: "" }),
       attributes: new fields.ObjectField(),
       groups: new fields.ObjectField()
     };
+  }
+  /** @inheritdoc */
+  static migrateData(source, options) {
+    if (isObject(source) && "category" in source && !GEAR_CATEGORIES.includes(source.category)) {
+      source.category = "gear";
+    }
+    return super.migrateData(source, options);
   }
 };
 var SkillData = class extends MouseGuardItemDataBase {
@@ -404,6 +481,10 @@ function abilityLabelKey(key, actorType) {
 }
 function abilityLabel(ability, actorType) {
   const key = ability?.system?.key;
+  if (key === "nature" && actorType === "animal") {
+    const species = String(ability?.parent?.system?.species ?? "").trim();
+    if (species) return game.i18n.format("MOUSEGUARD.AnimalSheet.NatureOf", { species });
+  }
   const labelKey = key ? abilityLabelKey(key, actorType) : null;
   if (labelKey) return game.i18n.localize(labelKey);
   return itemLabel(ability);
@@ -460,6 +541,10 @@ function hasRewards(actor) {
   return actor?.type === "character" && !!actor.system?.rewards;
 }
 function listSubjects(actor) {
+  if (actor?.type === "animal") {
+    const nature = actor.getAbility?.("nature");
+    return { abilities: nature ? [nature] : [], skills: [] };
+  }
   const order = (item) => {
     const i = ABILITY_ORDER.indexOf(item.system?.key);
     return i === -1 ? ABILITY_ORDER.length : i;
@@ -526,7 +611,7 @@ function computeTest(actor, state) {
     beginnersLuck: null,
     rewards: hasRewards(actor)
   };
-  const subject = actor.items.get(state.subjectId);
+  const subject = actor.type === "animal" ? actor.getAbility?.("nature") ?? null : actor.items.get(state.subjectId);
   if (!subject || !["skill", "ability"].includes(subject.type)) {
     ctx.blocked = loc("MOUSEGUARD.Test.Error.NoSubject");
     return ctx;
@@ -912,12 +997,12 @@ async function applyConsequences(actor, record, { initial = false, message = nul
   record.applied ??= {};
   const applied = record.applied;
   const canWrite = actor?.isOwner;
-  if (initial && canWrite && record.beginnersLuck && record.subjectId) {
+  if (initial && canWrite && record.beginnersLuck && record.subjectId && actor.type === "character") {
     const before = snapshot(actor.items.get(record.subjectId));
     const res = await actor.markLearning(record.subjectId, 1, { notify: false });
     if (res) applied.learning = { itemId: record.subjectId, before, value: res.learning, target: res.target, learned: res.learned };
   }
-  const desiredMark = record.markAdvancement && record.testedItemId && !result.tie ? result.passed ? "passed" : "failed" : null;
+  const desiredMark = actor?.type === "character" && record.markAdvancement && record.testedItemId && !result.tie ? result.passed ? "passed" : "failed" : null;
   const current = applied.advancement ?? null;
   if (canWrite && (current?.mark ?? null) !== desiredMark) {
     if (current?.mark) await revertAdvancement(actor, current);
@@ -936,7 +1021,7 @@ async function applyConsequences(actor, record, { initial = false, message = nul
       };
     }
   }
-  const nature = actor?.getAbility?.("nature");
+  const nature = actor?.type === "character" ? actor.getAbility?.("nature") : null;
   const desiredTax = nature ? natureTax(record, result) : 0;
   const appliedTax = int2(applied.tax?.amount);
   if (canWrite && nature && desiredTax !== appliedTax) {
@@ -1037,7 +1122,7 @@ async function performTest(actor, state) {
     tapNature: ctx.tapNature,
     inNature: ctx.inNature,
     traitFor: ctx.traitFor ? { id: ctx.traitFor.id, name: itemLabel(ctx.traitFor), level: int2(ctx.traitFor.system.level, 1) } : null,
-    traitAgainst: ctx.traitAgainst ? { id: ctx.traitAgainst.id, name: itemLabel(ctx.traitAgainst), mode: ctx.againstMode, checks: ctx.againstChecks } : null,
+    traitAgainst: ctx.traitAgainst ? { id: ctx.traitAgainst.id, name: itemLabel(ctx.traitAgainst), mode: ctx.againstMode, checks: hasRewards(actor) ? ctx.againstChecks : 0 } : null,
     markAdvancement: !!markAdvancement,
     dice: results.map((r, i) => ({ id: i, r, src: "pool", replaced: false, exploded: false })),
     used: { fate: false, deeper: null, ofCourse: null, tieTrait: null, tiebreaker: false },
@@ -1100,7 +1185,12 @@ function availableActions(record, actor) {
   if (record.versus && result.tie) {
     const traits = (actor?.itemTypes?.trait ?? []).filter((t) => t.id !== record.traitFor?.id);
     if (!record.used.fate && !record.traitAgainst && !resolvedTie && traits.length) {
-      actions.push({ action: "tieTrait", icon: "fa-solid fa-handshake-angle", label: loc2("MOUSEGUARD.Test.Action.TieTrait"), hint: loc2("MOUSEGUARD.Test.Action.TieTraitHint") });
+      actions.push({
+        action: "tieTrait",
+        icon: "fa-solid fa-handshake-angle",
+        label: loc2("MOUSEGUARD.Test.Action.TieTrait"),
+        hint: loc2(rewards ? "MOUSEGUARD.Test.Action.TieTraitHint" : "MOUSEGUARD.Test.Action.TieTraitHintNoChecks")
+      });
     }
     if (!resolvedTie) {
       actions.push({ action: "tiebreaker", icon: "fa-solid fa-scale-balanced", label: loc2("MOUSEGUARD.Test.Action.Tiebreaker"), hint: loc2("MOUSEGUARD.Test.Action.TiebreakerHint") });
@@ -1147,15 +1237,14 @@ async function renderTestCard(record, actor) {
   if (record.traitFor) {
     notes.push(fmt2(record.traitFor.level >= 3 ? "MOUSEGUARD.Test.Note.TraitForSuccess" : "MOUSEGUARD.Test.Note.TraitFor", { name: record.traitFor.name }));
   }
+  const earnsChecks = hasRewards(actor);
   if (record.traitAgainst) {
-    notes.push(fmt2(
-      record.traitAgainst.mode === "opponent" ? "MOUSEGUARD.Test.Note.TraitAgainstOpponent" : "MOUSEGUARD.Test.Note.TraitAgainst",
-      { name: record.traitAgainst.name, n: record.traitAgainst.checks }
-    ));
+    const key = record.traitAgainst.mode === "opponent" ? "MOUSEGUARD.Test.Note.TraitAgainstOpponent" : "MOUSEGUARD.Test.Note.TraitAgainst";
+    notes.push(fmt2(record.traitAgainst.checks ? key : `${key}NoChecks`, { name: record.traitAgainst.name, n: record.traitAgainst.checks }));
   }
   if (record.used.tieTrait) {
     const trait = actor?.items.get(record.used.tieTrait);
-    notes.push(fmt2("MOUSEGUARD.Test.Note.TieTrait", { name: trait ? itemLabel(trait) : "?" }));
+    notes.push(fmt2(earnsChecks ? "MOUSEGUARD.Test.Note.TieTrait" : "MOUSEGUARD.Test.Note.TieTraitNoChecks", { name: trait ? itemLabel(trait) : "?" }));
   }
   if (record.used.fate) notes.push(loc2("MOUSEGUARD.Test.Note.FateUsed"));
   for (const [key, labelKey] of [["deeper", "MOUSEGUARD.Test.Note.DeeperUsed"], ["ofCourse", "MOUSEGUARD.Test.Note.OfCourseUsed"]]) {
@@ -1517,14 +1606,14 @@ var MouseGuardTestDialog = class _MouseGuardTestDialog extends HandlebarsApplica
       hasRewards: !!rewards,
       personaAvailable: int3(rewards?.persona),
       personaMax: Math.max(0, ctx.personaBudget - (ctx.tapNature ? 1 : 0)),
-      showInNature: ctx.tapNature || ctx.natureTest,
+      showInNature: (ctx.tapNature || ctx.natureTest) && actor.type === "character",
       againstSelf: state.againstMode !== "opponent" || !state.versus,
       againstOpponent: state.againstMode === "opponent" && !!state.versus,
       isNatureSubject,
       showHomeTown: ctx.resCirc,
       showContact: ctx.resCirc && ctx.rollKey === "circles",
       markAdvancement,
-      canMark: !!ctx.testedItem,
+      canMark: !!ctx.testedItem && actor.type === "character",
       messageModes: messageModeChoices().map((m) => ({ ...m, selected: m.value === (state.messageMode || defaultMessageMode()) })),
       limits: LIMITS,
       summary: fmt3(summaryKey, { dice: ctx.dice, ob: int3(state.ob), opponent: int3(state.opponent) }) + (ctx.bonusSuccesses ? ` ${loc3("MOUSEGUARD.Test.Part.PlusSuccess")}` : ""),
@@ -1615,6 +1704,20 @@ var int4 = (value, fallback = 0) => {
   const n = Math.trunc(Number(value));
   return Number.isFinite(n) ? n : fallback;
 };
+var ANIMAL_IMG = "icons/svg/pawprint.svg";
+var NATURE_ASPECT_KEYS = Object.freeze({
+  mouse: [
+    "MOUSEGUARD.NPCSheet.AspectEscaping",
+    "MOUSEGUARD.NPCSheet.AspectClimbing",
+    "MOUSEGUARD.NPCSheet.AspectForaging",
+    "MOUSEGUARD.NPCSheet.AspectHiding"
+  ],
+  weasel: [
+    "MOUSEGUARD.NPCSheet.AspectAggressive",
+    "MOUSEGUARD.NPCSheet.AspectBurrowRaiding",
+    "MOUSEGUARD.NPCSheet.AspectGloating"
+  ]
+});
 function hasStatusEffect(id) {
   const list = CONFIG.statusEffects;
   if (!list) return false;
@@ -1632,28 +1735,36 @@ var MouseGuardActor = class extends Actor {
   }
   /**
    * New actors get their ability items: Nature, Will, Health, Resources and Circles for mice and weasels (weasels use
-   * the weasel Nature label), Nature only for animals.
+   * the weasel Nature label), Nature only for animals. NPC mice and weasels start with the nature aspects of their
+   * species (book p. 30, 219); an animal's aspects are written by the GM.
    * @inheritdoc
    */
   async _preCreate(data, options, user) {
     const allowed = await super._preCreate(data, options, user);
     if (allowed === false) return false;
-    if (this.itemTypes.ability.length > 0) return allowed;
     const type = data.type ?? this.type;
+    const changes = {};
+    if (!data.img) changes.img = ["animal", "weasel"].includes(type) ? ANIMAL_IMG : "systems/mouseguard/assets/icons/seated-mouse.svg";
+    const aspects = NATURE_ASPECT_KEYS[type];
+    if (aspects && !this._source.system?.natureAspects?.length && !this._source.flags?.mouseguard?.aspectsSet) {
+      changes["system.natureAspects"] = aspects.map(loc4);
+      changes["flags.mouseguard.aspectsSet"] = true;
+    }
     let keys = [];
     if (["character", "mouse", "weasel"].includes(type)) keys = [...ABILITY_ORDER];
     else if (type === "animal") keys = ["nature"];
-    if (!keys.length) return allowed;
-    const abilities = keys.map((key, i) => ({
-      name: type === "animal" ? `${loc4("MOUSEGUARD.Nature")} (${data.name ?? this.name})` : loc4(abilityLabelKey(key, type)),
-      type: "ability",
-      sort: (i + 1) * 1e5,
-      system: { key, rating: 1, max: 1 },
-      flags: { mouseguard: { schemaVersion: ITEM_SCHEMA_VERSION } }
-    }));
-    const changes = { items: [...this._source.items ?? [], ...abilities] };
-    if (!data.img) changes.img = "systems/mouseguard/assets/icons/seated-mouse.svg";
-    this.updateSource(changes);
+    if (keys.length && !this.itemTypes.ability.length) {
+      const species = String(this._source.system?.species ?? "").trim();
+      const abilities = keys.map((key, i) => ({
+        name: type === "animal" && species ? fmt4("MOUSEGUARD.AnimalSheet.NatureOf", { species }) : loc4(abilityLabelKey(key, type)),
+        type: "ability",
+        sort: (i + 1) * 1e5,
+        system: { key, rating: 1, max: 1 },
+        flags: { mouseguard: { schemaVersion: ITEM_SCHEMA_VERSION } }
+      }));
+      changes.items = [...this._source.items ?? [], ...abilities];
+    }
+    if (!foundry.utils.isEmpty(changes)) this.updateSource(changes);
     return allowed;
   }
   /* -------------------------------------------- */
@@ -1794,15 +1905,13 @@ var MouseGuardActor = class extends Actor {
       await trait.update({ "system.usedFor": Math.min(2, used + 1) });
       return true;
     }
-    const earned = Math.max(0, int4(checks, 1));
+    const earned = this.system.rewards ? Math.max(0, int4(checks, 1)) : 0;
     await trait.update({
       "system.usedAgainst": Math.min(99, int4(trait.system.usedAgainst) + 1),
       "system.checksEarned": Math.min(99, int4(trait.system.checksEarned) + earned)
     });
-    if (earned && this.system.rewards) {
-      await this.update({ "system.rewards.check": int4(this.system.rewards.check) + earned });
-    }
-    if (notify) ui.notifications.info(fmt4("MOUSEGUARD.Test.Note.ChecksEarned", { name: itemLabel(trait), n: earned }));
+    if (earned) await this.update({ "system.rewards.check": int4(this.system.rewards.check) + earned });
+    if (notify && earned) ui.notifications.info(fmt4("MOUSEGUARD.Test.Note.ChecksEarned", { name: itemLabel(trait), n: earned }));
     return true;
   }
   /**
@@ -2010,6 +2119,13 @@ var ABILITY_LABELS = Object.freeze({
 });
 var ABILITY_CAPS2 = Object.freeze({ nature: 7, will: 6, health: 6, resources: 10, circles: 10 });
 var SKILL_CAP2 = 6;
+var ANIMAL_NATURE_CAP = 12;
+var GEAR_CATEGORY_LABELS = Object.freeze({
+  gear: "MOUSEGUARD.ItemSheet.CategoryGear",
+  weapon: "MOUSEGUARD.ItemSheet.CategoryWeapon",
+  armor: "MOUSEGUARD.ItemSheet.CategoryArmor",
+  natural: "MOUSEGUARD.ItemSheet.CategoryNatural"
+});
 var TYPE_HEIGHTS = Object.freeze({
   skill: 720,
   trait: 720,
@@ -2203,6 +2319,11 @@ var MouseGuardItemSheet = class _MouseGuardItemSheet extends HandlebarsApplicati
     const viaApi = typeof actor.getAbility === "function" ? actor.getAbility("nature") : void 0;
     return viaApi ?? actor.items.find((i) => i.type === "ability" && i.system?.key === "nature");
   }
+  /** Is the item owned by an NPC or an animal (no advancement, no learning, no player caps)? */
+  #ownedByNpc() {
+    const actor = this.item.actor;
+    return !!actor && actor.type !== "character";
+  }
   /** May the test button be shown? */
   #canRoll() {
     const actor = this.item.actor;
@@ -2233,6 +2354,7 @@ var MouseGuardItemSheet = class _MouseGuardItemSheet extends HandlebarsApplicati
     const blLabel = loc5(ABILITY_LABELS[bl]);
     const learning = num(system.learning);
     const nature = this.#natureItem();
+    const npc = this.#ownedByNpc();
     const natureTarget = nature ? Math.max(1, num(nature.system?.max, num(nature.system?.rating))) : null;
     context.skill = {
       rank,
@@ -2250,7 +2372,8 @@ var MouseGuardItemSheet = class _MouseGuardItemSheet extends HandlebarsApplicati
         hint: natureTarget ? fmt5("MOUSEGUARD.ItemSheet.LearningNeed", { count: natureTarget }) : loc5("MOUSEGUARD.ItemSheet.LearningHint")
       },
       help: this.#helpList(),
-      helpOptions: context.editMode ? this.#helpOptions() : []
+      helpOptions: context.editMode ? this.#helpOptions() : [],
+      showAdvancement: !npc
     };
     context.badge = {
       value: learned ? String(rank) : "\xD7",
@@ -2318,28 +2441,36 @@ var MouseGuardItemSheet = class _MouseGuardItemSheet extends HandlebarsApplicati
     const key = Object.hasOwn(ABILITY_LABELS, system.key) ? system.key : "";
     const isNature = key === "nature";
     const rating = num(system.rating);
-    const max = isNature ? Math.max(rating, num(system.max, rating)) : rating;
-    const cap = ABILITY_CAPS2[key] ?? 10;
+    const actor = this.item.actor;
+    const npc = this.#ownedByNpc();
+    const fixedNature = isNature && npc;
+    const max = isNature && !fixedNature ? Math.max(rating, num(system.max, rating)) : rating;
+    let cap = isNature && actor?.type === "animal" ? ANIMAL_NATURE_CAP : ABILITY_CAPS2[key] ?? 10;
+    if (npc) cap = Math.max(cap, rating);
     const measured = isNature ? max : rating;
     context.ability = {
       key,
       isNature,
+      fixedNature,
+      npc,
       rating,
       max,
       cap,
       taxed: isNature && rating < max,
-      scale: makeScale(Math.min(rating, cap), Math.max(cap, max), max),
+      scale: makeScale(Math.min(rating, Math.max(cap, max)), Math.max(cap, max), max),
       keyOptions: [
         ...Object.entries(ABILITY_LABELS).map(([k, label]) => ({ value: k, label: loc5(label), selected: k === key })),
         { value: "", label: loc5("MOUSEGUARD.ItemSheet.AbilityCustom"), selected: key === "" }
       ],
-      advancement: this.#advancementView(system, measured, cap, 10)
+      advancement: this.#advancementView(system, measured, cap, 10),
+      showAdvancement: !npc
     };
+    const split = isNature && !fixedNature;
     context.badge = {
-      value: isNature ? `${rating}/${max}` : String(rating),
+      value: split ? `${rating}/${max}` : String(rating),
       label: loc5("MOUSEGUARD.ItemSheet.Rating"),
-      tooltip: isNature ? loc5("MOUSEGUARD.ItemSheet.NatureHint") : "",
-      cssClass: isNature ? "is-wide" : ""
+      tooltip: split ? loc5("MOUSEGUARD.ItemSheet.NatureHint") : "",
+      cssClass: split ? "is-wide" : ""
     };
     if (key && context.displayName !== context.item.name && !context.item.name.startsWith("MOUSEGUARD.")) {
       context.subtitle.push(context.item.name);
@@ -2348,7 +2479,17 @@ var MouseGuardItemSheet = class _MouseGuardItemSheet extends HandlebarsApplicati
   }
   #prepareGear(context) {
     const system = context.system;
-    context.gear = { quantity: num(system.quantity, 1), weight: num(system.weight) };
+    const category = Object.hasOwn(GEAR_CATEGORY_LABELS, system.category) ? system.category : "gear";
+    context.gear = {
+      quantity: num(system.quantity, 1),
+      weight: num(system.weight),
+      category,
+      categoryLabel: loc5(GEAR_CATEGORY_LABELS[category]),
+      categoryOptions: Object.entries(GEAR_CATEGORY_LABELS).map(([value, label]) => ({ value, label: loc5(label), selected: value === category })),
+      effect: typeof system.effect === "string" ? system.effect.trim() : "",
+      isConflictGear: category !== "gear"
+    };
+    if (category !== "gear") context.subtitle.push(context.gear.categoryLabel);
   }
   /** Current "help" list of a skill, sanitized. */
   #helpList() {
@@ -2477,6 +2618,7 @@ var MouseGuardItemSheet = class _MouseGuardItemSheet extends HandlebarsApplicati
     const { path, advance } = target.dataset;
     if (!path) return;
     const delta = event.button === 2 ? -1 : 1;
+    if ((advance || target.dataset.learn) && this.#ownedByNpc()) return;
     if (advance && item.isEmbedded && typeof item.actor?.markAdvancement === "function") {
       return item.actor.markAdvancement(item.id, advance, delta);
     }
@@ -2678,8 +2820,8 @@ function track({ kind, label, tooltip, count, value, action = "advance", mode })
 }
 var ROMAN2 = ["", "I", "II", "III"];
 function excerpt(html, length = 90) {
-  const text2 = String(html ?? "").replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim();
-  return text2.length > length ? `${text2.slice(0, length - 1)}\u2026` : text2;
+  const text = String(html ?? "").replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim();
+  return text.length > length ? `${text.slice(0, length - 1)}\u2026` : text;
 }
 function formatAge(age) {
   const n = Number(age);
@@ -2691,8 +2833,8 @@ function formatAge(age) {
   }
   return game.i18n.format(AGE_KEYS[rule] ?? AGE_KEYS.other, { age: n });
 }
-function cloakSwatch(text2) {
-  const value = String(text2 ?? "").trim();
+function cloakSwatch(text) {
+  const value = String(text ?? "").trim();
   if (!value) return "";
   if (globalThis.CSS?.supports?.("color", value)) return value;
   const words = value.toLowerCase().split(/[\s,.;/-]+/);
@@ -3494,1947 +3636,1045 @@ async function handleTestUpdateQuery({ uuid, changes, messageUuid } = {}, { user
   throw new Error("Mouse Guard test relay: unsupported document");
 }
 
-// node_modules/svelte/internal/index.mjs
-function noop() {
-}
-function run(fn) {
-  return fn();
-}
-function blank_object() {
-  return /* @__PURE__ */ Object.create(null);
-}
-function run_all(fns) {
-  fns.forEach(run);
-}
-function is_function(thing) {
-  return typeof thing === "function";
-}
-function safe_not_equal(a, b) {
-  return a != a ? b == b : a !== b || (a && typeof a === "object" || typeof a === "function");
-}
-var src_url_equal_anchor;
-function src_url_equal(element_src, url) {
-  if (!src_url_equal_anchor) {
-    src_url_equal_anchor = document.createElement("a");
-  }
-  src_url_equal_anchor.href = url;
-  return element_src === src_url_equal_anchor.href;
-}
-function is_empty(obj) {
-  return Object.keys(obj).length === 0;
-}
-function subscribe(store, ...callbacks) {
-  if (store == null) {
-    return noop;
-  }
-  const unsub = store.subscribe(...callbacks);
-  return unsub.unsubscribe ? () => unsub.unsubscribe() : unsub;
-}
-function component_subscribe(component, store, callback) {
-  component.$$.on_destroy.push(subscribe(store, callback));
-}
-var is_hydrating = false;
-function start_hydrating() {
-  is_hydrating = true;
-}
-function end_hydrating() {
-  is_hydrating = false;
-}
-function append(target, node) {
-  target.appendChild(node);
-}
-function insert(target, node, anchor) {
-  target.insertBefore(node, anchor || null);
-}
-function detach(node) {
-  if (node.parentNode) {
-    node.parentNode.removeChild(node);
-  }
-}
-function destroy_each(iterations, detaching) {
-  for (let i = 0; i < iterations.length; i += 1) {
-    if (iterations[i])
-      iterations[i].d(detaching);
-  }
-}
-function element(name) {
-  return document.createElement(name);
-}
-function text(data) {
-  return document.createTextNode(data);
-}
-function space() {
-  return text(" ");
-}
-function empty() {
-  return text("");
-}
-function listen(node, event, handler, options) {
-  node.addEventListener(event, handler, options);
-  return () => node.removeEventListener(event, handler, options);
-}
-function stop_propagation(fn) {
-  return function(event) {
-    event.stopPropagation();
-    return fn.call(this, event);
-  };
-}
-function attr(node, attribute, value) {
-  if (value == null)
-    node.removeAttribute(attribute);
-  else if (node.getAttribute(attribute) !== value)
-    node.setAttribute(attribute, value);
-}
-function children(element2) {
-  return Array.from(element2.childNodes);
-}
-function set_data(text2, data) {
-  data = "" + data;
-  if (text2.wholeText !== data)
-    text2.data = data;
-}
-var current_component;
-function set_current_component(component) {
-  current_component = component;
-}
-function get_current_component() {
-  if (!current_component)
-    throw new Error("Function called outside component initialization");
-  return current_component;
-}
-function setContext(key, context) {
-  get_current_component().$$.context.set(key, context);
-  return context;
-}
-function getContext(key) {
-  return get_current_component().$$.context.get(key);
-}
-var dirty_components = [];
-var binding_callbacks = [];
-var render_callbacks = [];
-var flush_callbacks = [];
-var resolved_promise = Promise.resolve();
-var update_scheduled = false;
-function schedule_update() {
-  if (!update_scheduled) {
-    update_scheduled = true;
-    resolved_promise.then(flush);
-  }
-}
-function add_render_callback(fn) {
-  render_callbacks.push(fn);
-}
-var seen_callbacks = /* @__PURE__ */ new Set();
-var flushidx = 0;
-function flush() {
-  if (flushidx !== 0) {
-    return;
-  }
-  const saved_component = current_component;
-  do {
-    try {
-      while (flushidx < dirty_components.length) {
-        const component = dirty_components[flushidx];
-        flushidx++;
-        set_current_component(component);
-        update(component.$$);
-      }
-    } catch (e) {
-      dirty_components.length = 0;
-      flushidx = 0;
-      throw e;
-    }
-    set_current_component(null);
-    dirty_components.length = 0;
-    flushidx = 0;
-    while (binding_callbacks.length)
-      binding_callbacks.pop()();
-    for (let i = 0; i < render_callbacks.length; i += 1) {
-      const callback = render_callbacks[i];
-      if (!seen_callbacks.has(callback)) {
-        seen_callbacks.add(callback);
-        callback();
-      }
-    }
-    render_callbacks.length = 0;
-  } while (dirty_components.length);
-  while (flush_callbacks.length) {
-    flush_callbacks.pop()();
-  }
-  update_scheduled = false;
-  seen_callbacks.clear();
-  set_current_component(saved_component);
-}
-function update($$) {
-  if ($$.fragment !== null) {
-    $$.update();
-    run_all($$.before_update);
-    const dirty = $$.dirty;
-    $$.dirty = [-1];
-    $$.fragment && $$.fragment.p($$.ctx, dirty);
-    $$.after_update.forEach(add_render_callback);
-  }
-}
-var outroing = /* @__PURE__ */ new Set();
-var outros;
-function transition_in(block, local) {
-  if (block && block.i) {
-    outroing.delete(block);
-    block.i(local);
-  }
-}
-function transition_out(block, local, detach2, callback) {
-  if (block && block.o) {
-    if (outroing.has(block))
-      return;
-    outroing.add(block);
-    outros.c.push(() => {
-      outroing.delete(block);
-      if (callback) {
-        if (detach2)
-          block.d(1);
-        callback();
-      }
-    });
-    block.o(local);
-  } else if (callback) {
-    callback();
-  }
-}
-var globals = typeof window !== "undefined" ? window : typeof globalThis !== "undefined" ? globalThis : global;
-function create_component(block) {
-  block && block.c();
-}
-function mount_component(component, target, anchor, customElement) {
-  const { fragment, after_update } = component.$$;
-  fragment && fragment.m(target, anchor);
-  if (!customElement) {
-    add_render_callback(() => {
-      const new_on_destroy = component.$$.on_mount.map(run).filter(is_function);
-      if (component.$$.on_destroy) {
-        component.$$.on_destroy.push(...new_on_destroy);
-      } else {
-        run_all(new_on_destroy);
-      }
-      component.$$.on_mount = [];
-    });
-  }
-  after_update.forEach(add_render_callback);
-}
-function destroy_component(component, detaching) {
-  const $$ = component.$$;
-  if ($$.fragment !== null) {
-    run_all($$.on_destroy);
-    $$.fragment && $$.fragment.d(detaching);
-    $$.on_destroy = $$.fragment = null;
-    $$.ctx = [];
-  }
-}
-function make_dirty(component, i) {
-  if (component.$$.dirty[0] === -1) {
-    dirty_components.push(component);
-    schedule_update();
-    component.$$.dirty.fill(0);
-  }
-  component.$$.dirty[i / 31 | 0] |= 1 << i % 31;
-}
-function init(component, options, instance7, create_fragment7, not_equal, props, append_styles, dirty = [-1]) {
-  const parent_component = current_component;
-  set_current_component(component);
-  const $$ = component.$$ = {
-    fragment: null,
-    ctx: [],
-    // state
-    props,
-    update: noop,
-    not_equal,
-    bound: blank_object(),
-    // lifecycle
-    on_mount: [],
-    on_destroy: [],
-    on_disconnect: [],
-    before_update: [],
-    after_update: [],
-    context: new Map(options.context || (parent_component ? parent_component.$$.context : [])),
-    // everything else
-    callbacks: blank_object(),
-    dirty,
-    skip_bound: false,
-    root: options.target || parent_component.$$.root
-  };
-  append_styles && append_styles($$.root);
-  let ready = false;
-  $$.ctx = instance7 ? instance7(component, options.props || {}, (i, ret, ...rest) => {
-    const value = rest.length ? rest[0] : ret;
-    if ($$.ctx && not_equal($$.ctx[i], $$.ctx[i] = value)) {
-      if (!$$.skip_bound && $$.bound[i])
-        $$.bound[i](value);
-      if (ready)
-        make_dirty(component, i);
-    }
-    return ret;
-  }) : [];
-  $$.update();
-  ready = true;
-  run_all($$.before_update);
-  $$.fragment = create_fragment7 ? create_fragment7($$.ctx) : false;
-  if (options.target) {
-    if (options.hydrate) {
-      start_hydrating();
-      const nodes = children(options.target);
-      $$.fragment && $$.fragment.l(nodes);
-      nodes.forEach(detach);
-    } else {
-      $$.fragment && $$.fragment.c();
-    }
-    if (options.intro)
-      transition_in(component.$$.fragment);
-    mount_component(component, options.target, options.anchor, options.customElement);
-    end_hydrating();
-    flush();
-  }
-  set_current_component(parent_component);
-}
-var SvelteElement;
-if (typeof HTMLElement === "function") {
-  SvelteElement = class extends HTMLElement {
-    constructor() {
-      super();
-      this.attachShadow({ mode: "open" });
-    }
-    connectedCallback() {
-      const { on_mount } = this.$$;
-      this.$$.on_disconnect = on_mount.map(run).filter(is_function);
-      for (const key in this.$$.slotted) {
-        this.appendChild(this.$$.slotted[key]);
-      }
-    }
-    attributeChangedCallback(attr2, _oldValue, newValue) {
-      this[attr2] = newValue;
-    }
-    disconnectedCallback() {
-      run_all(this.$$.on_disconnect);
-    }
-    $destroy() {
-      destroy_component(this, 1);
-      this.$destroy = noop;
-    }
-    $on(type, callback) {
-      if (!is_function(callback)) {
-        return noop;
-      }
-      const callbacks = this.$$.callbacks[type] || (this.$$.callbacks[type] = []);
-      callbacks.push(callback);
-      return () => {
-        const index = callbacks.indexOf(callback);
-        if (index !== -1)
-          callbacks.splice(index, 1);
-      };
-    }
-    $set($$props) {
-      if (this.$$set && !is_empty($$props)) {
-        this.$$.skip_bound = true;
-        this.$$set($$props);
-        this.$$.skip_bound = false;
-      }
-    }
-  };
-}
-var SvelteComponent = class {
-  $destroy() {
-    destroy_component(this, 1);
-    this.$destroy = noop;
-  }
-  $on(type, callback) {
-    if (!is_function(callback)) {
-      return noop;
-    }
-    const callbacks = this.$$.callbacks[type] || (this.$$.callbacks[type] = []);
-    callbacks.push(callback);
-    return () => {
-      const index = callbacks.indexOf(callback);
-      if (index !== -1)
-        callbacks.splice(index, 1);
-    };
-  }
-  $set($$props) {
-    if (this.$$set && !is_empty($$props)) {
-      this.$$.skip_bound = true;
-      this.$$set($$props);
-      this.$$.skip_bound = false;
-    }
-  }
-};
-
-// module/svelte/MouseGuardActorSheetMousePortrait.svelte
-function create_fragment(ctx) {
-  let portrait;
-  let img;
-  let img_tabindex_value;
-  let img_src_value;
-  let img_title_value;
-  let img_aria_label_value;
-  let mounted;
-  let dispose;
-  return {
-    c() {
-      portrait = element("portrait");
-      img = element("img");
-      attr(img, "role", "button");
-      attr(img, "tabindex", img_tabindex_value = /*$sheetData*/
-      ctx[0]?.editable ? 0 : -1);
-      attr(img, "class", "profile-img svelte-1qaezql");
-      if (!src_url_equal(img.src, img_src_value = /*data*/
-      ctx[1].img)) attr(img, "src", img_src_value);
-      attr(img, "data-edit", "img");
-      attr(img, "title", img_title_value = /*data*/
-      ctx[1].name);
-      attr(img, "aria-label", img_aria_label_value = game.i18n.localize("MOUSEGUARD.ChangePortrait"));
-      attr(img, "height", "100");
-      attr(img, "width", "100");
-    },
-    m(target, anchor) {
-      insert(target, portrait, anchor);
-      append(portrait, img);
-      if (!mounted) {
-        dispose = [
-          listen(
-            img,
-            "click",
-            /*filePicker*/
-            ctx[3]
-          ),
-          listen(
-            img,
-            "keydown",
-            /*keydown_handler*/
-            ctx[4]
-          )
-        ];
-        mounted = true;
-      }
-    },
-    p(ctx2, [dirty]) {
-      if (dirty & /*$sheetData*/
-      1 && img_tabindex_value !== (img_tabindex_value = /*$sheetData*/
-      ctx2[0]?.editable ? 0 : -1)) {
-        attr(img, "tabindex", img_tabindex_value);
-      }
-      if (dirty & /*data*/
-      2 && !src_url_equal(img.src, img_src_value = /*data*/
-      ctx2[1].img)) {
-        attr(img, "src", img_src_value);
-      }
-      if (dirty & /*data*/
-      2 && img_title_value !== (img_title_value = /*data*/
-      ctx2[1].name)) {
-        attr(img, "title", img_title_value);
-      }
-    },
-    i: noop,
-    o: noop,
-    d(detaching) {
-      if (detaching) detach(portrait);
-      mounted = false;
-      run_all(dispose);
-    }
-  };
-}
-function instance($$self, $$props, $$invalidate) {
-  let $sheetData;
-  let sheetData = getContext("sheetStore");
-  component_subscribe($$self, sheetData, (value) => $$invalidate(0, $sheetData = value));
-  let actor;
-  let sheet;
-  let data;
-  const filePicker = (event) => {
-    if (!$sheetData?.editable) return;
-    event.preventDefault();
-    if (event.type === "keydown" && event.key !== "Enter" && event.key !== " ") return;
-    const attr2 = event.currentTarget.dataset.edit;
-    const current = foundry.utils.getProperty(data, attr2);
-    const fp = new foundry.applications.apps.FilePicker.implementation({
-      type: "imagevideo",
-      current,
-      callback: (path) => actor.update({ [attr2]: path })
-    });
-    return fp.browse();
-  };
-  const keydown_handler = (event) => event.key === "Enter" && filePicker(event);
-  $$self.$$.update = () => {
-    if ($$self.$$.dirty & /*$sheetData*/
-    1) {
-      $: actor = $sheetData?.actor;
-    }
-    if ($$self.$$.dirty & /*$sheetData*/
-    1) {
-      $: $$invalidate(1, data = $sheetData?.data);
-    }
-  };
-  return [$sheetData, data, sheetData, filePicker, keydown_handler];
-}
-var MouseGuardActorSheetMousePortrait = class extends SvelteComponent {
-  constructor(options) {
-    super();
-    init(this, options, instance, create_fragment, safe_not_equal, {});
-  }
-};
-var MouseGuardActorSheetMousePortrait_default = MouseGuardActorSheetMousePortrait;
-
-// module/svelte/MouseGuardActorSheetMouseName.svelte
-function create_fragment2(ctx) {
-  let div;
-  let label;
-  let t1;
-  let input;
-  let input_value_value;
-  let input_placeholder_value;
-  let input_disabled_value;
-  return {
-    c() {
-      div = element("div");
-      label = element("label");
-      label.textContent = `${game.i18n.localize("MOUSEGUARD.Name")}`;
-      t1 = space();
-      input = element("input");
-      attr(label, "for", "mouseguard-name");
-      attr(label, "class", "svelte-d8wevd");
-      attr(input, "id", "mouseguard-name");
-      attr(input, "name", "name");
-      attr(input, "type", "text");
-      input.value = input_value_value = /*data*/
-      ctx[1].name;
-      attr(input, "placeholder", input_placeholder_value = game.i18n.localize("MOUSEGUARD.Name"));
-      input.disabled = input_disabled_value = !/*$sheetData*/
-      ctx[0].editable;
-      attr(input, "class", "svelte-d8wevd");
-      attr(div, "class", "namebox svelte-d8wevd");
-    },
-    m(target, anchor) {
-      insert(target, div, anchor);
-      append(div, label);
-      append(div, t1);
-      append(div, input);
-    },
-    p(ctx2, [dirty]) {
-      if (dirty & /*data*/
-      2 && input_value_value !== (input_value_value = /*data*/
-      ctx2[1].name) && input.value !== input_value_value) {
-        input.value = input_value_value;
-      }
-      if (dirty & /*$sheetData*/
-      1 && input_disabled_value !== (input_disabled_value = !/*$sheetData*/
-      ctx2[0].editable)) {
-        input.disabled = input_disabled_value;
-      }
-    },
-    i: noop,
-    o: noop,
-    d(detaching) {
-      if (detaching) detach(div);
-    }
-  };
-}
-function instance2($$self, $$props, $$invalidate) {
-  let $sheetData;
-  let sheetData = getContext("sheetStore");
-  component_subscribe($$self, sheetData, (value) => $$invalidate(0, $sheetData = value));
-  let data;
-  $$self.$$.update = () => {
-    if ($$self.$$.dirty & /*$sheetData*/
-    1) {
-      $: $$invalidate(1, data = $sheetData.data);
-    }
-  };
-  return [$sheetData, data, sheetData];
-}
-var MouseGuardActorSheetMouseName = class extends SvelteComponent {
-  constructor(options) {
-    super();
-    init(this, options, instance2, create_fragment2, safe_not_equal, {});
-  }
-};
-var MouseGuardActorSheetMouseName_default = MouseGuardActorSheetMouseName;
-
-// module/svelte/MouseGuardActorSheetHeader.svelte
-function create_fragment3(ctx) {
-  let actorhead;
-  let div1;
-  let div0;
-  let mouseguardactorsheetmousename;
-  let t;
-  let mouseguardactorsheetportrait;
-  let current;
-  mouseguardactorsheetmousename = new MouseGuardActorSheetMouseName_default({});
-  mouseguardactorsheetportrait = new MouseGuardActorSheetMousePortrait_default({});
-  return {
-    c() {
-      actorhead = element("actorhead");
-      div1 = element("div");
-      div0 = element("div");
-      create_component(mouseguardactorsheetmousename.$$.fragment);
-      t = space();
-      create_component(mouseguardactorsheetportrait.$$.fragment);
-      attr(div0, "class", "flex-item svelte-b0h6ac");
-      attr(div1, "class", "flex-container svelte-b0h6ac");
-    },
-    m(target, anchor) {
-      insert(target, actorhead, anchor);
-      append(actorhead, div1);
-      append(div1, div0);
-      mount_component(mouseguardactorsheetmousename, div0, null);
-      append(div1, t);
-      mount_component(mouseguardactorsheetportrait, div1, null);
-      current = true;
-    },
-    p: noop,
-    i(local) {
-      if (current) return;
-      transition_in(mouseguardactorsheetmousename.$$.fragment, local);
-      transition_in(mouseguardactorsheetportrait.$$.fragment, local);
-      current = true;
-    },
-    o(local) {
-      transition_out(mouseguardactorsheetmousename.$$.fragment, local);
-      transition_out(mouseguardactorsheetportrait.$$.fragment, local);
-      current = false;
-    },
-    d(detaching) {
-      if (detaching) detach(actorhead);
-      destroy_component(mouseguardactorsheetmousename);
-      destroy_component(mouseguardactorsheetportrait);
-    }
-  };
-}
-function instance3($$self) {
-  let sheetData = getContext("sheetStore");
-  return [];
-}
-var MouseGuardActorSheetHeader = class extends SvelteComponent {
-  constructor(options) {
-    super();
-    init(this, options, instance3, create_fragment3, safe_not_equal, {});
-  }
-};
-var MouseGuardActorSheetHeader_default = MouseGuardActorSheetHeader;
-
-// module/svelte/MouseGuardCommon.svelte
-function updateRating(sheet, item, type, value) {
-  if (!Number.isFinite(value)) return;
-  const ob = { [type]: value };
-  const bounds = {
-    rank: [0, 6],
-    rating: [0, 20],
-    level: [1, 3],
-    max: [0, 20],
-    learning: [0, 10],
-    usedFor: [0, 2],
-    usedAgainst: [0, 99]
-  }[type];
-  if (bounds) ob[type] = Math.min(bounds[1], Math.max(bounds[0], Math.trunc(value)));
-  sheet?._updateEmbededItem(item, ob);
-}
-function rollTest(sheet, itemId, event) {
-  const actor = sheet?.actor ?? sheet?.document;
-  if (!actor?.rollTest || !itemId) return;
-  event?.preventDefault?.();
-  actor.rollTest({ itemId, event });
-}
-
-// module/svelte/MouseGuardNPCActorSheetBody.svelte
-function get_each_context(ctx, list, i) {
-  const child_ctx = ctx.slice();
-  child_ctx[19] = list[i];
-  return child_ctx;
-}
-function get_each_context_1(ctx, list, i) {
-  const child_ctx = ctx.slice();
-  child_ctx[22] = list[i];
-  return child_ctx;
-}
-function get_each_context_2(ctx, list, i) {
-  const child_ctx = ctx.slice();
-  child_ctx[25] = list[i];
-  return child_ctx;
-}
-function get_each_context_3(ctx, list, i) {
-  const child_ctx = ctx.slice();
-  child_ctx[28] = list[i];
-  return child_ctx;
-}
-function create_each_block_3(ctx) {
-  let ability;
-  let div;
-  let label;
-  let a;
-  let t0_value = abilityLabel(
-    /*ability*/
-    ctx[28],
-    /*actorType*/
-    ctx[5]
-  ) + "";
-  let t0;
-  let t1;
-  let t2;
-  let input;
-  let input_data_item_id_value;
-  let input_value_value;
-  let input_disabled_value;
-  let div_name_value;
-  let t3;
-  let mounted;
-  let dispose;
-  function click_handler(...args) {
-    return (
-      /*click_handler*/
-      ctx[8](
-        /*ability*/
-        ctx[28],
-        ...args
-      )
-    );
-  }
-  return {
-    c() {
-      ability = element("ability");
-      div = element("div");
-      label = element("label");
-      a = element("a");
-      t0 = text(t0_value);
-      t1 = text(":");
-      t2 = space();
-      input = element("input");
-      t3 = space();
-      attr(label, "class", "header svelte-1f8afzj");
-      attr(input, "data-item-id", input_data_item_id_value = /*ability*/
-      ctx[28].id ?? /*ability*/
-      ctx[28]._id);
-      attr(input, "type", "number");
-      attr(input, "min", "0");
-      attr(input, "max", "20");
-      input.value = input_value_value = /*ability*/
-      ctx[28].system.rating;
-      input.disabled = input_disabled_value = !/*$sheetData*/
-      ctx[0].editable;
-      attr(input, "class", "svelte-1f8afzj");
-      attr(div, "name", div_name_value = /*ability*/
-      ctx[28].id);
-      attr(ability, "class", "svelte-1f8afzj");
-    },
-    m(target, anchor) {
-      insert(target, ability, anchor);
-      append(ability, div);
-      append(div, label);
-      append(label, a);
-      append(a, t0);
-      append(label, t1);
-      append(div, t2);
-      append(div, input);
-      append(ability, t3);
-      if (!mounted) {
-        dispose = [
-          listen(label, "click", click_handler),
-          listen(input, "change", stop_propagation(
-            /*change_handler*/
-            ctx[9]
-          ))
-        ];
-        mounted = true;
-      }
-    },
-    p(new_ctx, dirty) {
-      ctx = new_ctx;
-      if (dirty & /*abilities, actorType*/
-      34 && t0_value !== (t0_value = abilityLabel(
-        /*ability*/
-        ctx[28],
-        /*actorType*/
-        ctx[5]
-      ) + "")) set_data(t0, t0_value);
-      if (dirty & /*abilities*/
-      2 && input_data_item_id_value !== (input_data_item_id_value = /*ability*/
-      ctx[28].id ?? /*ability*/
-      ctx[28]._id)) {
-        attr(input, "data-item-id", input_data_item_id_value);
-      }
-      if (dirty & /*abilities*/
-      2 && input_value_value !== (input_value_value = /*ability*/
-      ctx[28].system.rating) && input.value !== input_value_value) {
-        input.value = input_value_value;
-      }
-      if (dirty & /*$sheetData*/
-      1 && input_disabled_value !== (input_disabled_value = !/*$sheetData*/
-      ctx[0].editable)) {
-        input.disabled = input_disabled_value;
-      }
-      if (dirty & /*abilities*/
-      2 && div_name_value !== (div_name_value = /*ability*/
-      ctx[28].id)) {
-        attr(div, "name", div_name_value);
-      }
-    },
-    d(detaching) {
-      if (detaching) detach(ability);
-      mounted = false;
-      run_all(dispose);
-    }
-  };
-}
-function create_if_block_2(ctx) {
-  let div;
-  let largecard;
-  let h1;
-  let t1;
-  let each_value_2 = (
-    /*skills*/
-    ctx[4]
-  );
-  let each_blocks = [];
-  for (let i = 0; i < each_value_2.length; i += 1) {
-    each_blocks[i] = create_each_block_2(get_each_context_2(ctx, each_value_2, i));
-  }
-  return {
-    c() {
-      div = element("div");
-      largecard = element("largecard");
-      h1 = element("h1");
-      h1.textContent = `${game.i18n.localize("MOUSEGUARD.Skills")}`;
-      t1 = space();
-      for (let i = 0; i < each_blocks.length; i += 1) {
-        each_blocks[i].c();
-      }
-      attr(h1, "class", "svelte-1f8afzj");
-      attr(largecard, "class", "svelte-1f8afzj");
-      attr(div, "class", "box svelte-1f8afzj");
-    },
-    m(target, anchor) {
-      insert(target, div, anchor);
-      append(div, largecard);
-      append(largecard, h1);
-      append(largecard, t1);
-      for (let i = 0; i < each_blocks.length; i += 1) {
-        each_blocks[i].m(largecard, null);
-      }
-    },
-    p(ctx2, dirty) {
-      if (dirty & /*game, sheet, skills, $sheetData, updateRating, parseInt, rollTest, itemLabel*/
-      145) {
-        each_value_2 = /*skills*/
-        ctx2[4];
-        let i;
-        for (i = 0; i < each_value_2.length; i += 1) {
-          const child_ctx = get_each_context_2(ctx2, each_value_2, i);
-          if (each_blocks[i]) {
-            each_blocks[i].p(child_ctx, dirty);
-          } else {
-            each_blocks[i] = create_each_block_2(child_ctx);
-            each_blocks[i].c();
-            each_blocks[i].m(largecard, null);
-          }
-        }
-        for (; i < each_blocks.length; i += 1) {
-          each_blocks[i].d(1);
-        }
-        each_blocks.length = each_value_2.length;
-      }
-    },
-    d(detaching) {
-      if (detaching) detach(div);
-      destroy_each(each_blocks, detaching);
-    }
-  };
-}
-function create_each_block_2(ctx) {
-  let skill;
-  let div0;
-  let label;
-  let a0;
-  let t0_value = itemLabel(
-    /*skill*/
-    ctx[25]
-  ) + "";
-  let t0;
-  let t1;
-  let t2;
-  let input;
-  let input_data_item_id_value;
-  let input_value_value;
-  let input_disabled_value;
-  let div0_name_value;
-  let t3;
-  let div1;
-  let a1;
-  let i;
-  let a1_title_value;
-  let t4;
-  let mounted;
-  let dispose;
-  function click_handler_1(...args) {
-    return (
-      /*click_handler_1*/
-      ctx[10](
-        /*skill*/
-        ctx[25],
-        ...args
-      )
-    );
-  }
-  function click_handler_2() {
-    return (
-      /*click_handler_2*/
-      ctx[12](
-        /*skill*/
-        ctx[25]
-      )
-    );
-  }
-  return {
-    c() {
-      skill = element("skill");
-      div0 = element("div");
-      label = element("label");
-      a0 = element("a");
-      t0 = text(t0_value);
-      t1 = text(":");
-      t2 = space();
-      input = element("input");
-      t3 = space();
-      div1 = element("div");
-      a1 = element("a");
-      i = element("i");
-      t4 = space();
-      attr(label, "class", "header svelte-1f8afzj");
-      attr(input, "data-item-id", input_data_item_id_value = /*skill*/
-      ctx[25].id ?? /*skill*/
-      ctx[25]._id);
-      attr(input, "type", "number");
-      attr(input, "min", "0");
-      attr(input, "max", "6");
-      input.value = input_value_value = /*skill*/
-      ctx[25].system.rank;
-      input.disabled = input_disabled_value = !/*$sheetData*/
-      ctx[0].editable;
-      attr(input, "class", "svelte-1f8afzj");
-      attr(div0, "name", div0_name_value = /*skill*/
-      ctx[25].id);
-      attr(i, "class", "fas fa-trash");
-      attr(a1, "class", "item-control item-delete");
-      attr(a1, "title", a1_title_value = game.i18n.localize("MOUSEGUARD.DeleteItem"));
-      attr(div1, "class", "item-controls");
-      attr(skill, "class", "svelte-1f8afzj");
-    },
-    m(target, anchor) {
-      insert(target, skill, anchor);
-      append(skill, div0);
-      append(div0, label);
-      append(label, a0);
-      append(a0, t0);
-      append(label, t1);
-      append(div0, t2);
-      append(div0, input);
-      append(skill, t3);
-      append(skill, div1);
-      append(div1, a1);
-      append(a1, i);
-      append(skill, t4);
-      if (!mounted) {
-        dispose = [
-          listen(label, "click", click_handler_1),
-          listen(input, "change", stop_propagation(
-            /*change_handler_1*/
-            ctx[11]
-          )),
-          listen(a1, "click", click_handler_2)
-        ];
-        mounted = true;
-      }
-    },
-    p(new_ctx, dirty) {
-      ctx = new_ctx;
-      if (dirty & /*skills*/
-      16 && t0_value !== (t0_value = itemLabel(
-        /*skill*/
-        ctx[25]
-      ) + "")) set_data(t0, t0_value);
-      if (dirty & /*skills*/
-      16 && input_data_item_id_value !== (input_data_item_id_value = /*skill*/
-      ctx[25].id ?? /*skill*/
-      ctx[25]._id)) {
-        attr(input, "data-item-id", input_data_item_id_value);
-      }
-      if (dirty & /*skills*/
-      16 && input_value_value !== (input_value_value = /*skill*/
-      ctx[25].system.rank) && input.value !== input_value_value) {
-        input.value = input_value_value;
-      }
-      if (dirty & /*$sheetData*/
-      1 && input_disabled_value !== (input_disabled_value = !/*$sheetData*/
-      ctx[0].editable)) {
-        input.disabled = input_disabled_value;
-      }
-      if (dirty & /*skills*/
-      16 && div0_name_value !== (div0_name_value = /*skill*/
-      ctx[25].id)) {
-        attr(div0, "name", div0_name_value);
-      }
-    },
-    d(detaching) {
-      if (detaching) detach(skill);
-      mounted = false;
-      run_all(dispose);
-    }
-  };
-}
-function create_if_block_1(ctx) {
-  let div;
-  let largecard;
-  let h1;
-  let t1;
-  let each_value_1 = (
-    /*traits*/
-    ctx[2]
-  );
-  let each_blocks = [];
-  for (let i = 0; i < each_value_1.length; i += 1) {
-    each_blocks[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
-  }
-  return {
-    c() {
-      div = element("div");
-      largecard = element("largecard");
-      h1 = element("h1");
-      h1.textContent = `${game.i18n.localize("MOUSEGUARD.Traits")}`;
-      t1 = space();
-      for (let i = 0; i < each_blocks.length; i += 1) {
-        each_blocks[i].c();
-      }
-      attr(h1, "class", "svelte-1f8afzj");
-      attr(largecard, "class", "svelte-1f8afzj");
-      attr(div, "class", "box svelte-1f8afzj");
-    },
-    m(target, anchor) {
-      insert(target, div, anchor);
-      append(div, largecard);
-      append(largecard, h1);
-      append(largecard, t1);
-      for (let i = 0; i < each_blocks.length; i += 1) {
-        each_blocks[i].m(largecard, null);
-      }
-    },
-    p(ctx2, dirty) {
-      if (dirty & /*game, sheet, traits, $sheetData, updateRating, parseInt, itemLabel*/
-      133) {
-        each_value_1 = /*traits*/
-        ctx2[2];
-        let i;
-        for (i = 0; i < each_value_1.length; i += 1) {
-          const child_ctx = get_each_context_1(ctx2, each_value_1, i);
-          if (each_blocks[i]) {
-            each_blocks[i].p(child_ctx, dirty);
-          } else {
-            each_blocks[i] = create_each_block_1(child_ctx);
-            each_blocks[i].c();
-            each_blocks[i].m(largecard, null);
-          }
-        }
-        for (; i < each_blocks.length; i += 1) {
-          each_blocks[i].d(1);
-        }
-        each_blocks.length = each_value_1.length;
-      }
-    },
-    d(detaching) {
-      if (detaching) detach(div);
-      destroy_each(each_blocks, detaching);
-    }
-  };
-}
-function create_each_block_1(ctx) {
-  let trait;
-  let div0;
-  let label;
-  let t0_value = itemLabel(
-    /*trait*/
-    ctx[22]
-  ) + "";
-  let t0;
-  let t1;
-  let t2;
-  let input;
-  let input_data_item_id_value;
-  let input_value_value;
-  let input_disabled_value;
-  let div0_name_value;
-  let t3;
-  let div1;
-  let a;
-  let i;
-  let a_title_value;
-  let t4;
-  let mounted;
-  let dispose;
-  function click_handler_3() {
-    return (
-      /*click_handler_3*/
-      ctx[14](
-        /*trait*/
-        ctx[22]
-      )
-    );
-  }
-  return {
-    c() {
-      trait = element("trait");
-      div0 = element("div");
-      label = element("label");
-      t0 = text(t0_value);
-      t1 = text(":");
-      t2 = space();
-      input = element("input");
-      t3 = space();
-      div1 = element("div");
-      a = element("a");
-      i = element("i");
-      t4 = space();
-      attr(label, "class", "header svelte-1f8afzj");
-      attr(input, "data-item-id", input_data_item_id_value = /*trait*/
-      ctx[22].id ?? /*trait*/
-      ctx[22]._id);
-      attr(input, "type", "number");
-      attr(input, "min", "1");
-      attr(input, "max", "3");
-      input.value = input_value_value = /*trait*/
-      ctx[22].system.level;
-      input.disabled = input_disabled_value = !/*$sheetData*/
-      ctx[0].editable;
-      attr(input, "class", "svelte-1f8afzj");
-      attr(div0, "name", div0_name_value = /*trait*/
-      ctx[22].id);
-      attr(i, "class", "fas fa-trash");
-      attr(a, "class", "item-control item-delete");
-      attr(a, "title", a_title_value = game.i18n.localize("MOUSEGUARD.DeleteItem"));
-      attr(div1, "class", "item-controls");
-      attr(trait, "class", "svelte-1f8afzj");
-    },
-    m(target, anchor) {
-      insert(target, trait, anchor);
-      append(trait, div0);
-      append(div0, label);
-      append(label, t0);
-      append(label, t1);
-      append(div0, t2);
-      append(div0, input);
-      append(trait, t3);
-      append(trait, div1);
-      append(div1, a);
-      append(a, i);
-      append(trait, t4);
-      if (!mounted) {
-        dispose = [
-          listen(input, "change", stop_propagation(
-            /*change_handler_2*/
-            ctx[13]
-          )),
-          listen(a, "click", click_handler_3)
-        ];
-        mounted = true;
-      }
-    },
-    p(new_ctx, dirty) {
-      ctx = new_ctx;
-      if (dirty & /*traits*/
-      4 && t0_value !== (t0_value = itemLabel(
-        /*trait*/
-        ctx[22]
-      ) + "")) set_data(t0, t0_value);
-      if (dirty & /*traits*/
-      4 && input_data_item_id_value !== (input_data_item_id_value = /*trait*/
-      ctx[22].id ?? /*trait*/
-      ctx[22]._id)) {
-        attr(input, "data-item-id", input_data_item_id_value);
-      }
-      if (dirty & /*traits*/
-      4 && input_value_value !== (input_value_value = /*trait*/
-      ctx[22].system.level) && input.value !== input_value_value) {
-        input.value = input_value_value;
-      }
-      if (dirty & /*$sheetData*/
-      1 && input_disabled_value !== (input_disabled_value = !/*$sheetData*/
-      ctx[0].editable)) {
-        input.disabled = input_disabled_value;
-      }
-      if (dirty & /*traits*/
-      4 && div0_name_value !== (div0_name_value = /*trait*/
-      ctx[22].id)) {
-        attr(div0, "name", div0_name_value);
-      }
-    },
-    d(detaching) {
-      if (detaching) detach(trait);
-      mounted = false;
-      run_all(dispose);
-    }
-  };
-}
-function create_if_block(ctx) {
-  let h1;
-  let t1;
-  let each_1_anchor;
-  let each_value = (
-    /*wises*/
-    ctx[3]
-  );
-  let each_blocks = [];
-  for (let i = 0; i < each_value.length; i += 1) {
-    each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
-  }
-  return {
-    c() {
-      h1 = element("h1");
-      h1.textContent = `${game.i18n.localize("MOUSEGUARD.Wises")}`;
-      t1 = space();
-      for (let i = 0; i < each_blocks.length; i += 1) {
-        each_blocks[i].c();
-      }
-      each_1_anchor = empty();
-      attr(h1, "class", "svelte-1f8afzj");
-    },
-    m(target, anchor) {
-      insert(target, h1, anchor);
-      insert(target, t1, anchor);
-      for (let i = 0; i < each_blocks.length; i += 1) {
-        each_blocks[i].m(target, anchor);
-      }
-      insert(target, each_1_anchor, anchor);
-    },
-    p(ctx2, dirty) {
-      if (dirty & /*game, sheet, wises, itemLabel*/
-      136) {
-        each_value = /*wises*/
-        ctx2[3];
-        let i;
-        for (i = 0; i < each_value.length; i += 1) {
-          const child_ctx = get_each_context(ctx2, each_value, i);
-          if (each_blocks[i]) {
-            each_blocks[i].p(child_ctx, dirty);
-          } else {
-            each_blocks[i] = create_each_block(child_ctx);
-            each_blocks[i].c();
-            each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
-          }
-        }
-        for (; i < each_blocks.length; i += 1) {
-          each_blocks[i].d(1);
-        }
-        each_blocks.length = each_value.length;
-      }
-    },
-    d(detaching) {
-      if (detaching) detach(h1);
-      if (detaching) detach(t1);
-      destroy_each(each_blocks, detaching);
-      if (detaching) detach(each_1_anchor);
-    }
-  };
-}
-function create_each_block(ctx) {
-  let wise;
-  let div0;
-  let label;
-  let t0_value = itemLabel(
-    /*wise*/
-    ctx[19]
-  ) + "";
-  let t0;
-  let div0_name_value;
-  let t1;
-  let div1;
-  let a;
-  let i;
-  let a_title_value;
-  let t2;
-  let mounted;
-  let dispose;
-  function click_handler_4() {
-    return (
-      /*click_handler_4*/
-      ctx[15](
-        /*wise*/
-        ctx[19]
-      )
-    );
-  }
-  return {
-    c() {
-      wise = element("wise");
-      div0 = element("div");
-      label = element("label");
-      t0 = text(t0_value);
-      t1 = space();
-      div1 = element("div");
-      a = element("a");
-      i = element("i");
-      t2 = space();
-      attr(label, "class", "header svelte-1f8afzj");
-      attr(div0, "name", div0_name_value = /*wise*/
-      ctx[19].id);
-      attr(i, "class", "fas fa-trash");
-      attr(a, "class", "item-control item-delete");
-      attr(a, "title", a_title_value = game.i18n.localize("MOUSEGUARD.DeleteItem"));
-      attr(div1, "class", "item-controls");
-      attr(wise, "class", "svelte-1f8afzj");
-    },
-    m(target, anchor) {
-      insert(target, wise, anchor);
-      append(wise, div0);
-      append(div0, label);
-      append(label, t0);
-      append(wise, t1);
-      append(wise, div1);
-      append(div1, a);
-      append(a, i);
-      append(wise, t2);
-      if (!mounted) {
-        dispose = listen(a, "click", click_handler_4);
-        mounted = true;
-      }
-    },
-    p(new_ctx, dirty) {
-      ctx = new_ctx;
-      if (dirty & /*wises*/
-      8 && t0_value !== (t0_value = itemLabel(
-        /*wise*/
-        ctx[19]
-      ) + "")) set_data(t0, t0_value);
-      if (dirty & /*wises*/
-      8 && div0_name_value !== (div0_name_value = /*wise*/
-      ctx[19].id)) {
-        attr(div0, "name", div0_name_value);
-      }
-    },
-    d(detaching) {
-      if (detaching) detach(wise);
-      mounted = false;
-      dispose();
-    }
-  };
-}
-function create_fragment4(ctx) {
-  let div1;
-  let largecard;
-  let h1;
-  let t1;
-  let div0;
-  let t2;
-  let show_if_2 = Object(
-    /*skills*/
-    ctx[4]
-  ).length > 0;
-  let t3;
-  let show_if_1 = Object(
-    /*traits*/
-    ctx[2]
-  ).length > 0;
-  let t4;
-  let show_if = Object(
-    /*wises*/
-    ctx[3]
-  ).length > 0;
-  let if_block2_anchor;
-  let each_value_3 = (
-    /*abilities*/
-    ctx[1]
-  );
-  let each_blocks = [];
-  for (let i = 0; i < each_value_3.length; i += 1) {
-    each_blocks[i] = create_each_block_3(get_each_context_3(ctx, each_value_3, i));
-  }
-  let if_block0 = show_if_2 && create_if_block_2(ctx);
-  let if_block1 = show_if_1 && create_if_block_1(ctx);
-  let if_block2 = show_if && create_if_block(ctx);
-  return {
-    c() {
-      div1 = element("div");
-      largecard = element("largecard");
-      h1 = element("h1");
-      h1.textContent = `${game.i18n.localize("MOUSEGUARD.Abilities")}`;
-      t1 = space();
-      div0 = element("div");
-      for (let i = 0; i < each_blocks.length; i += 1) {
-        each_blocks[i].c();
-      }
-      t2 = space();
-      if (if_block0) if_block0.c();
-      t3 = space();
-      if (if_block1) if_block1.c();
-      t4 = space();
-      if (if_block2) if_block2.c();
-      if_block2_anchor = empty();
-      attr(h1, "class", "svelte-1f8afzj");
-      attr(div0, "class", "flex-container svelte-1f8afzj");
-      attr(largecard, "class", "svelte-1f8afzj");
-      attr(div1, "class", "box svelte-1f8afzj");
-    },
-    m(target, anchor) {
-      insert(target, div1, anchor);
-      append(div1, largecard);
-      append(largecard, h1);
-      append(largecard, t1);
-      append(largecard, div0);
-      for (let i = 0; i < each_blocks.length; i += 1) {
-        each_blocks[i].m(div0, null);
-      }
-      insert(target, t2, anchor);
-      if (if_block0) if_block0.m(target, anchor);
-      insert(target, t3, anchor);
-      if (if_block1) if_block1.m(target, anchor);
-      insert(target, t4, anchor);
-      if (if_block2) if_block2.m(target, anchor);
-      insert(target, if_block2_anchor, anchor);
-    },
-    p(ctx2, [dirty]) {
-      if (dirty & /*abilities, $sheetData, updateRating, sheet, parseInt, rollTest, abilityLabel, actorType*/
-      163) {
-        each_value_3 = /*abilities*/
-        ctx2[1];
-        let i;
-        for (i = 0; i < each_value_3.length; i += 1) {
-          const child_ctx = get_each_context_3(ctx2, each_value_3, i);
-          if (each_blocks[i]) {
-            each_blocks[i].p(child_ctx, dirty);
-          } else {
-            each_blocks[i] = create_each_block_3(child_ctx);
-            each_blocks[i].c();
-            each_blocks[i].m(div0, null);
-          }
-        }
-        for (; i < each_blocks.length; i += 1) {
-          each_blocks[i].d(1);
-        }
-        each_blocks.length = each_value_3.length;
-      }
-      if (dirty & /*skills*/
-      16) show_if_2 = Object(
-        /*skills*/
-        ctx2[4]
-      ).length > 0;
-      if (show_if_2) {
-        if (if_block0) {
-          if_block0.p(ctx2, dirty);
-        } else {
-          if_block0 = create_if_block_2(ctx2);
-          if_block0.c();
-          if_block0.m(t3.parentNode, t3);
-        }
-      } else if (if_block0) {
-        if_block0.d(1);
-        if_block0 = null;
-      }
-      if (dirty & /*traits*/
-      4) show_if_1 = Object(
-        /*traits*/
-        ctx2[2]
-      ).length > 0;
-      if (show_if_1) {
-        if (if_block1) {
-          if_block1.p(ctx2, dirty);
-        } else {
-          if_block1 = create_if_block_1(ctx2);
-          if_block1.c();
-          if_block1.m(t4.parentNode, t4);
-        }
-      } else if (if_block1) {
-        if_block1.d(1);
-        if_block1 = null;
-      }
-      if (dirty & /*wises*/
-      8) show_if = Object(
-        /*wises*/
-        ctx2[3]
-      ).length > 0;
-      if (show_if) {
-        if (if_block2) {
-          if_block2.p(ctx2, dirty);
-        } else {
-          if_block2 = create_if_block(ctx2);
-          if_block2.c();
-          if_block2.m(if_block2_anchor.parentNode, if_block2_anchor);
-        }
-      } else if (if_block2) {
-        if_block2.d(1);
-        if_block2 = null;
-      }
-    },
-    i: noop,
-    o: noop,
-    d(detaching) {
-      if (detaching) detach(div1);
-      destroy_each(each_blocks, detaching);
-      if (detaching) detach(t2);
-      if (if_block0) if_block0.d(detaching);
-      if (detaching) detach(t3);
-      if (if_block1) if_block1.d(detaching);
-      if (detaching) detach(t4);
-      if (if_block2) if_block2.d(detaching);
-      if (detaching) detach(if_block2_anchor);
-    }
-  };
-}
-function instance4($$self, $$props, $$invalidate) {
-  let actorType;
-  let skills;
-  let wises;
-  let traits;
-  let $sheetData;
-  let sheetData = getContext("sheetStore");
-  component_subscribe($$self, sheetData, (value) => $$invalidate(0, $sheetData = value));
-  let { sheet } = $sheetData;
-  let data;
-  let abilities;
-  const ABILITY_ORDER3 = ["nature", "will", "health", "resources", "circles"];
-  function abilityOrder(ability) {
-    const i = ABILITY_ORDER3.indexOf(ability?.system?.key);
-    return i === -1 ? ABILITY_ORDER3.length : i;
-  }
-  const click_handler = (ability, e) => rollTest(sheet, ability.id ?? ability._id, e);
-  const change_handler = (e) => updateRating(sheet, e.target.dataset.itemId, "rating", parseInt(e.target.value));
-  const click_handler_1 = (skill, e) => rollTest(sheet, skill.id ?? skill._id, e);
-  const change_handler_1 = (e) => updateRating(sheet, e.target.dataset.itemId, "rank", parseInt(e.target.value));
-  const click_handler_2 = (skill) => sheet?._onItemDelete(skill.id ?? skill._id);
-  const change_handler_2 = (e) => updateRating(sheet, e.target.dataset.itemId, "level", parseInt(e.target.value));
-  const click_handler_3 = (trait) => sheet?._onItemDelete(trait.id ?? trait._id);
-  const click_handler_4 = (wise) => sheet?._onItemDelete(wise.id ?? wise._id);
-  $$self.$$.update = () => {
-    if ($$self.$$.dirty & /*$sheetData*/
-    1) {
-      $: data = $sheetData.data;
-    }
-    if ($$self.$$.dirty & /*$sheetData*/
-    1) {
-      $: $$invalidate(5, actorType = $sheetData.data.type);
-    }
-    if ($$self.$$.dirty & /*$sheetData*/
-    1) {
-      $: $$invalidate(1, abilities = [...$sheetData.data.system.itemTypes.ability ?? []].sort((a, b) => abilityOrder(a) - abilityOrder(b)));
-    }
-    if ($$self.$$.dirty & /*$sheetData*/
-    1) {
-      $: $$invalidate(4, skills = $sheetData.data.system.itemTypes.skill);
-    }
-    if ($$self.$$.dirty & /*$sheetData*/
-    1) {
-      $: $$invalidate(3, wises = $sheetData.data.system.itemTypes.wise);
-    }
-    if ($$self.$$.dirty & /*$sheetData*/
-    1) {
-      $: $$invalidate(2, traits = $sheetData.data.system.itemTypes.trait);
-    }
-  };
-  return [
-    $sheetData,
-    abilities,
-    traits,
-    wises,
-    skills,
-    actorType,
-    sheetData,
-    sheet,
-    click_handler,
-    change_handler,
-    click_handler_1,
-    change_handler_1,
-    click_handler_2,
-    change_handler_2,
-    click_handler_3,
-    click_handler_4
-  ];
-}
-var MouseGuardNPCActorSheetBody = class extends SvelteComponent {
-  constructor(options) {
-    super();
-    init(this, options, instance4, create_fragment4, safe_not_equal, {});
-  }
-};
-var MouseGuardNPCActorSheetBody_default = MouseGuardNPCActorSheetBody;
-
-// module/svelte/MouseGuardActorSheetMouseDispo.svelte
-function create_fragment5(ctx) {
-  let largecard;
-  let h1;
-  let t1;
-  let dispoBox;
-  let startingBox;
-  let label0;
-  let t5;
-  let input0;
-  let input0_value_value;
-  let input0_disabled_value;
-  let t6;
-  let currentBox;
-  let label1;
-  let t10;
-  let input1;
-  let input1_value_value;
-  let input1_disabled_value;
-  return {
-    c() {
-      largecard = element("largecard");
-      h1 = element("h1");
-      h1.textContent = `${game.i18n.localize("MOUSEGUARD.Disposition")}`;
-      t1 = space();
-      dispoBox = element("dispoBox");
-      startingBox = element("startingBox");
-      label0 = element("label");
-      label0.textContent = `${game.i18n.localize("MOUSEGUARD.Starting")} 
-                ${game.i18n.localize("MOUSEGUARD.Disposition")}`;
-      t5 = space();
-      input0 = element("input");
-      t6 = space();
-      currentBox = element("currentBox");
-      label1 = element("label");
-      label1.textContent = `${game.i18n.localize("MOUSEGUARD.Current")} 
-                ${game.i18n.localize("MOUSEGUARD.Disposition")}`;
-      t10 = space();
-      input1 = element("input");
-      attr(h1, "class", "svelte-ujgmh3");
-      attr(label0, "class", "header svelte-ujgmh3");
-      attr(input0, "class", "disposition-value svelte-ujgmh3");
-      attr(input0, "name", "system.disposition.starting");
-      attr(input0, "type", "number");
-      input0.value = input0_value_value = /*data*/
-      ctx[1].system.disposition.starting;
-      attr(input0, "placeholder", "0");
-      input0.disabled = input0_disabled_value = !/*$sheetData*/
-      ctx[0].editable;
-      attr(startingBox, "class", "svelte-ujgmh3");
-      attr(label1, "class", "header svelte-ujgmh3");
-      attr(input1, "class", "disposition-value svelte-ujgmh3");
-      attr(input1, "name", "system.disposition.current");
-      attr(input1, "type", "number");
-      input1.value = input1_value_value = /*data*/
-      ctx[1].system.disposition.current;
-      attr(input1, "placeholder", "0");
-      input1.disabled = input1_disabled_value = !/*$sheetData*/
-      ctx[0].editable;
-      attr(currentBox, "class", "svelte-ujgmh3");
-      attr(dispoBox, "class", "svelte-ujgmh3");
-      attr(largecard, "class", "svelte-ujgmh3");
-    },
-    m(target, anchor) {
-      insert(target, largecard, anchor);
-      append(largecard, h1);
-      append(largecard, t1);
-      append(largecard, dispoBox);
-      append(dispoBox, startingBox);
-      append(startingBox, label0);
-      append(startingBox, t5);
-      append(startingBox, input0);
-      append(dispoBox, t6);
-      append(dispoBox, currentBox);
-      append(currentBox, label1);
-      append(currentBox, t10);
-      append(currentBox, input1);
-    },
-    p(ctx2, [dirty]) {
-      if (dirty & /*data*/
-      2 && input0_value_value !== (input0_value_value = /*data*/
-      ctx2[1].system.disposition.starting) && input0.value !== input0_value_value) {
-        input0.value = input0_value_value;
-      }
-      if (dirty & /*$sheetData*/
-      1 && input0_disabled_value !== (input0_disabled_value = !/*$sheetData*/
-      ctx2[0].editable)) {
-        input0.disabled = input0_disabled_value;
-      }
-      if (dirty & /*data*/
-      2 && input1_value_value !== (input1_value_value = /*data*/
-      ctx2[1].system.disposition.current) && input1.value !== input1_value_value) {
-        input1.value = input1_value_value;
-      }
-      if (dirty & /*$sheetData*/
-      1 && input1_disabled_value !== (input1_disabled_value = !/*$sheetData*/
-      ctx2[0].editable)) {
-        input1.disabled = input1_disabled_value;
-      }
-    },
-    i: noop,
-    o: noop,
-    d(detaching) {
-      if (detaching) detach(largecard);
-    }
-  };
-}
-function instance5($$self, $$props, $$invalidate) {
-  let $sheetData;
-  let sheetData = getContext("sheetStore");
-  component_subscribe($$self, sheetData, (value) => $$invalidate(0, $sheetData = value));
-  let data;
-  $$self.$$.update = () => {
-    if ($$self.$$.dirty & /*$sheetData*/
-    1) {
-      $: $$invalidate(1, data = $sheetData.data);
-    }
-  };
-  return [$sheetData, data, sheetData];
-}
-var MouseGuardActorSheetMouseDispo = class extends SvelteComponent {
-  constructor(options) {
-    super();
-    init(this, options, instance5, create_fragment5, safe_not_equal, {});
-  }
-};
-var MouseGuardActorSheetMouseDispo_default = MouseGuardActorSheetMouseDispo;
-
-// module/svelte/MouseGuardNPCActorSheetBase.svelte
-function create_fragment6(ctx) {
-  let div2;
-  let div0;
-  let mouseguardactorsheetheader;
-  let t0;
-  let div1;
-  let mouseguardnpcactorsheetbody;
-  let t1;
-  let mouseguardactorsheetmousedispo;
-  let current;
-  mouseguardactorsheetheader = new MouseGuardActorSheetHeader_default({});
-  mouseguardnpcactorsheetbody = new MouseGuardNPCActorSheetBody_default({});
-  mouseguardactorsheetmousedispo = new MouseGuardActorSheetMouseDispo_default({});
-  return {
-    c() {
-      div2 = element("div");
-      div0 = element("div");
-      create_component(mouseguardactorsheetheader.$$.fragment);
-      t0 = space();
-      div1 = element("div");
-      create_component(mouseguardnpcactorsheetbody.$$.fragment);
-      t1 = space();
-      create_component(mouseguardactorsheetmousedispo.$$.fragment);
-      attr(div0, "class", "npc-sheet-header svelte-djya2j");
-      attr(div1, "class", "sheet-content svelte-djya2j");
-      attr(div2, "class", "mouseguard-sheet svelte-djya2j");
-    },
-    m(target, anchor) {
-      insert(target, div2, anchor);
-      append(div2, div0);
-      mount_component(mouseguardactorsheetheader, div0, null);
-      append(div2, t0);
-      append(div2, div1);
-      mount_component(mouseguardnpcactorsheetbody, div1, null);
-      append(div1, t1);
-      mount_component(mouseguardactorsheetmousedispo, div1, null);
-      current = true;
-    },
-    p: noop,
-    i(local) {
-      if (current) return;
-      transition_in(mouseguardactorsheetheader.$$.fragment, local);
-      transition_in(mouseguardnpcactorsheetbody.$$.fragment, local);
-      transition_in(mouseguardactorsheetmousedispo.$$.fragment, local);
-      current = true;
-    },
-    o(local) {
-      transition_out(mouseguardactorsheetheader.$$.fragment, local);
-      transition_out(mouseguardnpcactorsheetbody.$$.fragment, local);
-      transition_out(mouseguardactorsheetmousedispo.$$.fragment, local);
-      current = false;
-    },
-    d(detaching) {
-      if (detaching) detach(div2);
-      destroy_component(mouseguardactorsheetheader);
-      destroy_component(mouseguardnpcactorsheetbody);
-      destroy_component(mouseguardactorsheetmousedispo);
-    }
-  };
-}
-function instance6($$self, $$props, $$invalidate) {
-  let { dataStore } = $$props;
-  setContext("sheetStore", dataStore);
-  $$self.$$set = ($$props2) => {
-    if ("dataStore" in $$props2) $$invalidate(0, dataStore = $$props2.dataStore);
-  };
-  return [dataStore];
-}
-var MouseGuardNPCActorSheetBase = class extends SvelteComponent {
-  constructor(options) {
-    super();
-    init(this, options, instance6, create_fragment6, safe_not_equal, { dataStore: 0 });
-  }
-};
-var MouseGuardNPCActorSheetBase_default = MouseGuardNPCActorSheetBase;
-
-// node_modules/svelte/store/index.mjs
-var subscriber_queue = [];
-function writable(value, start = noop) {
-  let stop;
-  const subscribers = /* @__PURE__ */ new Set();
-  function set(new_value) {
-    if (safe_not_equal(value, new_value)) {
-      value = new_value;
-      if (stop) {
-        const run_queue = !subscriber_queue.length;
-        for (const subscriber of subscribers) {
-          subscriber[1]();
-          subscriber_queue.push(subscriber, value);
-        }
-        if (run_queue) {
-          for (let i = 0; i < subscriber_queue.length; i += 2) {
-            subscriber_queue[i][0](subscriber_queue[i + 1]);
-          }
-          subscriber_queue.length = 0;
-        }
-      }
-    }
-  }
-  function update2(fn) {
-    set(fn(value));
-  }
-  function subscribe2(run2, invalidate = noop) {
-    const subscriber = [run2, invalidate];
-    subscribers.add(subscriber);
-    if (subscribers.size === 1) {
-      stop = start(set) || noop;
-    }
-    run2(value);
-    return () => {
-      subscribers.delete(subscriber);
-      if (subscribers.size === 0) {
-        stop();
-        stop = null;
-      }
-    };
-  }
-  return { set, update: update2, subscribe: subscribe2 };
-}
-
-// module/npcactor-sheet.js
-var MouseGuardNPCActorSheet = class extends foundry.applications.sheets.ActorSheetV2 {
-  app = null;
-  dataStore = null;
-  /** @inheritDoc */
+// module/sheets/npc-base-sheet.js
+var { HandlebarsApplicationMixin: HandlebarsApplicationMixin4, DialogV2: DialogV22 } = foundry.applications.api;
+var { ActorSheetV2: ActorSheetV22 } = foundry.applications.sheets;
+var CHARACTER_TEMPLATES = "systems/mouseguard/templates/actor/character";
+var NPC_TEMPLATES = "systems/mouseguard/templates/actor/npc";
+var PARTIALS3 = Object.freeze({
+  track: `${CHARACTER_TEMPLATES}/parts/track.hbs`,
+  tools: `${CHARACTER_TEMPLATES}/parts/line-tools.hbs`,
+  ribbon: `${CHARACTER_TEMPLATES}/parts/ribbon-tools.hbs`,
+  aspects: `${NPC_TEMPLATES}/parts/aspects.hbs`,
+  weapons: `${NPC_TEMPLATES}/parts/weapons.hbs`,
+  disposition: `${NPC_TEMPLATES}/parts/disposition.hbs`
+});
+var GEAR_CATEGORY_INFO = Object.freeze({
+  gear: { label: "MOUSEGUARD.ItemSheet.CategoryGear", create: "MOUSEGUARD.Sheet.NewGear", img: "icons/svg/item-bag.svg" },
+  weapon: { label: "MOUSEGUARD.ItemSheet.CategoryWeapon", create: "MOUSEGUARD.NPCSheet.NewWeapon", img: "icons/svg/sword.svg" },
+  armor: { label: "MOUSEGUARD.ItemSheet.CategoryArmor", create: "MOUSEGUARD.NPCSheet.NewArmor", img: "icons/svg/shield.svg" },
+  natural: { label: "MOUSEGUARD.ItemSheet.CategoryNatural", create: "MOUSEGUARD.AnimalSheet.NewWeapon", img: "icons/svg/pawprint.svg" }
+});
+function gearCategory(item) {
+  const category = item?.system?.category;
+  return Object.hasOwn(GEAR_CATEGORY_INFO, category) ? category : "gear";
+}
+var DEFAULT_ASPECTS = Object.freeze({
+  mouse: [
+    "MOUSEGUARD.NPCSheet.AspectEscaping",
+    "MOUSEGUARD.NPCSheet.AspectClimbing",
+    "MOUSEGUARD.NPCSheet.AspectForaging",
+    "MOUSEGUARD.NPCSheet.AspectHiding"
+  ],
+  weasel: [
+    "MOUSEGUARD.NPCSheet.AspectAggressive",
+    "MOUSEGUARD.NPCSheet.AspectBurrowRaiding",
+    "MOUSEGUARD.NPCSheet.AspectGloating"
+  ]
+});
+var MouseGuardNPCBaseSheet = class _MouseGuardNPCBaseSheet extends HandlebarsApplicationMixin4(ActorSheetV22) {
+  /** Play (false) or edit (true) mode; null until first decided. Sheet-instance state, not saved. */
+  #editMode = null;
+  /** Quick-test mode: a click on a skill or ability rolls at once, like Shift+click. */
+  #quickMode = false;
+  /** Nature aspects being added right now (guards against Enter + change firing twice). */
+  #aspectPending = /* @__PURE__ */ new Set();
+  /** @override */
   static DEFAULT_OPTIONS = {
-    classes: ["mouseguard", "sheet", "actor", "npc"],
-    position: {
-      width: 780,
-      height: 720
-    },
-    window: {
-      resizable: true
-    },
-    // The Svelte inputs that carry a `name` (actor name, disposition) belong to this sheet's <form> element and
-    // are saved by the core DocumentSheetV2 form handler. Embedded-item inputs carry no `name`.
-    form: {
-      submitOnChange: true,
-      closeOnSubmit: false
+    classes: ["mouseguard", "sheet", "actor", "mgs-sheet", "themed", "theme-light"],
+    position: { width: 1e3, height: 760 },
+    window: { resizable: true },
+    form: { submitOnChange: true },
+    actions: {
+      toggleMode: _MouseGuardNPCBaseSheet.#onToggleMode,
+      roll: _MouseGuardNPCBaseSheet.#onRoll,
+      testFree: _MouseGuardNPCBaseSheet.#onTestFree,
+      toggleQuick: _MouseGuardNPCBaseSheet.#onToggleQuick,
+      toggleCondition: _MouseGuardNPCBaseSheet.#onToggleCondition,
+      adjust: { handler: _MouseGuardNPCBaseSheet.#onAdjust, buttons: [0, 2] },
+      itemCreate: _MouseGuardNPCBaseSheet.#onItemCreate,
+      itemEdit: _MouseGuardNPCBaseSheet.#onItemEdit,
+      itemDelete: _MouseGuardNPCBaseSheet.#onItemDelete,
+      openCompendium: _MouseGuardNPCBaseSheet.#onOpenCompendium,
+      aspectAdd: _MouseGuardNPCBaseSheet.#onAspectAdd,
+      aspectRemove: _MouseGuardNPCBaseSheet.#onAspectRemove
     }
   };
+  /* -------------------------------------------- */
+  /** Is the sheet in edit mode? A blank actor (see {@link _isBlank}) opens in edit mode. */
+  get isEditMode() {
+    if (!this.isEditable) return false;
+    this.#editMode ??= this._isBlank();
+    return this.#editMode;
+  }
+  /** Is the quick-test mode on? */
+  get isQuickMode() {
+    return this.#quickMode;
+  }
+  /**
+   * Has nothing been written on this actor yet? Then the sheet opens in edit mode.
+   * @returns {boolean}
+   * @protected
+   */
+  _isBlank() {
+    return !this.actor.items.some((i) => UNIQUE_TYPES.has(i.type));
+  }
+  /**
+   * Portrait image shown while the actor still has the core default image (never saved to the actor).
+   * @type {string}
+   * @protected
+   */
+  get _portraitPlaceholder() {
+    return PORTRAIT_PLACEHOLDER;
+  }
+  /* -------------------------------------------- */
+  /*  Rendering                                   */
+  /* -------------------------------------------- */
+  /** @inheritDoc */
+  async _renderFrame(options) {
+    const frame = await super._renderFrame(options);
+    const title = frame.querySelector(".window-header .window-title");
+    if (title && this.isEditable) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "header-control icon fa-solid fa-lock mgs-mode-toggle";
+      button.dataset.action = "toggleMode";
+      title.before(button);
+    }
+    return frame;
+  }
   /** @inheritDoc */
   async _prepareContext(options) {
-    const actorData = this.actor.toObject(false);
-    actorData.system.itemTypes = Object.fromEntries(
-      Object.entries(this.actor.itemTypes).map(([type, items]) => [
-        type,
-        items.map((item) => ({ ...item.toObject(false), id: item.id }))
-      ])
-    );
+    const context = await super._prepareContext(options);
+    const actor = this.actor;
+    const system = actor.system;
+    Object.assign(context, {
+      actor,
+      system,
+      editMode: this.isEditMode,
+      quickMode: this.#quickMode,
+      owner: actor.isOwner,
+      disposition: { current: system.disposition?.current ?? 0, starting: system.disposition?.starting ?? 0 },
+      aspects: this._prepareAspects()
+    });
+    return context;
+  }
+  /** @inheritDoc */
+  async _preparePartContext(partId, context, options) {
+    context = await super._preparePartContext(partId, context, options);
+    if (partId in (context.tabs ?? {})) context.tab = context.tabs[partId];
+    const TextEditor = foundry.applications.ux.TextEditor.implementation;
+    const enrich = (html) => TextEditor.enrichHTML(html ?? "", {
+      secrets: this.actor.isOwner,
+      rollData: this.actor.getRollData(),
+      relativeTo: this.actor
+    });
+    if (partId === "biography" || partId === "description") context.biographyHTML = await enrich(this.actor.system.biography);
+    if (partId === "notes") context.notesHTML = await enrich(this.actor.system.notes);
+    return context;
+  }
+  /* -------------------------------------------- */
+  /**
+   * Portrait column data: image (placeholder while the actor has the core default image) and a subtitle line.
+   * @param {string[]} subtitle  parts of the subtitle, joined with " · "
+   * @returns {{src: string, isIcon: boolean, subtitle: string}}
+   * @protected
+   */
+  _preparePortrait(subtitle = []) {
+    const img = this.actor.img;
+    const isDefault = !img || img === CONST.DEFAULT_TOKEN;
+    const src = isDefault ? this._portraitPlaceholder : img;
     return {
-      actor: this.actor,
-      document: this.actor,
-      data: actorData,
-      system: this.actor.system,
-      systemData: this.actor.system,
-      sheet: this,
-      editable: this.isEditable,
-      owner: this.actor.isOwner
+      src,
+      isIcon: isDefault || /\.svg(\?.*)?$/i.test(src),
+      subtitle: subtitle.map((s) => String(s ?? "").trim()).filter(Boolean).join(" \xB7 ")
     };
   }
-  /** @override */
-  async _renderHTML(context, options) {
-    return "";
+  /**
+   * Condition chips for the header box.
+   * @protected
+   */
+  _prepareConditions() {
+    const conditions = this.actor.system.conditions ?? {};
+    return CONDITIONS.map((c) => ({
+      key: c.key,
+      active: !!conditions[c.key],
+      label: c.label,
+      tooltip: c.tooltip,
+      icon: `systems/mouseguard/assets/icons/${c.icon}.svg`
+    }));
   }
-  /** @override */
-  _replaceHTML(result, content, options) {
+  /**
+   * The nature aspects actually shown: the actor's own list, or the rulebook aspects of the species for a mouse or
+   * weasel whose list was never written (actors made before the field existed). Editing a shown default list saves it
+   * as the actor's own; once written (flags.mouseguard.aspectsSet), an emptied list stays empty.
+   * @returns {{names: string[], isDefault: boolean}}
+   * @protected
+   */
+  _aspectList() {
+    const own = (this.actor.system.natureAspects ?? []).filter((s) => typeof s === "string" && s.trim()).map((s) => s.trim());
+    if (own.length || this.actor.flags?.mouseguard?.aspectsSet) return { names: own, isDefault: false };
+    const defaults = (DEFAULT_ASPECTS[this.actor.type] ?? []).map(loc6);
+    return { names: defaults, isDefault: defaults.length > 0 };
+  }
+  /**
+   * Save the nature aspect list (and mark it as written, so the rulebook defaults never come back).
+   * @param {string[]} names
+   * @protected
+   */
+  _saveAspects(names) {
+    return this.actor.update({ "system.natureAspects": names, "flags.mouseguard.aspectsSet": true });
+  }
+  /**
+   * Nature aspect chips.
+   * @protected
+   */
+  _prepareAspects() {
+    const { names, isDefault } = this._aspectList();
+    return { list: names.map((name, index) => ({ name, index })), isDefault, empty: !names.length };
+  }
+  /**
+   * Gear row (any category), with the conflict effect line of weapons, armor and animal weapons.
+   * @param {Item} item
+   * @protected
+   */
+  _prepareGear(item) {
+    const sys = item.system ?? {};
+    const category = gearCategory(item);
+    return {
+      id: item.id,
+      name: itemDisplayName2(item),
+      img: item.img,
+      category,
+      categoryLabel: GEAR_CATEGORY_INFO[category].label,
+      effect: String(sys.effect ?? "").trim(),
+      quantity: sys.quantity ?? 1,
+      weight: sys.weight ?? 0,
+      excerpt: excerpt(sys.description, 120)
+    };
+  }
+  /* -------------------------------------------- */
+  /** @inheritDoc */
+  async _onFirstRender(context, options) {
+    await super._onFirstRender(context, options);
+    this.#createContextMenus();
+    this.element.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      const target = event.target;
+      if (target?.matches?.("[data-aspect-input]") && event.key === "Enter") {
+        event.preventDefault();
+        this.#addAspect(target.value);
+        return;
+      }
+      if (!target?.matches?.('[role="button"][data-action]')) return;
+      event.preventDefault();
+      target.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, shiftKey: event.shiftKey, button: 0 }));
+    });
   }
   /** @inheritDoc */
   async _onRender(context, options) {
-    if (!this.app) {
-      this.dataStore = writable(context);
-      this.app = new MouseGuardNPCActorSheetBase_default({
-        target: this.element.querySelector(".window-content") ?? this.element,
-        props: {
-          dataStore: this.dataStore
-        }
-      });
-    } else {
-      this.dataStore?.set(context);
-    }
     await super._onRender(context, options);
-  }
-  /** @inheritDoc */
-  _onClose(options) {
-    if (this.app) {
-      this.app.$destroy();
-      this.app = null;
-      this.dataStore = null;
+    const editMode = this.isEditMode;
+    this.element.classList.toggle("mgs-edit-mode", editMode);
+    this.element.classList.toggle("mgs-play-mode", !editMode);
+    const toggle = this.element.querySelector(".window-header .mgs-mode-toggle");
+    if (toggle) {
+      toggle.classList.toggle("fa-lock-open", editMode);
+      toggle.classList.toggle("fa-lock", !editMode);
+      const label = loc6(editMode ? "MOUSEGUARD.Sheet.ToPlayMode" : "MOUSEGUARD.Sheet.ToEditMode");
+      toggle.dataset.tooltip = label;
+      toggle.setAttribute("aria-label", label);
+      toggle.setAttribute("aria-pressed", String(editMode));
     }
-    super._onClose(options);
   }
-  _setMouseDice(count, message = "", bonus = 0) {
-    game.mouseguard.RollCount = Math.max(0, Number(count) || 0) + Math.max(0, Number(bonus) || 0);
-    game.mouseguard.RollBonus = Math.max(0, Number(bonus) || 0);
-    game.mouseguard.RollMessage = message;
-    game.mouseguard.updateDisplay(game.mouseguard.RollCount);
+  /* -------------------------------------------- */
+  /*  Form handling                               */
+  /* -------------------------------------------- */
+  /**
+   * The portrait <img data-edit="img"> is submitted with every form change. While the actor has no picture of its own
+   * it shows the placeholder, which must not be written into actor.img (and from there into the token).
+   * A cleared number input submits null, which the schema would reject: the stored value is kept instead.
+   * @override
+   */
+  _processFormData(event, form, formData) {
+    for (const [name, value] of Object.entries(formData.object)) {
+      if (value === null && form.elements.namedItem(name)?.type === "number") delete formData.object[name];
+    }
+    const data = super._processFormData(event, form, formData);
+    const sourceImg = this.actor._source.img;
+    const hasOwnImage = !!sourceImg && sourceImg !== CONST.DEFAULT_TOKEN;
+    if (!hasOwnImage && data.img === this._portraitPlaceholder) delete data.img;
+    return data;
   }
-  async _updateActorAbility(id, type, value) {
-    if (!this.actor.isOwner) return;
-    await this.actor.updateEmbeddedDocuments("Item", [
-      { _id: id, system: { [type]: value } }
-    ]);
+  /**
+   * Inputs that edit an embedded item carry `data-item-field` (and no `name`), so they never reach the actor form
+   * submission. Their changes are written to the item here instead. The nature aspect input adds a tag.
+   * @override
+   */
+  _onChangeForm(formConfig, event) {
+    const target = event.target;
+    if (target?.matches?.("[data-aspect-input]")) {
+      event.stopPropagation();
+      this.#addAspect(target.value);
+      return;
+    }
+    const input = target?.closest?.("[data-item-field]");
+    if (input) {
+      event.stopPropagation();
+      this.#updateItemField(input);
+      return;
+    }
+    return super._onChangeForm(formConfig, event);
   }
-  async _updateEmbededItem(id, _data) {
-    if (!this.actor.isOwner || !id) return;
-    await this.actor.updateEmbeddedDocuments("Item", [
-      { _id: id, system: _data }
-    ]);
+  /** Write one embedded-item input to its item. */
+  async #updateItemField(input) {
+    const item = this.actor.items.get(input.closest("[data-item-id]")?.dataset.itemId);
+    if (!item) return;
+    let value;
+    if (input.type === "checkbox") value = input.checked;
+    else if (input.type === "number" || input.dataset.dtype === "Number") {
+      if (input.value === "") return;
+      value = Number(input.value);
+      if (!Number.isFinite(value)) return;
+      if (input.min !== "") value = Math.max(value, Number(input.min));
+      if (input.max !== "") value = Math.min(value, Number(input.max));
+    } else value = input.value;
+    await item.update({ [input.dataset.itemField]: value });
   }
-  async _onItemDelete(itemId) {
-    if (!this.actor.isOwner) return;
-    const item = this.actor.items.get(itemId);
-    if (item) await item.delete();
+  /** Append a nature aspect (no duplicates, case-insensitive). */
+  async #addAspect(rawValue) {
+    if (!this.isEditable) return;
+    const value = String(rawValue ?? "").trim();
+    if (!value) return;
+    const key = value.toLocaleLowerCase();
+    const { names } = this._aspectList();
+    if (this.#aspectPending.has(key) || names.some((n) => n.toLocaleLowerCase() === key)) return;
+    this.#aspectPending.add(key);
+    try {
+      await this._saveAspects([...names, value]);
+    } finally {
+      this.#aspectPending.delete(key);
+    }
   }
-  async _onItemCreate(event) {
-    event.preventDefault();
-    const header = event.currentTarget;
-    const type = header.dataset.type;
-    if (!this.actor.isOwner || !CONFIG.Item.dataModels[type]) return;
-    const NEW_NAMES = {
-      skill: "MOUSEGUARD.Sheet.NewSkill",
-      trait: "MOUSEGUARD.Sheet.NewTrait",
-      wise: "MOUSEGUARD.Sheet.NewWise",
-      ability: "MOUSEGUARD.Sheet.NewAbility",
-      contact: "MOUSEGUARD.Sheet.NewContact",
-      condition: "MOUSEGUARD.Sheet.NewCondition"
+  /* -------------------------------------------- */
+  /*  Drag and drop                               */
+  /* -------------------------------------------- */
+  /**
+   * Why an item may not be dropped on this actor (a localized message), or null when it may.
+   * @param {Item} item
+   * @returns {string|null}
+   * @protected
+   */
+  _dropRefusal(item) {
+    return null;
+  }
+  /**
+   * Tab that shows an item of this type / category, or null.
+   * @param {Item} item
+   * @returns {string|null}
+   * @protected
+   */
+  _tabForItem(item) {
+    return null;
+  }
+  /**
+   * Dropping an item from a compendium, the sidebar or another actor creates it on this actor (core behaviour),
+   * except for an item this actor may not have and a skill, trait or wise it already has. Dropping one of its own
+   * items sorts it.
+   * @inheritDoc
+   */
+  async _onDropItem(event, item) {
+    if (!this.actor.isOwner || !this.isEditable) return null;
+    if (this.actor.uuid === item.parent?.uuid) return super._onDropItem(event, item);
+    const refusal = this._dropRefusal(item);
+    if (refusal) {
+      ui.notifications.warn(refusal);
+      return null;
+    }
+    const duplicate = this.#findDuplicate(item);
+    if (duplicate) {
+      ui.notifications.info(game.i18n.format("MOUSEGUARD.NPCSheet.AlreadyHas", { name: itemDisplayName2(duplicate) }));
+      return null;
+    }
+    const created = await super._onDropItem(event, item);
+    const tab = created ? this._tabForItem(created) : null;
+    if (tab && this.tabGroups.primary !== tab) {
+      try {
+        this.changeTab(tab, "primary");
+      } catch (err) {
+        this.tabGroups.primary = tab;
+      }
+    }
+    return created;
+  }
+  /** An existing item that the dropped one would duplicate. */
+  #findDuplicate(item) {
+    const norm = (s) => String(s ?? "").trim().toLowerCase();
+    if (item.type === "ability") {
+      const key = abilityKeyOf(item);
+      return key ? this.actor.items.find((i) => i.type === "ability" && abilityKeyOf(i) === key) : null;
+    }
+    if (!UNIQUE_TYPES.has(item.type)) return null;
+    const names = new Set([norm(item.name), norm(item.flags?.mouseguard?.originalName)].filter(Boolean));
+    const source = item.uuid;
+    return this.actor.items.find((i) => {
+      if (i.type !== item.type) return false;
+      if (source && i._stats?.compendiumSource === source) return true;
+      return names.has(norm(i.name)) || i.flags?.mouseguard?.originalName && names.has(norm(i.flags.mouseguard.originalName));
+    }) ?? null;
+  }
+  /**
+   * Sort only among the rows of one list (same item type, and for gear the same weapon / gear group); ignore drops
+   * on other rows.
+   * @inheritDoc
+   */
+  _onSortItem(event, item) {
+    const row = event.target.closest?.("[data-item-id]");
+    const target = row && this.actor.items.get(row.dataset.itemId);
+    if (!target || target.id === item.id || target.type !== item.type) return;
+    if (item.type === "item" && row.parentElement !== this.element.querySelector(`[data-item-id="${item.id}"]`)?.parentElement) return;
+    return super._onSortItem(event, item);
+  }
+  /* -------------------------------------------- */
+  /*  Context menu                                */
+  /* -------------------------------------------- */
+  /** Item row context menu (right click on the name part of a row). Created once: this.element persists. */
+  #createContextMenus() {
+    const options = { fixed: true, hookName: "get{}ItemContextOptions", parentClassHooks: false };
+    const selector = ".mgs-line[data-item-id] .mgs-line-main, .mgs-gear-row[data-item-id], .mgs-weapon[data-item-id], .mgs-nature-value[data-item-id]";
+    const handler = () => this._getItemContextOptions();
+    if (typeof this._createContextMenu === "function") this._createContextMenu(handler, selector, options);
+    else new foundry.applications.ux.ContextMenu.implementation(this.element, selector, handler(), { fixed: true, jQuery: false });
+  }
+  /**
+   * One context menu entry usable by v14 (label/visible/onClick) and v13 (name/condition/callback) without
+   * deprecation warnings.
+   * @param {string} label             i18n key
+   * @param {string} icon              Font Awesome classes
+   * @param {(item: Item) => boolean} visible
+   * @param {(item: Item, event?: Event) => any} run
+   * @protected
+   */
+  _contextEntry(label, icon, visible, run2) {
+    const itemOf = (el) => this.actor.items.get((el instanceof HTMLElement ? el : el?.[0])?.closest("[data-item-id]")?.dataset.itemId);
+    return {
+      label,
+      name: label,
+      icon: `<i class="${icon}"></i>`,
+      visible: (el) => !!itemOf(el) && visible(itemOf(el)),
+      condition: (el) => !!itemOf(el) && visible(itemOf(el)),
+      onClick: (event, el) => run2(itemOf(el), event),
+      callback: (el) => run2(itemOf(el))
     };
-    const name = game.i18n.localize(NEW_NAMES[type] ?? "MOUSEGUARD.Sheet.NewGear");
-    const itemData = { name, type };
-    const [item] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
-    item?.sheet?.render(true);
-    return item;
   }
-  async _onItemRoll(event) {
-    const button = event.currentTarget;
-    const li = button.closest(".item");
-    const itemId = li?.dataset.itemId;
-    const item = this.actor.items.get(itemId);
-    const formula = button.dataset.roll;
-    if (!formula) return;
-    const RollClass2 = foundry.dice.Roll;
-    const r = new RollClass2(formula, this.actor.getRollData());
-    await r.evaluate();
-    return r.toMessage({
-      author: game.user.id,
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      flavor: `<h2>${item?.name ?? ""}</h2><h3>${button.textContent}</h3>`
+  /**
+   * Item row context menu entries: test / quick test (skills and abilities), edit, delete.
+   * @protected
+   */
+  _getItemContextOptions() {
+    const rollable = (i) => i.type === "skill" || i.type === "ability";
+    const editable = () => this.isEditable;
+    return [
+      this._contextEntry(
+        "MOUSEGUARD.Sheet.MenuTest",
+        "fa-solid fa-dice-d6",
+        (i) => rollable(i) && editable(),
+        (i) => this._rollTest(this.#rollTarget(i, false))
+      ),
+      this._contextEntry(
+        "MOUSEGUARD.Sheet.MenuQuickTest",
+        "fa-solid fa-bolt",
+        (i) => rollable(i) && editable(),
+        (i) => this._rollTest(this.#rollTarget(i, true))
+      ),
+      this._contextEntry(
+        "MOUSEGUARD.Sheet.MenuEdit",
+        "fa-solid fa-pen-to-square",
+        () => true,
+        (i) => i.sheet?.render({ force: true })
+      ),
+      this._contextEntry(
+        "MOUSEGUARD.Sheet.MenuDelete",
+        "fa-solid fa-trash",
+        () => editable(),
+        (i) => this._confirmDelete(i)
+      )
+    ];
+  }
+  /* -------------------------------------------- */
+  /*  Actor API wrappers, with fallbacks          */
+  /* -------------------------------------------- */
+  /** rollTest options for an item row: rollTest({itemId}) for skills, rollTest({abilityKey}) for keyed abilities. */
+  #rollTarget(item, quick, event) {
+    const key = item.type === "ability" ? item.system?.key : "";
+    if (key) return { abilityKey: key, itemId: item.id, quick, event };
+    return { itemId: item.id, quick, event };
+  }
+  /**
+   * actor.rollTest, guarded.
+   * @param {object} options  see MouseGuardActor#rollTest
+   * @protected
+   */
+  async _rollTest(options) {
+    const actor = this.actor;
+    if (typeof actor.rollTest !== "function") {
+      ui.notifications.warn(loc6("MOUSEGUARD.Sheet.NoRollSystem"));
+      return null;
+    }
+    try {
+      return await actor.rollTest(options);
+    } catch (err) {
+      console.error("Mouse Guard | rollTest failed", err);
+      ui.notifications.error(loc6("MOUSEGUARD.Sheet.RollFailed"));
+      return null;
+    }
+  }
+  /**
+   * Confirm, then delete an embedded item.
+   * @param {Item} item
+   * @protected
+   */
+  async _confirmDelete(item) {
+    if (!item) return;
+    const name = foundry.utils.escapeHTML?.(itemDisplayName2(item)) ?? itemDisplayName2(item);
+    const confirmed = await DialogV22.confirm({
+      window: { title: loc6("MOUSEGUARD.Sheet.DeleteTitle"), icon: "fa-solid fa-trash" },
+      content: `<p>${game.i18n.format("MOUSEGUARD.Sheet.DeleteConfirm", { name })}</p>`,
+      rejectClose: false,
+      modal: true
     });
+    if (confirmed) await item.delete();
+  }
+  /**
+   * The embedded item of an action target row.
+   * @param {HTMLElement} target
+   * @returns {Item|undefined}
+   * @protected
+   */
+  _itemFrom(target) {
+    return this.actor.items.get(target.closest("[data-item-id]")?.dataset.itemId);
+  }
+  /* -------------------------------------------- */
+  /*  Actions                                     */
+  /* -------------------------------------------- */
+  /** Switch between play and edit mode. */
+  static #onToggleMode(event) {
+    event.preventDefault();
+    if (!this.isEditable) return;
+    this.#editMode = !this.isEditMode;
+    this.render();
+  }
+  /** Click on a skill or ability name: Test dialog; Shift+click (or quick mode): roll at once. */
+  static async #onRoll(event, target) {
+    event.preventDefault();
+    const item = this._itemFrom(target);
+    if (!item || !this.isEditable) return;
+    const quick = !!event.shiftKey || this.#quickMode;
+    return this._rollTest(this.#rollTarget(item, quick, event));
+  }
+  /** "Test" header button: Test dialog (the ability of `data-ability`, or choose the skill or ability inside it). */
+  static async #onTestFree(event, target) {
+    event.preventDefault();
+    const abilityKey = target.dataset.ability;
+    if (abilityKey && this.actor.getAbility?.(abilityKey)) {
+      return this._rollTest({ abilityKey, quick: !!event.shiftKey || this.#quickMode, event });
+    }
+    return this._rollTest({ quick: false, event });
+  }
+  /** "Quick test" header button: toggles quick mode. */
+  static #onToggleQuick(event) {
+    event.preventDefault();
+    this.#quickMode = !this.#quickMode;
+    this.render({ parts: ["header"] });
+  }
+  /** Toggle a condition. */
+  static async #onToggleCondition(event, target) {
+    event.preventDefault();
+    const key = target.dataset.condition;
+    if (!this.isEditable || !this.actor.system.conditions || !CONDITIONS.some((c) => c.key === key)) return;
+    if (typeof this.actor.toggleCondition === "function") return this.actor.toggleCondition(key);
+    return this.actor.update({ [`system.conditions.${key}`]: !this.actor.system.conditions?.[key] });
+  }
+  /** Left click +1, right click -1 on an actor number (disposition). */
+  static async #onAdjust(event, target) {
+    event.preventDefault();
+    if (!this.isEditable) return;
+    const path = target.dataset.path;
+    if (!path?.startsWith("system.")) return;
+    const delta = event.button === 2 ? -1 : 1;
+    const min = Number(target.dataset.min ?? 0);
+    const max = Number(target.dataset.max ?? 99);
+    const current = Number(foundry.utils.getProperty(this.actor, path)) || 0;
+    const value = clamp(current + delta, min, max);
+    if (value !== current) return this.actor.update({ [path]: value });
+  }
+  /** Create a new item of the requested type (and gear category) and open its sheet. */
+  static async #onItemCreate(event, target) {
+    event.preventDefault();
+    if (!this.isEditable) return;
+    const type = target.dataset.type;
+    if (!(type in (CONFIG.Item.dataModels ?? {})) && !game.documentTypes?.Item?.includes(type)) return;
+    const data = { name: loc6(NEW_ITEM_NAMES[type] ?? "MOUSEGUARD.Sheet.NewGear"), type };
+    const category = target.dataset.category;
+    if (type === "item" && Object.hasOwn(GEAR_CATEGORY_INFO, category)) {
+      const info = GEAR_CATEGORY_INFO[category];
+      Object.assign(data, { name: loc6(info.create), img: info.img, system: { category } });
+    }
+    const [item] = await this.actor.createEmbeddedDocuments("Item", [data]);
+    item?.sheet?.render({ force: true });
+  }
+  /** Open the sheet of an embedded item. */
+  static #onItemEdit(event, target) {
+    event.preventDefault();
+    this._itemFrom(target)?.sheet?.render({ force: true });
+  }
+  /** Delete an embedded item (after confirmation). */
+  static async #onItemDelete(event, target) {
+    event.preventDefault();
+    if (!this.isEditable) return;
+    return this._confirmDelete(this._itemFrom(target));
+  }
+  /** Open a compendium pack (skills / traits) to drag entries onto the sheet. */
+  static #onOpenCompendium(event, target) {
+    event.preventDefault();
+    const pack = game.packs.get(target.dataset.pack);
+    if (pack) pack.render(true);
+    else ui.notifications.warn(game.i18n.format("MOUSEGUARD.Sheet.NoPack", { pack: target.dataset.pack }));
+  }
+  /** "+" next to the nature aspect input. */
+  static async #onAspectAdd(event, target) {
+    event.preventDefault();
+    const input = target.closest(".mgs-aspects")?.querySelector("[data-aspect-input]");
+    await this.#addAspect(input?.value);
+  }
+  /** Remove one nature aspect. */
+  static async #onAspectRemove(event, target) {
+    event.preventDefault();
+    if (!this.isEditable) return;
+    const index = Number(target.dataset.index);
+    const { names } = this._aspectList();
+    if (!Number.isInteger(index) || index < 0 || index >= names.length) return;
+    names.splice(index, 1);
+    await this._saveAspects(names);
+  }
+};
+
+// module/sheets/npc-sheet.js
+var { DialogV2: DialogV23 } = foundry.applications.api;
+var DETAILS2 = Object.freeze([
+  { key: "role", label: "MOUSEGUARD.NPCSheet.Role" },
+  { key: "home", label: "MOUSEGUARD.Sheet.Home" },
+  { key: "age", label: "MOUSEGUARD.Sheet.Age", type: "number" },
+  { key: "fur_color", label: "MOUSEGUARD.Sheet.FurColor" },
+  { key: "cloak_color", label: "MOUSEGUARD.Sheet.CloakColor" }
+]);
+var MAIN_TAB_LABELS = Object.freeze({ mouse: "MOUSEGUARD.Sheet.TabMouse", weasel: "MOUSEGUARD.NPCSheet.TabWeasel" });
+var WEAPON_CATEGORIES = /* @__PURE__ */ new Set(["weapon", "armor"]);
+var MouseGuardNPCSheet = class _MouseGuardNPCSheet extends MouseGuardNPCBaseSheet {
+  /** @override */
+  static DEFAULT_OPTIONS = {
+    classes: ["npc", "mgs-npc"],
+    position: { width: 1100, height: 800 },
+    actions: {
+      newSession: _MouseGuardNPCSheet.#onNewSession,
+      traitUse: { handler: _MouseGuardNPCSheet.#onTraitUse, buttons: [0, 2] },
+      toggleKey: _MouseGuardNPCSheet.#onToggleKey
+    }
+  };
+  /** @override */
+  static PARTS = {
+    portrait: { template: `${NPC_TEMPLATES}/portrait.hbs` },
+    header: { template: `${NPC_TEMPLATES}/header.hbs`, templates: [PARTIALS3.disposition] },
+    tabs: { template: "templates/generic/tab-navigation.hbs", classes: ["mgs-tabs"] },
+    main: {
+      template: `${NPC_TEMPLATES}/tab-main.hbs`,
+      templates: [PARTIALS3.track, PARTIALS3.tools, PARTIALS3.ribbon, PARTIALS3.aspects],
+      scrollable: [""]
+    },
+    biography: { template: `${NPC_TEMPLATES}/tab-biography.hbs`, scrollable: [""] },
+    gear: {
+      template: `${NPC_TEMPLATES}/tab-gear.hbs`,
+      templates: [PARTIALS3.tools, PARTIALS3.ribbon, PARTIALS3.weapons],
+      scrollable: [""]
+    },
+    notes: { template: `${NPC_TEMPLATES}/tab-notes.hbs`, scrollable: [""] }
+  };
+  /** @override */
+  static TABS = {
+    primary: {
+      tabs: [
+        { id: "main", label: "MOUSEGUARD.Sheet.TabMouse" },
+        { id: "biography", label: "MOUSEGUARD.NPCSheet.TabDescription" },
+        { id: "gear", label: "MOUSEGUARD.Sheet.TabGear" },
+        { id: "notes", label: "MOUSEGUARD.Sheet.TabNotes" }
+      ],
+      initial: "main"
+    }
+  };
+  /* -------------------------------------------- */
+  /** @inheritDoc */
+  _initializeApplicationOptions(options) {
+    const opts = super._initializeApplicationOptions(options);
+    const type = opts.document?.type;
+    if (type) opts.classes.push(`mgs-npc--${type}`);
+    return opts;
+  }
+  /** Weasels get the paw print instead of the seated mouse while they have no picture. @override */
+  get _portraitPlaceholder() {
+    return this.actor.type === "weasel" ? "icons/svg/pawprint.svg" : super._portraitPlaceholder;
+  }
+  /** The profile tab is named after the species (Mouse / Weasel). @inheritDoc */
+  _getTabsConfig(group) {
+    const config = super._getTabsConfig(group);
+    if (group !== "primary" || !config) return config;
+    const label = MAIN_TAB_LABELS[this.actor.type] ?? "MOUSEGUARD.Sheet.TabMouse";
+    return { ...config, tabs: config.tabs.map((t) => t.id === "main" ? { ...t, label } : t) };
+  }
+  /* -------------------------------------------- */
+  /*  Rendering                                   */
+  /* -------------------------------------------- */
+  /** @inheritDoc */
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options);
+    const actor = this.actor;
+    const system = actor.system;
+    const byType = (type) => actor.items.filter((i) => i.type === type).sort((a, b) => a.sort - b.sort || a.name.localeCompare(b.name));
+    const keyCharacter = !!system.keyCharacter;
+    const details = system.details ?? {};
+    const gearItems = byType("item").map((i) => this._prepareGear(i));
+    const gear = gearItems.filter((g) => !WEAPON_CATEGORIES.has(g.category));
+    const totalWeight = gearItems.reduce((sum, g) => sum + (Number(g.quantity) || 0) * (Number(g.weight) || 0), 0);
+    const shownTypes = /* @__PURE__ */ new Set(["ability", "skill", "trait", "wise", "item"]);
+    const portrait = this._preparePortrait([details.role, formatAge(details.age), details.home]);
+    portrait.cloak = String(details.cloak_color ?? "").trim();
+    portrait.cloakSwatch = cloakSwatch(details.cloak_color);
+    Object.assign(context, {
+      isWeasel: actor.type === "weasel",
+      keyCharacter,
+      portrait,
+      conditions: this._prepareConditions(),
+      healthy: !CONDITIONS.some((c) => system.conditions?.[c.key]),
+      showQuests: keyCharacter,
+      quests: [
+        { key: "belief", path: "system.motivation.belief", value: system.motivation?.belief ?? "", label: "MOUSEGUARD.Sheet.Belief", hint: "MOUSEGUARD.NPCSheet.BeliefHint" },
+        { key: "goal", path: "system.motivation.goal", value: system.motivation?.goal ?? "", label: "MOUSEGUARD.Sheet.Goal", hint: "MOUSEGUARD.NPCSheet.GoalHint" },
+        { key: "instinct", path: "system.motivation.instinct", value: system.motivation?.instinct ?? "", label: "MOUSEGUARD.Sheet.Instinct", hint: "MOUSEGUARD.NPCSheet.InstinctHint" }
+      ],
+      abilities: this.#prepareAbilities(),
+      skills: byType("skill").map((i) => this.#prepareSkill(i)),
+      traits: byType("trait").map((i) => this.#prepareTrait(i)),
+      wises: byType("wise").map((i) => ({ id: i.id, name: itemDisplayName2(i) })),
+      weapons: gearItems.filter((g) => WEAPON_CATEGORIES.has(g.category)),
+      weaponsEmpty: "MOUSEGUARD.NPCSheet.EmptyWeapons",
+      showWeaponCategory: true,
+      gear,
+      totalWeight: Math.round(totalWeight * 100) / 100,
+      others: actor.items.filter((i) => !shownTypes.has(i.type)).sort((a, b) => a.sort - b.sort).map((i) => ({ id: i.id, name: itemDisplayName2(i), img: i.img, typeLabel: loc6(CONFIG.Item.typeLabels?.[i.type] ?? i.type) })),
+      details: DETAILS2.map((d) => ({ ...d, name: `system.details.${d.key}`, value: details[d.key] ?? (d.type === "number" ? 0 : "") })),
+      packs: { skill: !!game.packs.get(PACKS.skill), trait: !!game.packs.get(PACKS.trait) }
+    });
+    return context;
+  }
+  /** Ability rows, in rulebook order (nature, will, health, resources, circles), then any other ability. */
+  #prepareAbilities() {
+    const rows = this.actor.items.filter((i) => i.type === "ability").map((item) => {
+      const key = abilityKeyOf(item);
+      return {
+        id: item.id,
+        key,
+        label: abilityDisplayName(item),
+        rating: Number(item.system?.rating) || 0,
+        isNature: key === "nature",
+        order: ABILITY_ORDER2.includes(key) ? ABILITY_ORDER2.indexOf(key) : 10 + (item.sort || 0) / 1e6
+      };
+    });
+    return rows.sort((a, b) => a.order - b.order || a.label.localeCompare(b.label));
+  }
+  /** Skill row: rank, or "–" for an unlearned skill (Beginner's Luck). */
+  #prepareSkill(item) {
+    const sys = item.system ?? {};
+    const rank = Number(sys.rank) || 0;
+    const blKey = sys.beginnersLuck === "health" ? "health" : "will";
+    return {
+      id: item.id,
+      name: itemDisplayName2(item),
+      rank,
+      learned: rank > 0,
+      blTooltip: rank > 0 ? "" : game.i18n.format("MOUSEGUARD.Sheet.BeginnersLuckHint", { ability: loc6(ABILITY_LABELS2[blKey]) })
+    };
+  }
+  /** Trait row: level I-III and the beneficial uses this session. */
+  #prepareTrait(item) {
+    const sys = item.system ?? {};
+    const level = clamp(sys.level ?? 1, 1, 3);
+    const usedFor = Number(sys.usedFor) || 0;
+    return {
+      id: item.id,
+      name: itemDisplayName2(item),
+      level,
+      roman: ROMAN2[level],
+      unlimited: level >= 3,
+      spent: level < 3 && usedFor >= level,
+      forTrack: level < 3 ? track({ kind: "usedFor", label: "MOUSEGUARD.Sheet.TraitForShort", tooltip: "MOUSEGUARD.NPCSheet.TraitForHint", count: level, value: usedFor, action: "traitUse", mode: "for" }) : null
+    };
+  }
+  /* -------------------------------------------- */
+  /*  Hooks of the base sheet                     */
+  /* -------------------------------------------- */
+  /** @override */
+  _tabForItem(item) {
+    if (["ability", "skill", "trait", "wise"].includes(item.type)) return "main";
+    return "gear";
+  }
+  /** Adds "use the trait" to the item context menu. @override */
+  _getItemContextOptions() {
+    const entries = super._getItemContextOptions();
+    const use = this._contextEntry(
+      "MOUSEGUARD.Sheet.MenuTraitFor",
+      "fa-solid fa-angles-up",
+      (i) => i.type === "trait" && this.isEditable,
+      (i) => this.#useTrait(i)
+    );
+    entries.splice(2, 0, use);
+    return entries;
+  }
+  /** Use a trait to help (once per session at level 1, twice at level 2, at will at level 3). */
+  async #useTrait(item) {
+    if (typeof this.actor.useTrait === "function") return this.actor.useTrait(item.id, "for");
+    const level = clamp(item.system?.level ?? 1, 1, 3);
+    const used = Number(item.system?.usedFor) || 0;
+    if (level < 3 && used >= level) return;
+    return item.update({ "system.usedFor": clamp(used + 1, 0, 2) });
+  }
+  /* -------------------------------------------- */
+  /*  Actions                                     */
+  /* -------------------------------------------- */
+  /** "New session" header button: trait uses of this session are reset. */
+  static async #onNewSession(event) {
+    event.preventDefault();
+    if (!this.isEditable) return;
+    const name = foundry.utils.escapeHTML?.(this.actor.name) ?? this.actor.name;
+    const confirmed = await DialogV23.confirm({
+      window: { title: loc6("MOUSEGUARD.Sheet.NewSession"), icon: "fa-solid fa-hourglass-start" },
+      content: `<p>${game.i18n.format("MOUSEGUARD.NPCSheet.NewSessionConfirm", { name })}</p>`,
+      rejectClose: false,
+      modal: true
+    });
+    if (!confirmed) return;
+    if (typeof this.actor.startNewSession === "function") return this.actor.startNewSession();
+    const updates = this.actor.items.filter((i) => i.type === "trait").map((i) => ({ _id: i.id, "system.usedFor": 0 }));
+    if (updates.length) await this.actor.updateEmbeddedDocuments("Item", updates);
+  }
+  /** Trait use pips: left click = use the trait (or take back a filled pip), right click = take one use back. */
+  static async #onTraitUse(event, target) {
+    event.preventDefault();
+    const item = this._itemFrom(target);
+    if (!item || !this.isEditable) return;
+    const used = Number(item.system?.usedFor) || 0;
+    const pip = event.target.closest?.(".mgs-pip");
+    if (event.button === 2 || pip?.classList.contains("on")) {
+      if (used > 0) await item.update({ "system.usedFor": used - 1 });
+      return;
+    }
+    return this.#useTrait(item);
+  }
+  /** Key character switch: shows Belief, Goal and Instinct. */
+  static async #onToggleKey(event) {
+    event.preventDefault();
+    if (!this.isEditable) return;
+    return this.actor.update({ "system.keyCharacter": !this.actor.system.keyCharacter });
+  }
+};
+
+// module/sheets/animal-sheet.js
+var ANIMAL_TEMPLATES = "systems/mouseguard/templates/actor/animal";
+var NATURE_CAP = 12;
+var ARMY_SIZES = Object.freeze({ 2: 20, 3: 100, 4: 200, 5: 2e3, 6: 2e4 });
+var orderKey = (level) => `MOUSEGUARD.AnimalSheet.Order${level}`;
+var REFUSED_TYPES = /* @__PURE__ */ new Set(["skill", "trait", "wise", "contact"]);
+var MouseGuardAnimalSheet = class _MouseGuardAnimalSheet extends MouseGuardNPCBaseSheet {
+  /** @override */
+  static DEFAULT_OPTIONS = {
+    classes: ["animal", "mgs-animal"],
+    position: { width: 1100, height: 800 },
+    actions: {
+      setOrder: _MouseGuardAnimalSheet.#onSetOrder,
+      createNature: _MouseGuardAnimalSheet.#onCreateNature
+    }
+  };
+  /** @override */
+  static PARTS = {
+    portrait: { template: `${ANIMAL_TEMPLATES}/portrait.hbs` },
+    header: { template: `${ANIMAL_TEMPLATES}/header.hbs`, templates: [PARTIALS3.disposition] },
+    tabs: { template: "templates/generic/tab-navigation.hbs", classes: ["mgs-tabs"] },
+    animal: {
+      template: `${ANIMAL_TEMPLATES}/tab-animal.hbs`,
+      templates: [PARTIALS3.tools, PARTIALS3.aspects, PARTIALS3.weapons],
+      scrollable: [""]
+    },
+    description: {
+      template: `${ANIMAL_TEMPLATES}/tab-description.hbs`,
+      templates: [PARTIALS3.tools],
+      scrollable: [""]
+    },
+    notes: { template: `${NPC_TEMPLATES}/tab-notes.hbs`, scrollable: [""] }
+  };
+  /** @override */
+  static TABS = {
+    primary: {
+      tabs: [
+        { id: "animal", label: "MOUSEGUARD.AnimalSheet.TabAnimal" },
+        { id: "description", label: "MOUSEGUARD.NPCSheet.TabDescription" },
+        { id: "notes", label: "MOUSEGUARD.Sheet.TabNotes" }
+      ],
+      initial: "animal"
+    }
+  };
+  /* -------------------------------------------- */
+  /** @override */
+  get _portraitPlaceholder() {
+    return "icons/svg/pawprint.svg";
+  }
+  /** A new animal (no species, aspects or animal weapons yet) opens in edit mode. @override */
+  _isBlank() {
+    const system = this.actor.system;
+    return !String(system.species ?? "").trim() && !(system.natureAspects ?? []).length && !this.actor.itemTypes.item?.length;
+  }
+  /* -------------------------------------------- */
+  /*  Rendering                                   */
+  /* -------------------------------------------- */
+  /** @inheritDoc */
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options);
+    const actor = this.actor;
+    const system = actor.system;
+    const level = Math.clamp(Number(system.naturalOrder) || 0, 0, NATURAL_ORDER_MAX);
+    const natureItem = actor.getAbility?.("nature") ?? actor.items.find((i) => i.type === "ability" && i.system?.key === "nature");
+    const rating = Number(natureItem?.system?.rating) || 0;
+    const items = actor.items.filter((i) => i.type === "item").sort((a, b) => a.sort - b.sort || a.name.localeCompare(b.name));
+    const species = String(system.species ?? "").trim();
+    Object.assign(context, {
+      portrait: this._preparePortrait([species, level ? game.i18n.format("MOUSEGUARD.AnimalSheet.OrderShort", { level }) : ""]),
+      species,
+      speciesOptions: this.#speciesOptions(),
+      nature: natureItem ? { id: natureItem.id, label: natureItem.displayName ?? loc6("MOUSEGUARD.Nature"), rating, cap: NATURE_CAP } : null,
+      weapons: items.filter((i) => gearCategory(i) === "natural").map((i) => this._prepareGear(i)),
+      weaponsEmpty: "MOUSEGUARD.AnimalSheet.EmptyWeapons",
+      showWeaponCategory: false,
+      // everything but the Nature shown in the header and the animal weapons, so that legacy items stay reachable
+      others: actor.items.filter((i) => i.id !== natureItem?.id && !(i.type === "item" && gearCategory(i) === "natural")).sort((a, b) => a.sort - b.sort).map((i) => ({
+        id: i.id,
+        name: itemDisplayName2(i),
+        img: i.img,
+        typeLabel: loc6(i.type === "item" ? GEAR_CATEGORY_INFO[gearCategory(i)].label : CONFIG.Item.typeLabels?.[i.type] ?? i.type)
+      })),
+      order: this.#prepareOrder(level, rating)
+    });
+    return context;
+  }
+  /** Natural Order table (9 = bear, moose ... 1 = insects; mice are 3) and what it means for the guards. */
+  #prepareOrder(level, nature) {
+    const relative = level ? level - NATURAL_ORDER_MOUSE : null;
+    const rows = [];
+    for (let n = NATURAL_ORDER_MAX; n >= 1; n--) {
+      rows.push({ level: n, label: loc6(orderKey(n)), current: n === level, isMouse: n === NATURAL_ORDER_MOUSE, above: n - NATURAL_ORDER_MOUSE });
+    }
+    const order = { level, known: level > 0, relative, rows, mighty: (relative ?? 0) >= 2 };
+    if (!level) return order;
+    if (relative === 0) order.relation = loc6("MOUSEGUARD.AnimalSheet.RelationLevel");
+    else {
+      const n = Math.abs(relative);
+      let one = n === 1;
+      try {
+        one = new Intl.PluralRules(game.i18n.lang).select(n) === "one";
+      } catch (err) {
+      }
+      const key = `MOUSEGUARD.AnimalSheet.Relation${relative > 0 ? "Above" : "Below"}${one ? "One" : "Other"}`;
+      order.relation = game.i18n.format(key, { n });
+    }
+    if (relative <= 1) order.fight = loc6("MOUSEGUARD.AnimalSheet.FightAny");
+    else if (relative === 2) order.fight = loc6("MOUSEGUARD.AnimalSheet.FightNoKill");
+    else order.fight = loc6("MOUSEGUARD.AnimalSheet.FightDriveOff");
+    const army = ARMY_SIZES[Math.min(relative, 6)];
+    order.war = army ? game.i18n.format("MOUSEGUARD.AnimalSheet.WarArmy", { n: army.toLocaleString(game.i18n.lang) }) : loc6("MOUSEGUARD.AnimalSheet.WarNotNeeded");
+    order.science = relative >= 2 ? game.i18n.format("MOUSEGUARD.AnimalSheet.ScienceTrap", { ob: nature }) : loc6("MOUSEGUARD.AnimalSheet.ScienceNotNeeded");
+    return order;
+  }
+  /** Species named in the Natural Order table, for the species input's suggestions. */
+  #speciesOptions() {
+    const names = /* @__PURE__ */ new Set();
+    for (let n = 1; n <= NATURAL_ORDER_MAX; n++) {
+      for (const name of loc6(orderKey(n)).split(/[,;]/)) if (name.trim()) names.add(name.trim());
+    }
+    return Array.from(names).sort((a, b) => a.localeCompare(b, game.i18n.lang));
+  }
+  /** Natural Order level of a species named in the table (exact name, ignoring case), or 0. */
+  #orderOfSpecies(species) {
+    const wanted = String(species ?? "").trim().toLocaleLowerCase();
+    if (!wanted) return 0;
+    for (let n = NATURAL_ORDER_MAX; n >= 1; n--) {
+      const names = loc6(orderKey(n)).split(/[,;]/).map((s) => s.trim().toLocaleLowerCase());
+      if (names.includes(wanted)) return n;
+    }
+    return 0;
+  }
+  /* -------------------------------------------- */
+  /*  Form handling                               */
+  /* -------------------------------------------- */
+  /**
+   * Typing a new species from the Natural Order table fills in its level while the level is still unknown (a level
+   * cleared on purpose stays cleared while the species stays the same).
+   * @inheritDoc
+   */
+  _processFormData(event, form, formData) {
+    const data = super._processFormData(event, form, formData);
+    const species = data.system?.species;
+    const changed = typeof species === "string" && species.trim() !== String(this.actor.system.species ?? "").trim();
+    if (changed && !(Number(this.actor.system.naturalOrder) > 0) && data.system.naturalOrder === void 0) {
+      const level = this.#orderOfSpecies(species);
+      if (level) data.system.naturalOrder = level;
+    }
+    return data;
+  }
+  /* -------------------------------------------- */
+  /*  Hooks of the base sheet                     */
+  /* -------------------------------------------- */
+  /** Animals have one ability, Nature: no skills, traits, wises, contacts or other abilities. @override */
+  _dropRefusal(item) {
+    if (REFUSED_TYPES.has(item.type)) return loc6("MOUSEGUARD.AnimalSheet.DropRefused");
+    if (item.type === "ability" && item.system?.key !== "nature") return loc6("MOUSEGUARD.AnimalSheet.DropRefused");
+    return null;
+  }
+  /** @override */
+  _tabForItem(item) {
+    if (item.type === "item" && gearCategory(item) === "natural") return "animal";
+    return item.type === "ability" ? "animal" : "description";
+  }
+  /* -------------------------------------------- */
+  /*  Actions                                     */
+  /* -------------------------------------------- */
+  /** Natural Order row click (edit mode): set the level; a click on the current level clears it. */
+  static async #onSetOrder(event, target) {
+    event.preventDefault();
+    if (!this.isEditable || !this.isEditMode) return;
+    const level = Math.clamp(Number(target.dataset.level) || 0, 0, NATURAL_ORDER_MAX);
+    const next = level === Number(this.actor.system.naturalOrder) ? 0 : level;
+    return this.actor.update({ "system.naturalOrder": next });
+  }
+  /**
+   * Create the missing Nature ability of an animal. A lone ability without a key (a legacy or renamed Nature item) is
+   * made the Nature instead of adding a second one.
+   */
+  static async #onCreateNature(event) {
+    event.preventDefault();
+    if (!this.isEditable || this.actor.getAbility?.("nature")) return;
+    const keyless = (this.actor.itemTypes.ability ?? []).filter((i) => !i.system?.key);
+    if (keyless.length === 1) return keyless[0].update({ "system.key": "nature" });
+    await this.actor.createEmbeddedDocuments("Item", [{
+      name: loc6("MOUSEGUARD.Nature"),
+      type: "ability",
+      system: { key: "nature", rating: 1, max: 1 }
+    }]);
   }
 };
 
@@ -5478,8 +4718,8 @@ await roll.toMessage({
 }
 
 // module/conflict-tracker.js
-var { ApplicationV2: ApplicationV22, HandlebarsApplicationMixin: HandlebarsApplicationMixin4 } = foundry.applications.api;
-var ConflictTracker = class extends HandlebarsApplicationMixin4(ApplicationV22) {
+var { ApplicationV2: ApplicationV22, HandlebarsApplicationMixin: HandlebarsApplicationMixin5 } = foundry.applications.api;
+var ConflictTracker = class extends HandlebarsApplicationMixin5(ApplicationV22) {
   /** @inheritDoc */
   static DEFAULT_OPTIONS = {
     id: "conflict-tracker",
@@ -5632,13 +4872,13 @@ var MouseSocket = class {
           label: game.i18n.localize("MOUSEGUARD.Send"),
           default: true,
           callback: async (event, button, dialog2) => {
-            const element2 = dialog2.element;
-            const move1Actor = element2.querySelector("#move0-actor")?.value;
-            const move1Move = element2.querySelector(".move0:checked")?.value;
-            const move2Actor = element2.querySelector("#move1-actor")?.value;
-            const move2Move = element2.querySelector(".move1:checked")?.value;
-            const move3Actor = element2.querySelector("#move2-actor")?.value;
-            const move3Move = element2.querySelector(".move2:checked")?.value;
+            const element = dialog2.element;
+            const move1Actor = element.querySelector("#move0-actor")?.value;
+            const move1Move = element.querySelector(".move0:checked")?.value;
+            const move2Actor = element.querySelector("#move1-actor")?.value;
+            const move2Move = element.querySelector(".move1:checked")?.value;
+            const move3Actor = element.querySelector("#move2-actor")?.value;
+            const move3Move = element.querySelector(".move2:checked")?.value;
             if (!move1Move || !move2Move || !move3Move || !move1Actor || !move2Actor || !move3Actor) {
               ui.notifications.error(
                 game.i18n.localize("MOUSEGUARD.Conflict.MovesError")
@@ -6077,9 +5317,9 @@ var statusEffects = [
 ];
 
 // module/mouse-effects.js
-var { ApplicationV2: ApplicationV23, HandlebarsApplicationMixin: HandlebarsApplicationMixin5 } = foundry.applications.api;
+var { ApplicationV2: ApplicationV23, HandlebarsApplicationMixin: HandlebarsApplicationMixin6 } = foundry.applications.api;
 var MOUSEGUARD_STATUS_IDS = new Set(statusEffects.map((e) => e.id));
-var EffectsPanel = class extends HandlebarsApplicationMixin5(ApplicationV23) {
+var EffectsPanel = class extends HandlebarsApplicationMixin6(ApplicationV23) {
   /** @inheritDoc */
   static DEFAULT_OPTIONS = {
     id: "mouseguard-effects-panel",
@@ -6133,6 +5373,281 @@ var EffectsPanel = class extends HandlebarsApplicationMixin5(ApplicationV23) {
   }
 };
 
+// node_modules/svelte/internal/index.mjs
+function noop() {
+}
+function run(fn) {
+  return fn();
+}
+function blank_object() {
+  return /* @__PURE__ */ Object.create(null);
+}
+function run_all(fns) {
+  fns.forEach(run);
+}
+function is_function(thing) {
+  return typeof thing === "function";
+}
+function safe_not_equal(a, b) {
+  return a != a ? b == b : a !== b || (a && typeof a === "object" || typeof a === "function");
+}
+function is_empty(obj) {
+  return Object.keys(obj).length === 0;
+}
+var is_hydrating = false;
+function start_hydrating() {
+  is_hydrating = true;
+}
+function end_hydrating() {
+  is_hydrating = false;
+}
+function detach(node) {
+  if (node.parentNode) {
+    node.parentNode.removeChild(node);
+  }
+}
+function children(element) {
+  return Array.from(element.childNodes);
+}
+var current_component;
+function set_current_component(component) {
+  current_component = component;
+}
+var dirty_components = [];
+var binding_callbacks = [];
+var render_callbacks = [];
+var flush_callbacks = [];
+var resolved_promise = Promise.resolve();
+var update_scheduled = false;
+function schedule_update() {
+  if (!update_scheduled) {
+    update_scheduled = true;
+    resolved_promise.then(flush);
+  }
+}
+function add_render_callback(fn) {
+  render_callbacks.push(fn);
+}
+var seen_callbacks = /* @__PURE__ */ new Set();
+var flushidx = 0;
+function flush() {
+  if (flushidx !== 0) {
+    return;
+  }
+  const saved_component = current_component;
+  do {
+    try {
+      while (flushidx < dirty_components.length) {
+        const component = dirty_components[flushidx];
+        flushidx++;
+        set_current_component(component);
+        update(component.$$);
+      }
+    } catch (e) {
+      dirty_components.length = 0;
+      flushidx = 0;
+      throw e;
+    }
+    set_current_component(null);
+    dirty_components.length = 0;
+    flushidx = 0;
+    while (binding_callbacks.length)
+      binding_callbacks.pop()();
+    for (let i = 0; i < render_callbacks.length; i += 1) {
+      const callback = render_callbacks[i];
+      if (!seen_callbacks.has(callback)) {
+        seen_callbacks.add(callback);
+        callback();
+      }
+    }
+    render_callbacks.length = 0;
+  } while (dirty_components.length);
+  while (flush_callbacks.length) {
+    flush_callbacks.pop()();
+  }
+  update_scheduled = false;
+  seen_callbacks.clear();
+  set_current_component(saved_component);
+}
+function update($$) {
+  if ($$.fragment !== null) {
+    $$.update();
+    run_all($$.before_update);
+    const dirty = $$.dirty;
+    $$.dirty = [-1];
+    $$.fragment && $$.fragment.p($$.ctx, dirty);
+    $$.after_update.forEach(add_render_callback);
+  }
+}
+var outroing = /* @__PURE__ */ new Set();
+function transition_in(block, local) {
+  if (block && block.i) {
+    outroing.delete(block);
+    block.i(local);
+  }
+}
+var globals = typeof window !== "undefined" ? window : typeof globalThis !== "undefined" ? globalThis : global;
+function mount_component(component, target, anchor, customElement) {
+  const { fragment, after_update } = component.$$;
+  fragment && fragment.m(target, anchor);
+  if (!customElement) {
+    add_render_callback(() => {
+      const new_on_destroy = component.$$.on_mount.map(run).filter(is_function);
+      if (component.$$.on_destroy) {
+        component.$$.on_destroy.push(...new_on_destroy);
+      } else {
+        run_all(new_on_destroy);
+      }
+      component.$$.on_mount = [];
+    });
+  }
+  after_update.forEach(add_render_callback);
+}
+function destroy_component(component, detaching) {
+  const $$ = component.$$;
+  if ($$.fragment !== null) {
+    run_all($$.on_destroy);
+    $$.fragment && $$.fragment.d(detaching);
+    $$.on_destroy = $$.fragment = null;
+    $$.ctx = [];
+  }
+}
+function make_dirty(component, i) {
+  if (component.$$.dirty[0] === -1) {
+    dirty_components.push(component);
+    schedule_update();
+    component.$$.dirty.fill(0);
+  }
+  component.$$.dirty[i / 31 | 0] |= 1 << i % 31;
+}
+function init(component, options, instance, create_fragment, not_equal, props, append_styles, dirty = [-1]) {
+  const parent_component = current_component;
+  set_current_component(component);
+  const $$ = component.$$ = {
+    fragment: null,
+    ctx: [],
+    // state
+    props,
+    update: noop,
+    not_equal,
+    bound: blank_object(),
+    // lifecycle
+    on_mount: [],
+    on_destroy: [],
+    on_disconnect: [],
+    before_update: [],
+    after_update: [],
+    context: new Map(options.context || (parent_component ? parent_component.$$.context : [])),
+    // everything else
+    callbacks: blank_object(),
+    dirty,
+    skip_bound: false,
+    root: options.target || parent_component.$$.root
+  };
+  append_styles && append_styles($$.root);
+  let ready = false;
+  $$.ctx = instance ? instance(component, options.props || {}, (i, ret, ...rest) => {
+    const value = rest.length ? rest[0] : ret;
+    if ($$.ctx && not_equal($$.ctx[i], $$.ctx[i] = value)) {
+      if (!$$.skip_bound && $$.bound[i])
+        $$.bound[i](value);
+      if (ready)
+        make_dirty(component, i);
+    }
+    return ret;
+  }) : [];
+  $$.update();
+  ready = true;
+  run_all($$.before_update);
+  $$.fragment = create_fragment ? create_fragment($$.ctx) : false;
+  if (options.target) {
+    if (options.hydrate) {
+      start_hydrating();
+      const nodes = children(options.target);
+      $$.fragment && $$.fragment.l(nodes);
+      nodes.forEach(detach);
+    } else {
+      $$.fragment && $$.fragment.c();
+    }
+    if (options.intro)
+      transition_in(component.$$.fragment);
+    mount_component(component, options.target, options.anchor, options.customElement);
+    end_hydrating();
+    flush();
+  }
+  set_current_component(parent_component);
+}
+var SvelteElement;
+if (typeof HTMLElement === "function") {
+  SvelteElement = class extends HTMLElement {
+    constructor() {
+      super();
+      this.attachShadow({ mode: "open" });
+    }
+    connectedCallback() {
+      const { on_mount } = this.$$;
+      this.$$.on_disconnect = on_mount.map(run).filter(is_function);
+      for (const key in this.$$.slotted) {
+        this.appendChild(this.$$.slotted[key]);
+      }
+    }
+    attributeChangedCallback(attr, _oldValue, newValue) {
+      this[attr] = newValue;
+    }
+    disconnectedCallback() {
+      run_all(this.$$.on_disconnect);
+    }
+    $destroy() {
+      destroy_component(this, 1);
+      this.$destroy = noop;
+    }
+    $on(type, callback) {
+      if (!is_function(callback)) {
+        return noop;
+      }
+      const callbacks = this.$$.callbacks[type] || (this.$$.callbacks[type] = []);
+      callbacks.push(callback);
+      return () => {
+        const index = callbacks.indexOf(callback);
+        if (index !== -1)
+          callbacks.splice(index, 1);
+      };
+    }
+    $set($$props) {
+      if (this.$$set && !is_empty($$props)) {
+        this.$$.skip_bound = true;
+        this.$$set($$props);
+        this.$$.skip_bound = false;
+      }
+    }
+  };
+}
+var SvelteComponent = class {
+  $destroy() {
+    destroy_component(this, 1);
+    this.$destroy = noop;
+  }
+  $on(type, callback) {
+    if (!is_function(callback)) {
+      return noop;
+    }
+    const callbacks = this.$$.callbacks[type] || (this.$$.callbacks[type] = []);
+    callbacks.push(callback);
+    return () => {
+      const index = callbacks.indexOf(callback);
+      if (index !== -1)
+        callbacks.splice(index, 1);
+    };
+  }
+  $set($$props) {
+    if (this.$$set && !is_empty($$props)) {
+      this.$$.skip_bound = true;
+      this.$$set($$props);
+      this.$$.skip_bound = false;
+    }
+  }
+};
+
 // module/svelte/MouseGuardConflictManager.svelte
 var MouseGuardConflictManager = class extends SvelteComponent {
   constructor(options) {
@@ -6141,6 +5656,50 @@ var MouseGuardConflictManager = class extends SvelteComponent {
   }
 };
 var MouseGuardConflictManager_default = MouseGuardConflictManager;
+
+// node_modules/svelte/store/index.mjs
+var subscriber_queue = [];
+function writable(value, start = noop) {
+  let stop;
+  const subscribers = /* @__PURE__ */ new Set();
+  function set(new_value) {
+    if (safe_not_equal(value, new_value)) {
+      value = new_value;
+      if (stop) {
+        const run_queue = !subscriber_queue.length;
+        for (const subscriber of subscribers) {
+          subscriber[1]();
+          subscriber_queue.push(subscriber, value);
+        }
+        if (run_queue) {
+          for (let i = 0; i < subscriber_queue.length; i += 2) {
+            subscriber_queue[i][0](subscriber_queue[i + 1]);
+          }
+          subscriber_queue.length = 0;
+        }
+      }
+    }
+  }
+  function update2(fn) {
+    set(fn(value));
+  }
+  function subscribe2(run2, invalidate = noop) {
+    const subscriber = [run2, invalidate];
+    subscribers.add(subscriber);
+    if (subscribers.size === 1) {
+      stop = start(set) || noop;
+    }
+    run2(value);
+    return () => {
+      subscribers.delete(subscriber);
+      if (subscribers.size === 0) {
+        stop();
+        stop = null;
+      }
+    };
+  }
+  return { set, update: update2, subscribe: subscribe2 };
+}
 
 // module/mouse-conflict-manager.js
 var { ApplicationV2: ApplicationV24 } = foundry.applications.api;
@@ -6228,7 +5787,7 @@ Hooks.once("init", async function() {
     character: CharacterData,
     mouse: NPCActorData,
     weasel: NPCActorData,
-    animal: NPCActorData
+    animal: AnimalData
   };
   CONFIG.Item.dataModels = {
     item: ItemData,
@@ -6250,10 +5809,15 @@ Hooks.once("init", async function() {
   CONFIG.Dice.terms["6"] = MouseDie;
   CONFIG.Dice.types.push(MouseDie);
   CONFIG.Dice.rolls.push(MouseRoll);
-  foundry.documents.collections.Actors.registerSheet("mouseguard", MouseGuardNPCActorSheet, {
-    types: ["mouse", "weasel", "animal"],
+  foundry.documents.collections.Actors.registerSheet("mouseguard", MouseGuardNPCSheet, {
+    types: ["mouse", "weasel"],
     makeDefault: true,
     label: "MOUSEGUARD.Sheet.NPCSheetLabel"
+  });
+  foundry.documents.collections.Actors.registerSheet("mouseguard", MouseGuardAnimalSheet, {
+    types: ["animal"],
+    makeDefault: true,
+    label: "MOUSEGUARD.AnimalSheet.SheetLabel"
   });
   foundry.documents.collections.Actors.registerSheet("mouseguard", MouseGuardCharacterSheet, {
     types: ["character"],

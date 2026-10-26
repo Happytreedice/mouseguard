@@ -28,8 +28,8 @@ const PARTIALS = {
 };
 
 /** Display order and localization keys of the five abilities (by AbilityData.key). */
-const ABILITY_ORDER = ["nature", "will", "health", "resources", "circles"];
-const ABILITY_LABELS = Object.freeze({
+export const ABILITY_ORDER = ["nature", "will", "health", "resources", "circles"];
+export const ABILITY_LABELS = Object.freeze({
     nature: "MOUSEGUARD.Nature",
     will: "MOUSEGUARD.Will",
     health: "MOUSEGUARD.Health",
@@ -38,8 +38,8 @@ const ABILITY_LABELS = Object.freeze({
 });
 
 /** Highest ratings (rulebook pp. 30-31, 247, 254, 259-263): no "ready to advance" glow at the cap. */
-const ABILITY_CAPS = Object.freeze({ nature: 7, will: 6, health: 6, resources: 10, circles: 10 });
-const SKILL_CAP = 6;
+export const ABILITY_CAPS = Object.freeze({ nature: 7, will: 6, health: 6, resources: 10, circles: 10 });
+export const SKILL_CAP = 6;
 
 /** Legacy ability names (before AbilityData.key existed). Used only when an item has no key yet. */
 const NATURE_NAME = /^(?:MOUSEGUARD\.)?(?:[MW]?Nature|Природа)(?:\s*\(.*\))?$/i;
@@ -51,7 +51,7 @@ const ABILITY_NAMES = Object.freeze({
 });
 
 /** The five conditions: actor field, label / tooltip keys (shared with the token status effects) and icon. */
-const CONDITIONS = Object.freeze([
+export const CONDITIONS = Object.freeze([
     { key: "hungryThirsty", label: "MOUSEGUARD.Sheet.HungryShort", tooltip: "MOUSEGUARD.hungthurstToolTip", icon: "hungthurst" },
     { key: "angry", label: "MOUSEGUARD.angry", tooltip: "MOUSEGUARD.angryToolTip", icon: "angry" },
     { key: "tired", label: "MOUSEGUARD.tired", tooltip: "MOUSEGUARD.tiredToolTip", icon: "tired" },
@@ -68,7 +68,7 @@ const AGE_KEYS = Object.freeze({
 });
 
 /** The four marks of a wise (WiseData.checks). */
-const WISE_MARKS = Object.freeze([
+export const WISE_MARKS = Object.freeze([
     { key: "pass", short: "MOUSEGUARD.Sheet.WisePassShort", tooltip: "MOUSEGUARD.Sheet.WisePassHint" },
     { key: "fail", short: "MOUSEGUARD.Sheet.WiseFailShort", tooltip: "MOUSEGUARD.Sheet.WiseFailHint" },
     { key: "figuredOut", short: "MOUSEGUARD.Sheet.WiseFiguredOutShort", tooltip: "MOUSEGUARD.Sheet.WiseFiguredOutHint" },
@@ -91,7 +91,7 @@ const DETAILS = Object.freeze([
 ]);
 
 /** Default names of new items, per type. */
-const NEW_ITEM_NAMES = Object.freeze({
+export const NEW_ITEM_NAMES = Object.freeze({
     skill: "MOUSEGUARD.Sheet.NewSkill",
     trait: "MOUSEGUARD.Sheet.NewTrait",
     wise: "MOUSEGUARD.Sheet.NewWise",
@@ -102,13 +102,13 @@ const NEW_ITEM_NAMES = Object.freeze({
 });
 
 /** Compendium packs that can be browsed from a card ribbon. */
-const PACKS = Object.freeze({ skill: "mouseguard.skills", trait: "mouseguard.traits" });
+export const PACKS = Object.freeze({ skill: "mouseguard.skills", trait: "mouseguard.traits" });
 
 /** Shown in the portrait column while the actor still has the core default image; never saved to the actor. */
-const PORTRAIT_PLACEHOLDER = "systems/mouseguard/assets/seated-mouse.svg";
+export const PORTRAIT_PLACEHOLDER = "systems/mouseguard/assets/seated-mouse.svg";
 
 /** Item types that may exist only once per character (matched by name). */
-const UNIQUE_TYPES = new Set(["skill", "trait", "wise"]);
+export const UNIQUE_TYPES = new Set(["skill", "trait", "wise"]);
 
 /** Cloak colour words the sheet can paint, in addition to any valid CSS colour. */
 const CLOAK_COLOURS = Object.freeze({
@@ -126,11 +126,11 @@ const CLOAK_COLOURS = Object.freeze({
 /*  Helpers                                     */
 /* -------------------------------------------- */
 
-const clamp = (value, min, max) => Math.min(Math.max(Number(value) || 0, min), max);
-const loc = (key) => game.i18n.localize(key);
+export const clamp = (value, min, max) => Math.min(Math.max(Number(value) || 0, min), max);
+export const loc = (key) => game.i18n.localize(key);
 
 /** AbilityData.key of an ability item, inferring it from a legacy name when the item has none yet. */
-function abilityKeyOf(item) {
+export function abilityKeyOf(item) {
     const key = item.system?.key;
     if (key) return key;
     const name = String(item.name ?? "").trim();
@@ -151,7 +151,7 @@ function ownDisplayName(item) {
 }
 
 /** Display name rule from the contract: label of the key, else a localized "MOUSEGUARD.*" name, else the name. */
-function abilityDisplayName(item) {
+export function abilityDisplayName(item) {
     const own = ownDisplayName(item);
     if (own && !own.startsWith("MOUSEGUARD.")) return own;
     const key = abilityKeyOf(item);
@@ -161,7 +161,7 @@ function abilityDisplayName(item) {
 }
 
 /** Name of any item as shown on the sheet (never a raw localization key). */
-function itemDisplayName(item) {
+export function itemDisplayName(item) {
     if (item.type === "ability") return abilityDisplayName(item);
     const own = ownDisplayName(item);
     if (own && !own.startsWith("MOUSEGUARD.")) return own;
@@ -170,29 +170,29 @@ function itemDisplayName(item) {
 }
 
 /** An array of `count` pips, the first `value` of them filled. */
-function pips(count, value) {
+export function pips(count, value) {
     const n = clamp(count, 0, 10);
     const v = clamp(value, 0, n);
     return Array.from({ length: n }, (_, index) => ({ index, on: index < v }));
 }
 
 /** A pip track for the track.hbs partial. */
-function track({ kind, label, tooltip, count, value, action = "advance", mode }) {
+export function track({ kind, label, tooltip, count, value, action = "advance", mode }) {
     const list = pips(count, value);
     return { kind, label, tooltip, action, mode, pips: list, full: list.length > 0 && list.every((p) => p.on) };
 }
 
 /** Roman numeral for a trait level. */
-const ROMAN = ["", "I", "II", "III"];
+export const ROMAN = ["", "I", "II", "III"];
 
 /** Plain text excerpt of an HTML string. */
-function excerpt(html, length = 90) {
+export function excerpt(html, length = 90) {
     const text = String(html ?? "").replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim();
     return text.length > length ? `${text.slice(0, length - 1)}…` : text;
 }
 
 /** Russian-aware plural form of "N years". */
-function formatAge(age) {
+export function formatAge(age) {
     const n = Number(age);
     if (!Number.isFinite(n) || n <= 0) return "";
     let rule = "other";
@@ -203,7 +203,7 @@ function formatAge(age) {
 }
 
 /** A CSS colour for the cloak colour text, or "" when the text names no known colour. */
-function cloakSwatch(text) {
+export function cloakSwatch(text) {
     const value = String(text ?? "").trim();
     if (!value) return "";
     if (globalThis.CSS?.supports?.("color", value)) return value;

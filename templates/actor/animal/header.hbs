@@ -1,0 +1,44 @@
+{{!-- Header strip (copy of the character header): action buttons, the Nature box (the animal's only ability) and the Disposition box. --}}
+<header class="mgs-header {{#if editMode}}is-editing{{/if}}">
+  <div class="mgs-header-grid">
+    <div class="mgs-actions">
+        <button type="button" class="mgs-roll-button" data-action="testFree" data-ability="nature" data-tooltip="MOUSEGUARD.AnimalSheet.TestHint"
+                {{#unless nature}}disabled{{/unless}}>
+            <i class="fa-solid fa-dice-d6" inert></i> {{localize "MOUSEGUARD.Sheet.Test"}}
+        </button>
+        <button type="button" class="mgs-roll-button mgs-quick-toggle {{#if quickMode}}active{{/if}}" data-action="toggleQuick"
+                aria-pressed="{{#if quickMode}}true{{else}}false{{/if}}" data-tooltip="MOUSEGUARD.AnimalSheet.QuickTestHint">
+            <i class="fa-solid {{#if quickMode}}fa-toggle-on{{else}}fa-toggle-off{{/if}}" inert></i> {{localize "MOUSEGUARD.Sheet.QuickTest"}}
+        </button>
+    </div>
+
+    <section class="mgs-note mgs-animal-nature">
+        <h3 class="mgs-subhead">{{#if nature}}{{nature.label}}{{else}}{{localize "MOUSEGUARD.Nature"}}{{/if}}</h3>
+        {{#if nature}}
+        <div class="mgs-nature-value" data-item-id="{{nature.id}}">
+            {{#if editMode}}
+            <input class="mgs-reward-input" type="number" id="{{partId}}-nature-rating" data-item-field="system.rating" value="{{nature.rating}}"
+                   min="0" max="{{nature.cap}}" step="1" aria-label="{{localize "MOUSEGUARD.Sheet.Rating"}}">
+            {{else}}
+            <a class="mgs-reward-value mgs-nature-roll" data-action="roll" role="button" tabindex="0"
+               data-tooltip="MOUSEGUARD.Sheet.RollHint" aria-label="{{nature.label}}">{{nature.rating}}</a>
+            {{/if}}
+        </div>
+        <p class="mgs-box-hint">{{localize "MOUSEGUARD.AnimalSheet.NatureHint"}}</p>
+        {{else}}
+        <p class="mgs-box-hint">{{localize "MOUSEGUARD.AnimalSheet.NoNature"}}</p>
+        {{#if editMode}}
+        <button type="button" class="mgs-roll-button mgs-box-button" data-action="createNature">
+            <i class="fa-solid fa-plus" inert></i> {{localize "MOUSEGUARD.AnimalSheet.CreateNature"}}
+        </button>
+        {{/if}}
+        {{/if}}
+    </section>
+
+    <section class="mgs-note mgs-npc-box">
+        <h3 class="mgs-subhead">{{localize "MOUSEGUARD.Sheet.Disposition"}}</h3>
+        {{> "systems/mouseguard/templates/actor/npc/parts/disposition.hbs"}}
+        <p class="mgs-box-hint">{{localize "MOUSEGUARD.AnimalSheet.DispositionHint"}}</p>
+    </section>
+  </div>
+</header>

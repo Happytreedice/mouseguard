@@ -150,12 +150,12 @@
         <div class="mg-radio-row">
             <label class="mg-check">
                 <input type="radio" name="againstMode" value="self" {{#if againstSelf}}checked{{/if}}>
-                <span>{{localize "MOUSEGUARD.Test.Dialog.AgainstSelf"}}</span>
+                <span>{{#if hasRewards}}{{localize "MOUSEGUARD.Test.Dialog.AgainstSelf"}}{{else}}{{localize "MOUSEGUARD.Test.Dialog.AgainstSelfNoChecks"}}{{/if}}</span>
             </label>
             {{#if state.versus}}
             <label class="mg-check">
                 <input type="radio" name="againstMode" value="opponent" {{#if againstOpponent}}checked{{/if}}>
-                <span>{{localize "MOUSEGUARD.Test.Dialog.AgainstOpponent"}}</span>
+                <span>{{#if hasRewards}}{{localize "MOUSEGUARD.Test.Dialog.AgainstOpponent"}}{{else}}{{localize "MOUSEGUARD.Test.Dialog.AgainstOpponentNoChecks"}}{{/if}}</span>
             </label>
             {{/if}}
         </div>

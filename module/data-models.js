@@ -232,11 +232,47 @@ export class CharacterData extends TypeDataModel {
     set itemTypes(_) {}
 }
 
+/** Nature aspects (descriptors) of a species: a list of short names. */
+const natureAspectsSchema = () => new fields.ArrayField(new fields.StringField({ blank: true }));
+
+/**
+ * Legacy or hand-made aspect lists: a comma / semicolon / newline separated string becomes an array, blank entries go.
+ * @param {object} source  system source (mutated)
+ */
+function migrateNatureAspects(source) {
+    if (!("natureAspects" in source)) return;
+    const value = source.natureAspects;
+    if (typeof value === "string") source.natureAspects = value.split(/[,;\n]/).map((s) => s.trim()).filter(Boolean);
+    else if (Array.isArray(value)) {
+        source.natureAspects = value.filter((s) => typeof s === "string" && s.trim()).map((s) => s.trim());
+    }
+}
+
+/**
+ * NPC mice and weasels (actor types "mouse" and "weasel"). Same abilities, skills, traits and wises as a guard mouse,
+ * but no Fate, Persona or checks. Belief, Goal and Instinct are written only for key characters (book: the GM writes
+ * them for important NPCs, e.g. Matriarch Gwendolyn or a scenario's main antagonist).
+ */
 export class NPCActorData extends TypeDataModel {
     static defineSchema() {
         return {
             biography: new fields.HTMLField({ required: false, blank: true, initial: "" }),
+            notes: new fields.HTMLField({ required: false, blank: true, initial: "" }),
             player: new fields.StringField({ blank: true, initial: "" }),
+            details: new fields.SchemaField({
+                role: new fields.StringField({ blank: true, initial: "" }),
+                home: new fields.StringField({ blank: true, initial: "" }),
+                age: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
+                fur_color: new fields.StringField({ blank: true, initial: "" }),
+                cloak_color: new fields.StringField({ blank: true, initial: "" })
+            }),
+            keyCharacter: new fields.BooleanField({ initial: false }),
+            motivation: new fields.SchemaField({
+                belief: new fields.StringField({ blank: true, initial: "" }),
+                goal: new fields.StringField({ blank: true, initial: "" }),
+                instinct: new fields.StringField({ blank: true, initial: "" })
+            }),
+            natureAspects: natureAspectsSchema(),
             conditions: conditionsSchema(),
             disposition: dispositionSchema()
         };
@@ -244,7 +280,57 @@ export class NPCActorData extends TypeDataModel {
 
     /** @inheritdoc */
     static migrateData(source, options) {
-        if (isObject(source)) migrateLegacyHTML(source, "biography");
+        if (isObject(source)) {
+            migrateLegacyHTML(source, "biography");
+            migrateLegacyHTML(source, "notes");
+            migrateNatureAspects(source);
+        }
+        return super.migrateData(source, options);
+    }
+
+    get itemTypes() {
+        return this.parent?.itemTypes ?? {};
+    }
+
+    set itemTypes(_) {}
+}
+
+/** Highest level of the Natural Order table (book p. 243: 1 insects ... 9 bear, moose; mice are level 3). */
+export const NATURAL_ORDER_MAX = 9;
+
+/** Natural Order level of a grown mouse (book p. 243). */
+export const NATURAL_ORDER_MOUSE = 3;
+
+/**
+ * Wild animals (actor type "animal"). They have a single ability, Nature (<species>), which is rolled for every test,
+ * versus test, tiebreaker and conflict action, plus nature aspects, animal weapons (gear items of the "natural"
+ * category) and a place in the Natural Order. No Will, Health, Resources, Circles, skills, traits or conditions.
+ */
+export class AnimalData extends TypeDataModel {
+    static defineSchema() {
+        return {
+            biography: new fields.HTMLField({ required: false, blank: true, initial: "" }),
+            notes: new fields.HTMLField({ required: false, blank: true, initial: "" }),
+            species: new fields.StringField({ blank: true, initial: "" }),
+            naturalOrder: new fields.NumberField({
+                required: true, nullable: false, initial: 0, integer: true, min: 0, max: NATURAL_ORDER_MAX
+            }),
+            natureAspects: natureAspectsSchema(),
+            disposition: dispositionSchema()
+        };
+    }
+
+    /** @inheritdoc */
+    static migrateData(source, options) {
+        if (isObject(source)) {
+            migrateLegacyHTML(source, "biography");
+            migrateLegacyHTML(source, "notes");
+            migrateNatureAspects(source);
+            if ("naturalOrder" in source) {
+                const level = Math.trunc(toNumber(source.naturalOrder));
+                source.naturalOrder = Math.clamp(level, 0, NATURAL_ORDER_MAX);
+            }
+        }
         return super.migrateData(source, options);
     }
 
@@ -268,15 +354,31 @@ class MouseGuardItemDataBase extends TypeDataModel {
     }
 }
 
+/**
+ * Gear categories: ordinary gear, weapons and armor (fight gear, book p. 130-132), and animal weapons (claws, fangs,
+ * quills... of wild animals).
+ */
+export const GEAR_CATEGORIES = Object.freeze(["gear", "weapon", "armor", "natural"]);
+
 export class ItemData extends MouseGuardItemDataBase {
     static defineSchema() {
         return {
             description: new fields.HTMLField({ required: false, blank: true, initial: "" }),
             quantity: new fields.NumberField({ initial: 1, integer: true }),
             weight: new fields.NumberField({ initial: 0 }),
+            category: new fields.StringField({ required: true, blank: false, initial: "gear", choices: [...GEAR_CATEGORIES] }),
+            effect: new fields.StringField({ blank: true, initial: "" }),
             attributes: new fields.ObjectField(),
             groups: new fields.ObjectField()
         };
+    }
+
+    /** @inheritdoc */
+    static migrateData(source, options) {
+        if (isObject(source) && ("category" in source) && !GEAR_CATEGORIES.includes(source.category)) {
+            source.category = "gear";
+        }
+        return super.migrateData(source, options);
     }
 }
 

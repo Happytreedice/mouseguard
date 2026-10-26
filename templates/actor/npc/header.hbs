@@ -1,0 +1,47 @@
+{{!-- Header strip (copy of the character header): action buttons, Conditions box, Disposition box with the key character switch. --}}
+<header class="mgs-header {{#if editMode}}is-editing{{/if}}">
+  <div class="mgs-header-grid">
+    <div class="mgs-actions">
+        <button type="button" class="mgs-roll-button" data-action="testFree" data-tooltip="MOUSEGUARD.Sheet.TestHint">
+            <i class="fa-solid fa-dice-d6" inert></i> {{localize "MOUSEGUARD.Sheet.Test"}}
+        </button>
+        <button type="button" class="mgs-roll-button mgs-quick-toggle {{#if quickMode}}active{{/if}}" data-action="toggleQuick"
+                aria-pressed="{{#if quickMode}}true{{else}}false{{/if}}" data-tooltip="MOUSEGUARD.Sheet.QuickTestHint">
+            <i class="fa-solid {{#if quickMode}}fa-toggle-on{{else}}fa-toggle-off{{/if}}" inert></i> {{localize "MOUSEGUARD.Sheet.QuickTest"}}
+        </button>
+        <button type="button" class="mgs-roll-button" data-action="newSession" data-tooltip="MOUSEGUARD.NPCSheet.NewSessionHint">
+            <i class="fa-solid fa-hourglass-start" inert></i> {{localize "MOUSEGUARD.Sheet.NewSession"}}
+        </button>
+    </div>
+
+    <section class="mgs-note mgs-conditions">
+        <h3 class="mgs-subhead">{{localize "MOUSEGUARD.Sheet.Conditions"}}</h3>
+        <div class="mgs-chips">
+            <span class="mgs-chip mgs-chip--healthy {{#if healthy}}active{{/if}}" data-tooltip="MOUSEGUARD.NPCSheet.HealthyHint">
+                <i class="fa-solid fa-heart" inert></i> {{localize "MOUSEGUARD.Sheet.Healthy"}}
+            </span>
+            {{#each conditions}}
+            <a class="mgs-chip {{#if active}}active{{/if}}" data-action="toggleCondition" data-condition="{{key}}"
+               data-tooltip="{{tooltip}}" role="button" tabindex="0" aria-pressed="{{#if active}}true{{else}}false{{/if}}">
+                <img class="mgs-chip-icon" src="{{icon}}" alt=""> {{localize label}}
+            </a>
+            {{/each}}
+        </div>
+    </section>
+
+    <section class="mgs-note mgs-npc-box">
+        <h3 class="mgs-subhead">{{localize "MOUSEGUARD.Sheet.Disposition"}}</h3>
+        {{> "systems/mouseguard/templates/actor/npc/parts/disposition.hbs"}}
+        {{#if editable}}
+        <a class="mgs-chip mgs-key-chip {{#if keyCharacter}}active{{/if}}" data-action="toggleKey" role="button" tabindex="0"
+           aria-pressed="{{#if keyCharacter}}true{{else}}false{{/if}}" data-tooltip="MOUSEGUARD.NPCSheet.KeyCharacterHint">
+            <i class="fa-solid fa-star" inert></i> {{localize "MOUSEGUARD.NPCSheet.KeyCharacter"}}
+        </a>
+        {{else if keyCharacter}}
+        <span class="mgs-chip mgs-key-chip active" data-tooltip="MOUSEGUARD.NPCSheet.KeyCharacterHint">
+            <i class="fa-solid fa-star" inert></i> {{localize "MOUSEGUARD.NPCSheet.KeyCharacter"}}
+        </span>
+        {{/if}}
+    </section>
+  </div>
+</header>

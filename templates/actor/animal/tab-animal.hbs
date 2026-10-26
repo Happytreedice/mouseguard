@@ -1,0 +1,76 @@
+{{!-- Animal tab: Nature aspects, Animal weapons and Natural Order cards, then what the Natural Order means for the guards. --}}
+<section class="tab mgs-tab-body mgs-tab-animal {{tab.cssClass}} {{#if editMode}}is-editing{{/if}}" data-tab="animal" data-group="primary">
+    <div class="mgs-cards mgs-cards--animal">
+
+        {{!-- Nature aspects --}}
+        <article class="mgs-card mgs-card--aspects">
+            <h2 class="mgs-ribbon mgs-ribbon--green">
+                <span class="mgs-ribbon-title">{{localize "MOUSEGUARD.NPCSheet.Aspects"}}</span>
+                <i class="mgs-ribbon-icon fa-solid fa-paw" inert></i>
+            </h2>
+            <p class="mgs-card-hint">{{localize "MOUSEGUARD.AnimalSheet.AspectsHint"}}</p>
+            {{> "systems/mouseguard/templates/actor/npc/parts/aspects.hbs"}}
+        </article>
+
+        {{!-- Animal weapons --}}
+        <article class="mgs-card mgs-card--weapons">
+            <h2 class="mgs-ribbon mgs-ribbon--rust">
+                <span class="mgs-ribbon-title">{{localize "MOUSEGUARD.AnimalSheet.Weapons"}}</span>
+                {{#if editMode}}
+                <span class="mgs-ribbon-tools">
+                    <a class="mgs-ribbon-btn" data-action="itemCreate" data-type="item" data-category="natural" role="button" tabindex="0"
+                       data-tooltip="MOUSEGUARD.AnimalSheet.CreateWeapon" aria-label="{{localize "MOUSEGUARD.AnimalSheet.CreateWeapon"}}"><i class="fa-solid fa-plus" inert></i></a>
+                </span>
+                {{else}}<i class="mgs-ribbon-icon fa-solid fa-tooth" inert></i>{{/if}}
+            </h2>
+            <p class="mgs-card-hint">{{localize "MOUSEGUARD.AnimalSheet.WeaponsHint"}}</p>
+            {{> "systems/mouseguard/templates/actor/npc/parts/weapons.hbs"}}
+        </article>
+
+        {{!-- Natural Order --}}
+        <article class="mgs-card mgs-card--order">
+            <h2 class="mgs-ribbon mgs-ribbon--slate">
+                <span class="mgs-ribbon-title">{{localize "MOUSEGUARD.AnimalSheet.NaturalOrder"}}</span>
+                <i class="mgs-ribbon-icon fa-solid fa-ranking-star" inert></i>
+            </h2>
+            <p class="mgs-card-hint">{{#if editMode}}{{localize "MOUSEGUARD.AnimalSheet.OrderEditHint"}}{{else}}{{localize "MOUSEGUARD.AnimalSheet.NaturalOrderHint"}}{{/if}}</p>
+            <ol class="mgs-order" aria-label="{{localize "MOUSEGUARD.AnimalSheet.NaturalOrder"}}">
+                {{#each order.rows as |row|}}
+                <li class="mgs-order-row {{#if row.current}}is-current{{/if}} {{#if row.isMouse}}is-mouse{{/if}}"
+                    {{#if @root.editMode}}data-action="setOrder" data-level="{{row.level}}" role="button" tabindex="0"
+                    aria-pressed="{{#if row.current}}true{{else}}false{{/if}}"{{/if}}>
+                    <span class="mgs-order-level">{{row.level}}</span>
+                    <span class="mgs-order-names">{{row.label}}</span>
+                </li>
+                {{/each}}
+            </ol>
+            {{#if order.relation}}
+            <p class="mgs-order-relation {{#if order.mighty}}is-mighty{{/if}}">{{order.relation}}</p>
+            {{else}}
+            <p class="mgs-order-relation is-unknown">{{localize "MOUSEGUARD.AnimalSheet.OrderUnknown"}}</p>
+            {{/if}}
+        </article>
+    </div>
+
+    {{!-- What the Natural Order means for the guards (book p. 243-244), and the Fight Animal conflict --}}
+    <div class="mgs-quests mgs-animal-rules">
+        {{#if order.known}}
+        <article class="mgs-quest mgs-rule {{#if order.mighty}}is-mighty{{/if}}">
+            <h3 class="mgs-quest-title">{{localize "MOUSEGUARD.AnimalSheet.RuleFight"}}</h3>
+            <p class="mgs-rule-text">{{order.fight}}</p>
+        </article>
+        <article class="mgs-quest mgs-rule">
+            <h3 class="mgs-quest-title">{{localize "MOUSEGUARD.AnimalSheet.RuleWar"}}</h3>
+            <p class="mgs-rule-text">{{order.war}}</p>
+        </article>
+        <article class="mgs-quest mgs-rule">
+            <h3 class="mgs-quest-title">{{localize "MOUSEGUARD.AnimalSheet.RuleScience"}}</h3>
+            <p class="mgs-rule-text">{{order.science}}</p>
+        </article>
+        {{/if}}
+        <article class="mgs-quest mgs-rule">
+            <h3 class="mgs-quest-title">{{localize "MOUSEGUARD.AnimalSheet.RuleConflict"}}</h3>
+            <p class="mgs-rule-text">{{localize "MOUSEGUARD.AnimalSheet.RuleConflictText"}}</p>
+        </article>
+    </div>
+</section>

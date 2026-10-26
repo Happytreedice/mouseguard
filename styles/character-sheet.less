@@ -1,6 +1,7 @@
 // =====================================================================================================================
 // Character sheet (module/sheets/character-sheet.js, templates/actor/character/*.hbs).
-// Everything is scoped under .mouseguard.sheet.actor.character, so the NPC (Svelte) sheet and other apps are untouched.
+// Everything is scoped under .mouseguard.sheet.actor.mgs-sheet: the character sheet and the NPC / animal sheets share it
+// (styles/npc-sheet.less adds the NPC-only parts); other apps are untouched.
 //
 // Layout and format copied from the Legend in the Mist (mist-engine-fvtt) character sheet:
 //   - dark textured window body (ME default_sheet_background.webp, background-size: cover);
@@ -36,7 +37,7 @@
 @mgs-tag-orange: #ecba85;
 @mgs-tag-green: #bccdaf;
 
-.mouseguard.sheet.actor.character {
+.mouseguard.sheet.actor.mgs-sheet {
     --mgs-font-heading: "Palatino Linotype", "Book Antiqua", Palatino, "PT Serif", "Noto Serif", Georgia, "DejaVu Serif", serif;
     --mgs-font-body: "Palatino Linotype", "Book Antiqua", Palatino, "PT Serif", "Noto Serif", Georgia, "DejaVu Serif", serif;
     --mgs-font-hand: "MG Caveat", "Segoe Print", "Comic Sans MS", cursive;
@@ -1219,12 +1220,12 @@
 
 // Narrow windows: the header strip folds (buttons in a row above the two paper boxes, then everything stacked).
 @container mgs-header (max-width: 600px) {
-    .mouseguard.sheet.actor.character .mgs-header-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-    .mouseguard.sheet.actor.character .mgs-actions { grid-column: ~"1 / -1"; flex-direction: row; }
-    .mouseguard.sheet.actor.character .mgs-roll-button { flex: 1 1 0; min-width: 0; }
+    .mouseguard.sheet.actor.mgs-sheet .mgs-header-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .mouseguard.sheet.actor.mgs-sheet .mgs-actions { grid-column: ~"1 / -1"; flex-direction: row; }
+    .mouseguard.sheet.actor.mgs-sheet .mgs-roll-button { flex: 1 1 0; min-width: 0; }
 }
 
 @container mgs-header (max-width: 380px) {
-    .mouseguard.sheet.actor.character .mgs-header-grid { grid-template-columns: minmax(0, 1fr); }
-    .mouseguard.sheet.actor.character .mgs-actions { flex-direction: column; }
+    .mouseguard.sheet.actor.mgs-sheet .mgs-header-grid { grid-template-columns: minmax(0, 1fr); }
+    .mouseguard.sheet.actor.mgs-sheet .mgs-actions { flex-direction: column; }
 }

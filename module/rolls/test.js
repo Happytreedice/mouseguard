@@ -249,15 +249,15 @@ export async function applyConsequences(actor, record, { initial = false, messag
     const applied = record.applied;
     const canWrite = actor?.isOwner;
 
-    // Beginner's Luck: one learning mark per test, pass or fail (book p. 100-101)
-    if (initial && canWrite && record.beginnersLuck && record.subjectId) {
+    // Beginner's Luck: one learning mark per test, pass or fail (book p. 100-101); NPCs do not learn
+    if (initial && canWrite && record.beginnersLuck && record.subjectId && (actor.type === "character")) {
         const before = snapshot(actor.items.get(record.subjectId));
         const res = await actor.markLearning(record.subjectId, 1, { notify: false });
         if (res) applied.learning = { itemId: record.subjectId, before, value: res.learning, target: res.target, learned: res.learned };
     }
 
     // Advancement mark (none on a tie until it is resolved; none for Beginner's Luck)
-    const desiredMark = (record.markAdvancement && record.testedItemId && !result.tie)
+    const desiredMark = (actor?.type === "character" && record.markAdvancement && record.testedItemId && !result.tie)
         ? (result.passed ? "passed" : "failed") : null;
     const current = applied.advancement ?? null;
     if (canWrite && (current?.mark ?? null) !== desiredMark) {
@@ -274,8 +274,8 @@ export async function applyConsequences(actor, record, { initial = false, messag
         }
     }
 
-    // Nature tax
-    const nature = actor?.getAbility?.("nature");
+    // Nature tax: a player character rule (book p. 255-256); an NPC's or an animal's Nature stays fixed
+    const nature = actor?.type === "character" ? actor.getAbility?.("nature") : null;
     const desiredTax = nature ? natureTax(record, result) : 0;
     const appliedTax = int(applied.tax?.amount);
     if (canWrite && nature && desiredTax !== appliedTax) {
@@ -396,7 +396,7 @@ export async function performTest(actor, state) {
         inNature: ctx.inNature,
         traitFor: ctx.traitFor ? { id: ctx.traitFor.id, name: itemLabel(ctx.traitFor), level: int(ctx.traitFor.system.level, 1) } : null,
         traitAgainst: ctx.traitAgainst
-            ? { id: ctx.traitAgainst.id, name: itemLabel(ctx.traitAgainst), mode: ctx.againstMode, checks: ctx.againstChecks }
+            ? { id: ctx.traitAgainst.id, name: itemLabel(ctx.traitAgainst), mode: ctx.againstMode, checks: hasRewards(actor) ? ctx.againstChecks : 0 }
             : null,
         markAdvancement: !!markAdvancement,
         dice: results.map((r, i) => ({ id: i, r, src: "pool", replaced: false, exploded: false })),
@@ -482,7 +482,8 @@ function availableActions(record, actor) {
     if (record.versus && result.tie) {
         const traits = (actor?.itemTypes?.trait ?? []).filter((t) => t.id !== record.traitFor?.id);
         if (!record.used.fate && !record.traitAgainst && !resolvedTie && traits.length) {
-            actions.push({ action: "tieTrait", icon: "fa-solid fa-handshake-angle", label: loc("MOUSEGUARD.Test.Action.TieTrait"), hint: loc("MOUSEGUARD.Test.Action.TieTraitHint") });
+            actions.push({ action: "tieTrait", icon: "fa-solid fa-handshake-angle", label: loc("MOUSEGUARD.Test.Action.TieTrait"),
+                hint: loc(rewards ? "MOUSEGUARD.Test.Action.TieTraitHint" : "MOUSEGUARD.Test.Action.TieTraitHintNoChecks") });
         }
         if (!resolvedTie) {
             actions.push({ action: "tiebreaker", icon: "fa-solid fa-scale-balanced", label: loc("MOUSEGUARD.Test.Action.Tiebreaker"), hint: loc("MOUSEGUARD.Test.Action.TiebreakerHint") });
@@ -545,13 +546,15 @@ export async function renderTestCard(record, actor) {
     if (record.traitFor) {
         notes.push(fmt(record.traitFor.level >= 3 ? "MOUSEGUARD.Test.Note.TraitForSuccess" : "MOUSEGUARD.Test.Note.TraitFor", { name: record.traitFor.name }));
     }
+    // NPCs earn no checks (book: checks are a player rule): the notes leave them out
+    const earnsChecks = hasRewards(actor);
     if (record.traitAgainst) {
-        notes.push(fmt(record.traitAgainst.mode === "opponent" ? "MOUSEGUARD.Test.Note.TraitAgainstOpponent" : "MOUSEGUARD.Test.Note.TraitAgainst",
-            { name: record.traitAgainst.name, n: record.traitAgainst.checks }));
+        const key = record.traitAgainst.mode === "opponent" ? "MOUSEGUARD.Test.Note.TraitAgainstOpponent" : "MOUSEGUARD.Test.Note.TraitAgainst";
+        notes.push(fmt(record.traitAgainst.checks ? key : `${key}NoChecks`, { name: record.traitAgainst.name, n: record.traitAgainst.checks }));
     }
     if (record.used.tieTrait) {
         const trait = actor?.items.get(record.used.tieTrait);
-        notes.push(fmt("MOUSEGUARD.Test.Note.TieTrait", { name: trait ? itemLabel(trait) : "?" }));
+        notes.push(fmt(earnsChecks ? "MOUSEGUARD.Test.Note.TieTrait" : "MOUSEGUARD.Test.Note.TieTraitNoChecks", { name: trait ? itemLabel(trait) : "?" }));
     }
     if (record.used.fate) notes.push(loc("MOUSEGUARD.Test.Note.FateUsed"));
     for (const [key, labelKey] of [["deeper", "MOUSEGUARD.Test.Note.DeeperUsed"], ["ofCourse", "MOUSEGUARD.Test.Note.OfCourseUsed"]]) {

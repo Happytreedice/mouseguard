@@ -56,13 +56,18 @@ export function abilityLabelKey(key, actorType) {
 
 /**
  * Display label for an ability item (document or plain data object).
- * Uses the localized label of its key when set, otherwise the localized name.
- * @param {{name?: string, system?: {key?: string}}} ability
+ * Uses the localized label of its key when set, otherwise the localized name. An animal's Nature names its species,
+ * "Nature (wolf)", when the owning actor has one.
+ * @param {{name?: string, system?: {key?: string}, parent?: Actor}} ability
  * @param {string} [actorType]
  * @returns {string}
  */
 export function abilityLabel(ability, actorType) {
     const key = ability?.system?.key;
+    if (key === "nature" && actorType === "animal") {
+        const species = String(ability?.parent?.system?.species ?? "").trim();
+        if (species) return game.i18n.format("MOUSEGUARD.AnimalSheet.NatureOf", { species });
+    }
     const labelKey = key ? abilityLabelKey(key, actorType) : null;
     if (labelKey) return game.i18n.localize(labelKey);
     return itemLabel(ability);

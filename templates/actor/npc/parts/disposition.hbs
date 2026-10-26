@@ -1,0 +1,22 @@
+{{!-- Disposition: current / starting, big numbers like the character rewards. Context: disposition, editMode. --}}
+<div class="mgs-reward-grid mgs-reward-grid--two" data-tooltip="MOUSEGUARD.Sheet.DispositionHint">
+    <div class="mgs-reward">
+        {{#if editMode}}
+        <input class="mgs-reward-input" type="number" name="system.disposition.current" value="{{disposition.current}}" min="0" step="1"
+               aria-label="{{localize "MOUSEGUARD.Sheet.DispositionCurrent"}}">
+        {{else}}
+        <a class="mgs-reward-value" data-action="adjust" data-path="system.disposition.current" data-min="0" data-max="99"
+           role="button" tabindex="0" aria-label="{{localize "MOUSEGUARD.Sheet.DispositionCurrent"}}">{{disposition.current}}</a>
+        {{/if}}
+        <span class="mgs-reward-label">{{localize "MOUSEGUARD.NPCSheet.Current"}}</span>
+    </div>
+    <div class="mgs-reward">
+        {{#if editMode}}
+        <input class="mgs-reward-input" type="number" name="system.disposition.starting" value="{{disposition.starting}}" min="0" step="1"
+               aria-label="{{localize "MOUSEGUARD.Sheet.DispositionStarting"}}">
+        {{else}}
+        <span class="mgs-reward-value is-static">{{disposition.starting}}</span>
+        {{/if}}
+        <span class="mgs-reward-label">{{localize "MOUSEGUARD.NPCSheet.Starting"}}</span>
+    </div>
+</div>

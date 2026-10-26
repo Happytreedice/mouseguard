@@ -1,0 +1,330 @@
+// =====================================================================================================================
+// NPC sheets: NPC mice and weasels (module/sheets/npc-sheet.js) and wild animals (module/sheets/animal-sheet.js).
+// They are copies of the character sheet and get its whole look from character-sheet.less (scope
+// .mouseguard.sheet.actor.mgs-sheet). This file only adds the NPC parts: nature aspect tags, the key character switch,
+// weapon rows with their conflict effect, the animal Nature box, the Natural Order table and the rules band.
+// Variables (@mgs-brown, ...) come from character-sheet.less, imported first by mouseguard.less.
+// =====================================================================================================================
+
+.mouseguard.sheet.actor.mgs-sheet {
+
+    // ---------------------------------------------------------------------------------------------------------------
+    // Header boxes
+    // ---------------------------------------------------------------------------------------------------------------
+    .mgs-npc-box,
+    .mgs-animal-nature {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .mgs-reward-grid--two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .mgs-reward-value.is-static {
+        cursor: default;
+        &:hover { color: @mgs-brown-dark; text-shadow: none; }
+    }
+
+    .mgs-key-chip {
+        align-self: center;
+        margin-top: 6px;
+        padding: 1px 10px;
+        i { font-size: 10px; }
+        &.active i { color: #8f5a12; }
+    }
+
+    .mgs-box-hint {
+        margin: 4px 0 0;
+        font-size: 10.5px;
+        font-style: italic;
+        line-height: 1.25;
+        text-align: center;
+        color: rgba(0, 0, 0, 0.55);
+    }
+
+    .mgs-box-button {
+        align-self: center;
+        width: auto;
+        margin-top: 6px;
+    }
+
+    // Animal Nature: one big number (the animal's only ability)
+    .mgs-nature-value {
+        display: flex;
+        justify-content: center;
+        .mgs-reward-value,
+        .mgs-reward-input {
+            width: 64px;
+            height: 42px;
+            font-size: 32px;
+            line-height: 42px;
+        }
+        .mgs-reward-input { font-size: 24px; }
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------
+    // Portrait marks
+    // ---------------------------------------------------------------------------------------------------------------
+    .mgs-key-mark,
+    .mgs-order-mark {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 6px;
+        font-size: 11px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: @mgs-tag-yellow;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+        i { font-size: 10px; }
+    }
+
+    .mgs-order-mark.is-mighty { color: @mgs-tag-orange; }
+
+    // ---------------------------------------------------------------------------------------------------------------
+    // Nature aspects (tags under Nature on the NPC sheet, a card of its own on the animal sheet)
+    // ---------------------------------------------------------------------------------------------------------------
+    .mgs-nature-aspects {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        margin-top: 3px;
+    }
+
+    .mgs-aspects {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 3px 4px;
+        padding: 0 2px;
+
+        &.is-default .mgs-aspect {
+            color: rgba(0, 0, 0, 0.5);
+            border-style: dashed;
+        }
+    }
+
+    .mgs-aspect {                           // ME tag pill
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        padding: 0 6px;
+        font-size: 12px;
+        font-style: italic;
+        line-height: 18px;
+        color: #2b2016;
+        background: fade(@mgs-tag-yellow, 55%);
+        border: 1px solid rgba(100, 55, 8, 0.3);
+        border-radius: 3px 2px 3px 2px;
+    }
+
+    .mgs-aspect-remove {
+        font-size: 9px;
+        color: rgba(114, 74, 50, 0.7);
+        &:hover { color: @mgs-red; }
+    }
+
+    .mgs-aspect-empty {
+        font-size: 12px;
+        font-style: italic;
+        color: rgba(0, 0, 0, 0.45);
+    }
+
+    .mgs-aspect-add {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        input[type="text"] {
+            width: 120px;
+            height: 20px;
+            padding: 0 4px;
+            font-size: 12px;
+        }
+    }
+
+    .mgs-card--aspects .mgs-aspects {
+        gap: 5px 6px;
+        margin: 4px 4px 0;
+        .mgs-aspect { padding: 2px 10px; font-size: 14px; line-height: 20px; }
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------
+    // Profile tab extras
+    // ---------------------------------------------------------------------------------------------------------------
+    .mgs-npc-hint {
+        margin: 8px 4px 0;
+        font-size: 12px;
+        font-style: italic;
+        text-align: center;
+        color: rgba(225, 211, 193, 0.85);
+        i { font-size: 10px; color: @mgs-tag-yellow; }
+    }
+
+    .mgs-npc-note {
+        margin: 8px 0 0;
+        font-size: 11.5px;
+        font-style: italic;
+        line-height: 1.35;
+        color: rgba(0, 0, 0, 0.55);
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------
+    // Weapons, armor and animal weapons (rows with a conflict effect line)
+    // ---------------------------------------------------------------------------------------------------------------
+    .mgs-card--weapons {
+        min-height: 0;
+        margin-bottom: 6px;
+    }
+
+    .mgs-tab-animal .mgs-card--weapons,
+    .mgs-tab-animal .mgs-card--aspects,
+    .mgs-tab-animal .mgs-card--order {
+        min-height: 300px;
+        margin-bottom: 0;
+    }
+
+    .mgs-weapons { padding: 0 4px; }
+
+    .mgs-weapon {
+        margin: 0 3px;
+        padding: 4px 0;
+        list-style: none;
+        border-bottom: 1.5px solid var(--mgs-rule);
+        &:last-child { border-bottom-color: transparent; }
+        &.draggable { cursor: grab; }
+    }
+
+    .mgs-weapon-main {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+        .mgs-line-tools { margin-left: auto; }
+    }
+
+    .mgs-weapon-name {
+        flex: 0 1 auto;
+        min-width: 0;
+        font-size: 14.5px;
+        font-style: italic;
+        font-weight: 700;
+        line-height: 1.2;
+        color: #000;
+        overflow-wrap: break-word;
+        &:hover { color: @mgs-brown; text-shadow: 0 0 6px rgba(236, 186, 133, 0.9); }
+    }
+
+    .mgs-weapon-cat {
+        flex: none;
+        padding: 0 4px;
+        font-family: var(--mgs-font-heading);
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: #fff;
+        background: fade(@mgs-brown, 80%);
+        border-radius: 2px;
+    }
+
+    .mgs-weapon--armor .mgs-weapon-cat { background: fade(#4a5560, 85%); }
+
+    .mgs-weapon-effect {
+        margin: 2px 0 0 30px;
+        font-size: 13px;
+        line-height: 1.3;
+        color: @mgs-brown-dark;
+    }
+
+    .mgs-weapon-effect-input {
+        display: block;
+        width: calc(100% - 30px);
+        height: 22px;
+        margin: 3px 0 0 30px;
+        font-size: 12.5px;
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------
+    // Natural Order table (book p. 243): 9 rows, the animal's level highlighted, the mice's level marked
+    // ---------------------------------------------------------------------------------------------------------------
+    .mgs-order {
+        flex: 1;
+        margin: 0;
+        padding: 0 4px;
+        list-style: none;
+    }
+
+    .mgs-order-row {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        padding: 2px 4px;
+        list-style: none;
+        border-bottom: 1px solid var(--mgs-rule);
+        font-size: 12px;
+        line-height: 1.25;
+        color: rgba(0, 0, 0, 0.7);
+
+        &[data-action] { cursor: pointer; }
+        &[data-action]:hover { background: rgba(114, 74, 50, 0.08); }
+        &.is-mouse .mgs-order-names { font-weight: 700; color: @mgs-brown-dark; }
+        &.is-current {
+            color: #2b2016;
+            background: fade(@mgs-tag-orange, 70%);
+            border-radius: 2px;
+            .mgs-order-level { color: #fff; background: @mgs-brown; }
+        }
+    }
+
+    .mgs-order-level {
+        flex: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        border-radius: 9px;
+        font-family: var(--mgs-font-heading);
+        font-size: 11px;
+        font-weight: 700;
+        color: @mgs-brown;
+        background: rgba(114, 74, 50, 0.12);
+    }
+
+    .mgs-order-names {
+        flex: 1;
+        min-width: 0;
+        font-style: italic;
+        overflow-wrap: anywhere;
+        &::first-letter { text-transform: uppercase; }
+    }
+
+    .mgs-order-relation {
+        margin: 6px 6px 0;
+        font-family: var(--mgs-font-heading);
+        font-size: 12px;
+        font-weight: 700;
+        text-align: center;
+        text-transform: uppercase;
+        color: @mgs-brown;
+        &.is-mighty { color: @mgs-red; }
+        &.is-unknown { font-weight: 400; font-style: italic; text-transform: none; color: rgba(0, 0, 0, 0.5); }
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------
+    // Rules band under the animal cards (the character's Belief / Goal / Instinct band, with printed text)
+    // ---------------------------------------------------------------------------------------------------------------
+    .mgs-animal-rules .mgs-rule {
+        &.is-mighty .mgs-quest-title { color: #fff; background-color: fade(@mgs-red, 85%); }
+    }
+
+    .mgs-rule-text {
+        margin: 0;
+        padding: 2px 8px 4px;
+        font-size: 13px;
+        line-height: 1.35;
+        text-align: center;
+        color: @mgs-brown-dark;
+    }
+}

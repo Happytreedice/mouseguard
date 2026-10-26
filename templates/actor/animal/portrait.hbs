@@ -1,0 +1,30 @@
+{{!-- Left column (copy of the character portrait): portrait fading into the sheet background, name, species and Natural Order level. --}}
+<aside class="mgs-portrait-col {{#if editMode}}is-editing{{/if}}">
+    <div class="mgs-portrait-frame">
+        <img class="mgs-portrait {{#if portrait.isIcon}}is-icon{{/if}}" src="{{portrait.src}}" alt="{{actor.name}}"
+             {{#if editMode}}data-action="editImage" data-edit="img" data-tooltip="MOUSEGUARD.Sheet.ChangePortrait"{{/if}}>
+    </div>
+
+    <div class="mgs-namecard">
+        {{#if editMode}}
+        <div class="mgs-identity-form">
+            <input class="mgs-name-input" type="text" name="name" value="{{actor.name}}"
+                   placeholder="{{localize "MOUSEGUARD.Sheet.Name"}}" aria-label="{{localize "MOUSEGUARD.Sheet.Name"}}">
+            <input type="text" name="system.species" value="{{species}}" list="{{partId}}-species"
+                   placeholder="{{localize "MOUSEGUARD.AnimalSheet.Species"}}" aria-label="{{localize "MOUSEGUARD.AnimalSheet.Species"}}">
+            <datalist id="{{partId}}-species">
+                {{#each speciesOptions}}<option value="{{this}}"></option>{{/each}}
+            </datalist>
+            <div class="mgs-ident-hint">{{localize "MOUSEGUARD.AnimalSheet.SpeciesHint"}}</div>
+        </div>
+        {{else}}
+        <h1 class="mgs-name">{{actor.name}}</h1>
+        {{#if portrait.subtitle}}<div class="mgs-subtitle">{{portrait.subtitle}}</div>{{/if}}
+        {{#if order.relation}}
+        <div class="mgs-order-mark {{#if order.mighty}}is-mighty{{/if}}" data-tooltip="MOUSEGUARD.AnimalSheet.NaturalOrderHint">
+            <i class="fa-solid fa-ranking-star" inert></i> {{order.relation}}
+        </div>
+        {{/if}}
+        {{/if}}
+    </div>
+</aside>

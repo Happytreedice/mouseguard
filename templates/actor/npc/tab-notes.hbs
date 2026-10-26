@@ -1,0 +1,13 @@
+{{!-- Notes tab (copy of the character Notes tab): the GM's notes. --}}
+<section class="tab mgs-tab-body mgs-tab-notes {{tab.cssClass}} {{#if editMode}}is-editing{{/if}}" data-tab="notes" data-group="primary">
+    <div class="mgs-paper mgs-prose mgs-notes">
+        <h3 class="mgs-with-line">{{localize "MOUSEGUARD.Sheet.Notes"}}</h3>
+        {{#if editable}}
+        <prose-mirror name="system.notes" toggled value="{{system.notes}}" data-document-uuid="{{actor.uuid}}">
+            {{{notesHTML}}}
+        </prose-mirror>
+        {{else}}
+        <div class="mgs-prose-content">{{{notesHTML}}}</div>
+        {{/if}}
+    </div>
+</section>

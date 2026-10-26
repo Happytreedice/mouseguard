@@ -1,0 +1,24 @@
+{{!-- Weapon rows: gear items of the weapon / armor / animal weapon category, each with its conflict effect line
+      (system.effect, edited inline). Context: weapons, weaponsEmpty (i18n key), showWeaponCategory, editMode. --}}
+<ol class="mgs-lines mgs-weapons" data-item-type="item">
+    {{#each weapons as |weapon|}}
+    <li class="mgs-weapon draggable mgs-weapon--{{weapon.category}}" data-item-id="{{weapon.id}}">
+        <div class="mgs-weapon-main">
+            <img class="mgs-gear-img" src="{{weapon.img}}" alt="">
+            <a class="mgs-weapon-name" data-action="itemEdit" role="button" tabindex="0"
+               {{#if weapon.excerpt}}data-tooltip-text="{{weapon.excerpt}}"{{else}}data-tooltip="MOUSEGUARD.Sheet.OpenHint"{{/if}}>{{weapon.name}}</a>
+            {{#if @root.showWeaponCategory}}<span class="mgs-weapon-cat">{{localize weapon.categoryLabel}}</span>{{/if}}
+            {{#if @root.editMode}}{{> "systems/mouseguard/templates/actor/character/parts/line-tools.hbs"}}{{/if}}
+        </div>
+        {{#if @root.editMode}}
+        <input class="mgs-weapon-effect-input" type="text" id="{{@root.partId}}-{{weapon.id}}-effect" data-item-field="system.effect"
+               value="{{weapon.effect}}" placeholder="{{localize "MOUSEGUARD.NPCSheet.EffectPlaceholder"}}"
+               aria-label="{{localize "MOUSEGUARD.ItemSheet.Effect"}}">
+        {{else if weapon.effect}}
+        <p class="mgs-weapon-effect">{{weapon.effect}}</p>
+        {{/if}}
+    </li>
+    {{else}}
+    <li class="mgs-empty">{{localize @root.weaponsEmpty}}</li>
+    {{/each}}
+</ol>

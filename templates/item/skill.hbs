@@ -28,7 +28,8 @@
             </div>
         </article>
 
-        {{!-- Advancement --}}
+        {{!-- Advancement (player characters only) --}}
+        {{#if skill.showAdvancement}}
         <article class="mgi-card">
             <h2 class="mgi-ribbon mgi-ribbon--green">{{localize "MOUSEGUARD.ItemSheet.Advancement"}}</h2>
             <div class="mgi-card-body">
@@ -56,6 +57,7 @@
                 {{#if skill.learned}}<p class="mgi-hint">{{skill.advancement.hint}}</p>{{/if}}
             </div>
         </article>
+        {{/if}}
 
         {{!-- Beginner's Luck & learning --}}
         <article class="mgi-card">
@@ -68,16 +70,18 @@
                         {{#each skill.beginnersLuckOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
                     </select>
                 </label>
+                {{#if skill.showAdvancement}}
                 <label class="mgi-field">
                     <span>{{localize "MOUSEGUARD.ItemSheet.Learning"}}</span>
                     <input type="number" name="system.learning" value="{{system.learning}}" min="0" max="10" step="1">
                 </label>
+                {{/if}}
                 {{else}}
                 <p class="mgi-line"><span class="mgi-line-label">{{localize "MOUSEGUARD.ItemSheet.BeginnersLuckAbility"}}</span>
                     <strong>{{skill.beginnersLuckLabel}}</strong></p>
                 {{#if skill.learned}}
                 <p class="mgi-hint">{{localize "MOUSEGUARD.ItemSheet.BeginnersLuckLearned"}}</p>
-                {{else}}
+                {{else if skill.showAdvancement}}
                 <div class="mgi-track">
                     <span class="mgi-track-label">{{localize "MOUSEGUARD.ItemSheet.Learning"}}</span>
                     {{> "systems/mouseguard/templates/item/parts/pips.hbs" pips=skill.learning.pips path="system.learning" min=0 max=10 learn=true interactive=interactive label=(localize "MOUSEGUARD.ItemSheet.Learning")}}
@@ -86,7 +90,7 @@
                 <p class="mgi-hint">{{skill.learning.hint}}</p>
                 {{/if}}
                 {{/if}}
-                {{#if editMode}}<p class="mgi-hint">{{skill.learning.hint}}</p>{{/if}}
+                {{#if editMode}}{{#if skill.showAdvancement}}<p class="mgi-hint">{{skill.learning.hint}}</p>{{/if}}{{/if}}
             </div>
         </article>
     </div>

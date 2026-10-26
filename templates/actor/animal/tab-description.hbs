@@ -1,0 +1,33 @@
+{{!-- Description tab: what the animal is and how dangerous it is to mice; any other items it carries. --}}
+<section class="tab mgs-tab-body mgs-tab-description {{tab.cssClass}} {{#if editMode}}is-editing{{/if}}" data-tab="description" data-group="primary">
+    <div class="mgs-paper mgs-prose mgs-biography">
+        <h3 class="mgs-with-line">{{localize "MOUSEGUARD.NPCSheet.Description"}}</h3>
+        {{#if editable}}
+        <prose-mirror name="system.biography" toggled value="{{system.biography}}" data-document-uuid="{{actor.uuid}}">
+            {{{biographyHTML}}}
+        </prose-mirror>
+        {{else}}
+        <div class="mgs-prose-content">{{{biographyHTML}}}</div>
+        {{/if}}
+    </div>
+
+    {{#if others.length}}
+    <article class="mgs-card mgs-card--others">
+        <h2 class="mgs-ribbon mgs-ribbon--black">
+            <span class="mgs-ribbon-title">{{localize "MOUSEGUARD.Sheet.OtherItems"}}</span>
+        </h2>
+        <ol class="mgs-gear-list">
+            {{#each others as |item|}}
+            <li class="mgs-gear-row draggable" data-item-id="{{item.id}}">
+                <span class="mgs-gear-name">
+                    <img class="mgs-gear-img" src="{{item.img}}" alt="">
+                    <a class="mgs-line-name" data-action="itemEdit" role="button" tabindex="0">{{item.name}}</a>
+                </span>
+                <span class="mgs-gear-type">{{item.typeLabel}}</span>
+                <span class="mgs-gear-tools">{{#if @root.editMode}}{{> "systems/mouseguard/templates/actor/character/parts/line-tools.hbs"}}{{/if}}</span>
+            </li>
+            {{/each}}
+        </ol>
+    </article>
+    {{/if}}
+</section>

@@ -1,0 +1,33 @@
+{{!-- Description tab (copy of the character Biography tab): details and the description text. --}}
+<section class="tab mgs-tab-body mgs-tab-biography {{tab.cssClass}} {{#if editMode}}is-editing{{/if}}" data-tab="biography" data-group="primary">
+    <div class="mgs-paper mgs-details mgs-npc-details">
+        <h3 class="mgs-with-line">{{localize "MOUSEGUARD.NPCSheet.Details"}}</h3>
+        <dl class="mgs-detail-list">
+            {{#each details as |detail|}}
+            <div class="mgs-detail mgs-detail--{{detail.key}}">
+                <dt><label for="{{@root.partId}}-{{detail.key}}">{{localize detail.label}}</label></dt>
+                <dd>
+                    {{#if @root.editMode}}
+                    <input id="{{@root.partId}}-{{detail.key}}" type="{{#if detail.type}}{{detail.type}}{{else}}text{{/if}}"
+                           name="{{detail.name}}" value="{{detail.value}}" {{#if detail.type}}min="0" step="1"{{/if}}>
+                    {{else}}
+                    <span class="mgs-detail-value {{#unless detail.value}}is-empty{{/unless}}">{{#if detail.value}}{{detail.value}}{{else}}&mdash;{{/if}}</span>
+                    {{/if}}
+                </dd>
+            </div>
+            {{/each}}
+        </dl>
+        <p class="mgs-npc-note">{{localize "MOUSEGUARD.NPCSheet.RatingsNote"}}</p>
+    </div>
+
+    <div class="mgs-paper mgs-prose mgs-biography">
+        <h3 class="mgs-with-line">{{localize "MOUSEGUARD.NPCSheet.Description"}}</h3>
+        {{#if editable}}
+        <prose-mirror name="system.biography" toggled value="{{system.biography}}" data-document-uuid="{{actor.uuid}}">
+            {{{biographyHTML}}}
+        </prose-mirror>
+        {{else}}
+        <div class="mgs-prose-content">{{{biographyHTML}}}</div>
+        {{/if}}
+    </div>
+</section>

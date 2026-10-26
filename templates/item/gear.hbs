@@ -1,8 +1,27 @@
-{{!-- Gear ("item" type) body: quantity, weight, description. --}}
+{{!-- Gear ("item" type) body: category (gear, weapon, armor, animal weapon) and conflict effect, quantity, weight, description. --}}
 <section class="mgi-body mgi-body--item">
     <div class="mgi-cards">
         <article class="mgi-card mgi-card--wide">
             <h2 class="mgi-ribbon mgi-ribbon--orange">{{localize "MOUSEGUARD.ItemSheet.Gear"}}</h2>
+            {{#if editMode}}
+            <div class="mgi-card-body">
+                <label class="mgi-field mgi-field--stack">
+                    <span>{{localize "MOUSEGUARD.ItemSheet.Category"}}</span>
+                    <select name="system.category">
+                        {{#each gear.categoryOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+                    </select>
+                </label>
+                <label class="mgi-field mgi-field--stack">
+                    <span>{{localize "MOUSEGUARD.ItemSheet.Effect"}}</span>
+                    <input type="text" name="system.effect" value="{{system.effect}}" placeholder="{{localize "MOUSEGUARD.ItemSheet.EffectPlaceholder"}}">
+                </label>
+                <p class="mgi-hint">{{localize "MOUSEGUARD.ItemSheet.EffectHint"}}</p>
+            </div>
+            {{else if gear.isConflictGear}}
+            <div class="mgi-card-body">
+                <p class="mgi-effect"><strong>{{gear.categoryLabel}}.</strong> {{#if gear.effect}}{{gear.effect}}{{else}}<span class="mgi-muted">{{localize "MOUSEGUARD.ItemSheet.EffectEmpty"}}</span>{{/if}}</p>
+            </div>
+            {{/if}}
             <div class="mgi-card-body mgi-card-body--row">
                 {{#if editMode}}
                 <label class="mgi-field">

@@ -11,6 +11,17 @@ const int = (value, fallback = 0) => {
     return Number.isFinite(n) ? n : fallback;
 };
 
+/** Default image of a new animal or weasel (core Foundry icon). */
+const ANIMAL_IMG = "icons/svg/pawprint.svg";
+
+/** Nature aspects a new NPC starts with: mice (book p. 30) and weasels (p. 219). */
+const NATURE_ASPECT_KEYS = Object.freeze({
+    mouse: ["MOUSEGUARD.NPCSheet.AspectEscaping", "MOUSEGUARD.NPCSheet.AspectClimbing",
+        "MOUSEGUARD.NPCSheet.AspectForaging", "MOUSEGUARD.NPCSheet.AspectHiding"],
+    weasel: ["MOUSEGUARD.NPCSheet.AspectAggressive", "MOUSEGUARD.NPCSheet.AspectBurrowRaiding",
+        "MOUSEGUARD.NPCSheet.AspectGloating"]
+});
+
 /** Is a status effect with this id configured? (v14 keyed proxy or v13 array) */
 function hasStatusEffect(id) {
     const list = CONFIG.statusEffects;
@@ -36,32 +47,41 @@ export class MouseGuardActor extends Actor {
 
     /**
      * New actors get their ability items: Nature, Will, Health, Resources and Circles for mice and weasels (weasels use
-     * the weasel Nature label), Nature only for animals.
+     * the weasel Nature label), Nature only for animals. NPC mice and weasels start with the nature aspects of their
+     * species (book p. 30, 219); an animal's aspects are written by the GM.
      * @inheritdoc
      */
     async _preCreate(data, options, user) {
         const allowed = await super._preCreate(data, options, user);
         if (allowed === false) return false;
-        if (this.itemTypes.ability.length > 0) return allowed;
 
         const type = data.type ?? this.type;
+        const changes = {};
+        if (!data.img) changes.img = ["animal", "weasel"].includes(type) ? ANIMAL_IMG : "systems/mouseguard/assets/icons/seated-mouse.svg";
+
+        const aspects = NATURE_ASPECT_KEYS[type];
+        if (aspects && !this._source.system?.natureAspects?.length && !this._source.flags?.mouseguard?.aspectsSet) {
+            changes["system.natureAspects"] = aspects.map(loc);
+            changes["flags.mouseguard.aspectsSet"] = true;
+        }
+
         let keys = [];
         if (["character", "mouse", "weasel"].includes(type)) keys = [...ABILITY_ORDER];
         else if (type === "animal") keys = ["nature"];
-        if (!keys.length) return allowed;
-
-        const abilities = keys.map((key, i) => ({
-            name: type === "animal"
-                ? `${loc("MOUSEGUARD.Nature")} (${data.name ?? this.name})`
-                : loc(abilityLabelKey(key, type)),
-            type: "ability",
-            sort: (i + 1) * 100000,
-            system: { key, rating: 1, max: 1 },
-            flags: { mouseguard: { schemaVersion: ITEM_SCHEMA_VERSION } }
-        }));
-        const changes = { items: [...(this._source.items ?? []), ...abilities] };
-        if (!data.img) changes.img = "systems/mouseguard/assets/icons/seated-mouse.svg";
-        this.updateSource(changes);
+        if (keys.length && !this.itemTypes.ability.length) {
+            const species = String(this._source.system?.species ?? "").trim();
+            const abilities = keys.map((key, i) => ({
+                name: (type === "animal") && species
+                    ? fmt("MOUSEGUARD.AnimalSheet.NatureOf", { species })
+                    : loc(abilityLabelKey(key, type)),
+                type: "ability",
+                sort: (i + 1) * 100000,
+                system: { key, rating: 1, max: 1 },
+                flags: { mouseguard: { schemaVersion: ITEM_SCHEMA_VERSION } }
+            }));
+            changes.items = [...(this._source.items ?? []), ...abilities];
+        }
+        if (!foundry.utils.isEmpty(changes)) this.updateSource(changes);
         return allowed;
     }
 
@@ -212,15 +232,14 @@ export class MouseGuardActor extends Actor {
             await trait.update({ "system.usedFor": Math.min(2, used + 1) });
             return true;
         }
-        const earned = Math.max(0, int(checks, 1));
+        // Only player characters earn checks (NPCs have no checks and no Players' Turn)
+        const earned = this.system.rewards ? Math.max(0, int(checks, 1)) : 0;
         await trait.update({
             "system.usedAgainst": Math.min(99, int(trait.system.usedAgainst) + 1),
             "system.checksEarned": Math.min(99, int(trait.system.checksEarned) + earned)
         });
-        if (earned && this.system.rewards) {
-            await this.update({ "system.rewards.check": int(this.system.rewards.check) + earned });
-        }
-        if (notify) ui.notifications.info(fmt("MOUSEGUARD.Test.Note.ChecksEarned", { name: itemLabel(trait), n: earned }));
+        if (earned) await this.update({ "system.rewards.check": int(this.system.rewards.check) + earned });
+        if (notify && earned) ui.notifications.info(fmt("MOUSEGUARD.Test.Note.ChecksEarned", { name: itemLabel(trait), n: earned }));
         return true;
     }
 

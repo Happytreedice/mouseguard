@@ -8,7 +8,8 @@ import { MouseGuardItem } from "./item.js";
 import { MouseGuardItemSheet } from "./item-sheet.js";
 import { MouseGuardCharacterSheet } from "./sheets/character-sheet.js";
 import { registerRollSystem } from "./rolls/index.js";
-import { MouseGuardNPCActorSheet } from "./npcactor-sheet.js";
+import { MouseGuardNPCSheet } from "./sheets/npc-sheet.js";
+import { MouseGuardAnimalSheet } from "./sheets/animal-sheet.js";
 import { preloadHandlebarsTemplates } from "./templates.js";
 import { createMouseGuardMacro } from "./macro.js";
 import { MouseDie, MouseRoll } from "./mousedie.js";
@@ -23,6 +24,7 @@ import { statusEffects } from "./status-effects.js";
 import {
     CharacterData,
     NPCActorData,
+    AnimalData,
     ItemData,
     SkillData,
     WiseData,
@@ -66,7 +68,7 @@ Hooks.once("init", async function () {
         character: CharacterData,
         mouse: NPCActorData,
         weasel: NPCActorData,
-        animal: NPCActorData
+        animal: AnimalData
     };
 
     CONFIG.Item.dataModels = {
@@ -96,10 +98,15 @@ Hooks.once("init", async function () {
     CONFIG.Dice.rolls.push(MouseRoll);
 
     // Register sheet application classes (No unregisterSheet for core to avoid v14 deprecation warnings)
-    foundry.documents.collections.Actors.registerSheet("mouseguard", MouseGuardNPCActorSheet, {
-        types: ["mouse", "weasel", "animal"],
+    foundry.documents.collections.Actors.registerSheet("mouseguard", MouseGuardNPCSheet, {
+        types: ["mouse", "weasel"],
         makeDefault: true,
         label: "MOUSEGUARD.Sheet.NPCSheetLabel"
+    });
+    foundry.documents.collections.Actors.registerSheet("mouseguard", MouseGuardAnimalSheet, {
+        types: ["animal"],
+        makeDefault: true,
+        label: "MOUSEGUARD.AnimalSheet.SheetLabel"
     });
     foundry.documents.collections.Actors.registerSheet("mouseguard", MouseGuardCharacterSheet, {
         types: ["character"],

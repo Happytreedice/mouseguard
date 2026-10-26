@@ -38,6 +38,17 @@ const ABILITY_CAPS = Object.freeze({ nature: 7, will: 6, health: 6, resources: 1
 /** Highest skill rank (rulebook p. 247). */
 const SKILL_CAP = 6;
 
+/** Highest Nature of a wild animal (moose, black bear: 12). */
+const ANIMAL_NATURE_CAP = 12;
+
+/** Gear categories (ItemData.category) and their labels. */
+const GEAR_CATEGORY_LABELS = Object.freeze({
+    gear: "MOUSEGUARD.ItemSheet.CategoryGear",
+    weapon: "MOUSEGUARD.ItemSheet.CategoryWeapon",
+    armor: "MOUSEGUARD.ItemSheet.CategoryArmor",
+    natural: "MOUSEGUARD.ItemSheet.CategoryNatural"
+});
+
 /** Window height per item type (the width is shared). */
 const TYPE_HEIGHTS = Object.freeze({
     skill: 720, trait: 720, wise: 560, ability: 560, item: 520, contact: 500, condition: 500
@@ -270,6 +281,12 @@ export class MouseGuardItemSheet extends HandlebarsApplicationMixin(ItemSheetV2)
         return viaApi ?? actor.items.find(i => (i.type === "ability") && (i.system?.key === "nature"));
     }
 
+    /** Is the item owned by an NPC or an animal (no advancement, no learning, no player caps)? */
+    #ownedByNpc() {
+        const actor = this.item.actor;
+        return !!actor && (actor.type !== "character");
+    }
+
     /** May the test button be shown? */
     #canRoll() {
         const actor = this.item.actor;
@@ -305,6 +322,8 @@ export class MouseGuardItemSheet extends HandlebarsApplicationMixin(ItemSheetV2)
         const blLabel = loc(ABILITY_LABELS[bl]);
         const learning = num(system.learning);
         const nature = this.#natureItem();
+        // NPCs never advance and never learn by Beginner's Luck (player character rules)
+        const npc = this.#ownedByNpc();
         const natureTarget = nature ? Math.max(1, num(nature.system?.max, num(nature.system?.rating))) : null;
 
         context.skill = {
@@ -325,7 +344,8 @@ export class MouseGuardItemSheet extends HandlebarsApplicationMixin(ItemSheetV2)
                     : loc("MOUSEGUARD.ItemSheet.LearningHint")
             },
             help: this.#helpList(),
-            helpOptions: context.editMode ? this.#helpOptions() : []
+            helpOptions: context.editMode ? this.#helpOptions() : [],
+            showAdvancement: !npc
         };
 
         context.badge = {
@@ -399,29 +419,39 @@ export class MouseGuardItemSheet extends HandlebarsApplicationMixin(ItemSheetV2)
         const key = Object.hasOwn(ABILITY_LABELS, system.key) ? system.key : "";
         const isNature = key === "nature";
         const rating = num(system.rating);
-        const max = isNature ? Math.max(rating, num(system.max, rating)) : rating;
-        const cap = ABILITY_CAPS[key] ?? 10;
+        // NPCs and animals never advance and their Nature is never taxed (a player character rule): one fixed rating.
+        // An animal's Nature goes up to 12; other NPC ratings are not held to the player caps (book NPCs reach Will 8).
+        const actor = this.item.actor;
+        const npc = this.#ownedByNpc();
+        const fixedNature = isNature && npc;
+        const max = (isNature && !fixedNature) ? Math.max(rating, num(system.max, rating)) : rating;
+        let cap = (isNature && (actor?.type === "animal")) ? ANIMAL_NATURE_CAP : (ABILITY_CAPS[key] ?? 10);
+        if (npc) cap = Math.max(cap, rating);
         // Nature advancement is counted against its untaxed maximum (rulebook p. 248).
         const measured = isNature ? max : rating;
         context.ability = {
             key,
             isNature,
+            fixedNature,
+            npc,
             rating,
             max,
             cap,
             taxed: isNature && (rating < max),
-            scale: makeScale(Math.min(rating, cap), Math.max(cap, max), max),
+            scale: makeScale(Math.min(rating, Math.max(cap, max)), Math.max(cap, max), max),
             keyOptions: [
                 ...Object.entries(ABILITY_LABELS).map(([k, label]) => ({ value: k, label: loc(label), selected: k === key })),
                 { value: "", label: loc("MOUSEGUARD.ItemSheet.AbilityCustom"), selected: key === "" }
             ],
-            advancement: this.#advancementView(system, measured, cap, 10)
+            advancement: this.#advancementView(system, measured, cap, 10),
+            showAdvancement: !npc
         };
+        const split = isNature && !fixedNature;
         context.badge = {
-            value: isNature ? `${rating}/${max}` : String(rating),
+            value: split ? `${rating}/${max}` : String(rating),
             label: loc("MOUSEGUARD.ItemSheet.Rating"),
-            tooltip: isNature ? loc("MOUSEGUARD.ItemSheet.NatureHint") : "",
-            cssClass: isNature ? "is-wide" : ""
+            tooltip: split ? loc("MOUSEGUARD.ItemSheet.NatureHint") : "",
+            cssClass: split ? "is-wide" : ""
         };
         if (key && (context.displayName !== context.item.name) && !context.item.name.startsWith("MOUSEGUARD.")) {
             context.subtitle.push(context.item.name);
@@ -431,7 +461,17 @@ export class MouseGuardItemSheet extends HandlebarsApplicationMixin(ItemSheetV2)
 
     #prepareGear(context) {
         const system = context.system;
-        context.gear = { quantity: num(system.quantity, 1), weight: num(system.weight) };
+        const category = Object.hasOwn(GEAR_CATEGORY_LABELS, system.category) ? system.category : "gear";
+        context.gear = {
+            quantity: num(system.quantity, 1),
+            weight: num(system.weight),
+            category,
+            categoryLabel: loc(GEAR_CATEGORY_LABELS[category]),
+            categoryOptions: Object.entries(GEAR_CATEGORY_LABELS).map(([value, label]) => ({ value, label: loc(label), selected: value === category })),
+            effect: typeof system.effect === "string" ? system.effect.trim() : "",
+            isConflictGear: category !== "gear"
+        };
+        if (category !== "gear") context.subtitle.push(context.gear.categoryLabel);
     }
 
     /** Current "help" list of a skill, sanitized. */
@@ -574,6 +614,8 @@ export class MouseGuardItemSheet extends HandlebarsApplicationMixin(ItemSheetV2)
         const { path, advance } = target.dataset;
         if (!path) return;
         const delta = (event.button === 2) ? -1 : 1;
+        // Advancement and learning pips are player character bookkeeping; the cards are hidden for NPC items
+        if ((advance || target.dataset.learn) && this.#ownedByNpc()) return;
         if (advance && item.isEmbedded && (typeof item.actor?.markAdvancement === "function")) {
             return item.actor.markAdvancement(item.id, advance, delta);
         }

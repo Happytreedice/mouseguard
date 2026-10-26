@@ -1,0 +1,23 @@
+{{!-- Nature aspects (system.natureAspects) as tags; edit mode: remove buttons and an input to add one.
+      Context: aspects = {list, isDefault, empty} at the root, editMode. --}}
+<div class="mgs-aspects {{#if @root.aspects.isDefault}}is-default{{/if}}">
+    {{#each @root.aspects.list as |aspect|}}
+    <span class="mgs-aspect" {{#if @root.aspects.isDefault}}data-tooltip="MOUSEGUARD.NPCSheet.AspectsDefaultHint"{{/if}}>
+        {{aspect.name}}
+        {{#if @root.editMode}}
+        <a class="mgs-aspect-remove" data-action="aspectRemove" data-index="{{aspect.index}}" role="button" tabindex="0"
+           data-tooltip="MOUSEGUARD.NPCSheet.AspectRemove" aria-label="{{localize "MOUSEGUARD.NPCSheet.AspectRemove"}}"><i class="fa-solid fa-xmark" inert></i></a>
+        {{/if}}
+    </span>
+    {{else}}
+    {{#unless @root.editMode}}<span class="mgs-aspect-empty">{{localize "MOUSEGUARD.NPCSheet.AspectsEmpty"}}</span>{{/unless}}
+    {{/each}}
+    {{#if @root.editMode}}
+    <span class="mgs-aspect-add">
+        <input type="text" data-aspect-input id="{{@root.partId}}-aspect-new" placeholder="{{localize "MOUSEGUARD.NPCSheet.AspectPlaceholder"}}"
+               aria-label="{{localize "MOUSEGUARD.NPCSheet.AspectAdd"}}">
+        <a class="mgs-tool" data-action="aspectAdd" role="button" tabindex="0" data-tooltip="MOUSEGUARD.NPCSheet.AspectAdd"
+           aria-label="{{localize "MOUSEGUARD.NPCSheet.AspectAdd"}}"><i class="fa-solid fa-plus" inert></i></a>
+    </span>
+    {{/if}}
+</div>

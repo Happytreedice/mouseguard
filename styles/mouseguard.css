@@ -323,7 +323,7 @@
   font-style: normal;
   font-display: swap;
 }
-.mouseguard.sheet.actor.character {
+.mouseguard.sheet.actor.mgs-sheet {
   --mgs-font-heading: "Palatino Linotype", "Book Antiqua", Palatino, "PT Serif", "Noto Serif", Georgia, "DejaVu Serif", serif;
   --mgs-font-body: "Palatino Linotype", "Book Antiqua", Palatino, "PT Serif", "Noto Serif", Georgia, "DejaVu Serif", serif;
   --mgs-font-hand: "MG Caveat", "Segoe Print", "Comic Sans MS", cursive;
@@ -334,38 +334,38 @@
   font-family: var(--mgs-font-body);
   background: #07060b;
 }
-.mouseguard.sheet.actor.character > .window-header {
+.mouseguard.sheet.actor.mgs-sheet > .window-header {
   background: #07060b;
   color: #efe6d6;
   border-bottom: 1px solid rgba(225, 211, 193, 0.12);
   font-family: var(--mgs-font-heading);
 }
-.mouseguard.sheet.actor.character > .window-header .window-title {
+.mouseguard.sheet.actor.mgs-sheet > .window-header .window-title {
   color: #efe6d6;
 }
-.mouseguard.sheet.actor.character > .window-header button.header-control {
+.mouseguard.sheet.actor.mgs-sheet > .window-header button.header-control {
   --button-text-color: #efe6d6;
   color: #efe6d6;
   background: none;
   border: none;
   box-shadow: none;
 }
-.mouseguard.sheet.actor.character > .window-header button.header-control:hover,
-.mouseguard.sheet.actor.character > .window-header button.header-control:focus-visible {
+.mouseguard.sheet.actor.mgs-sheet > .window-header button.header-control:hover,
+.mouseguard.sheet.actor.mgs-sheet > .window-header button.header-control:focus-visible {
   color: #fff;
   background: none;
   border: none;
   text-shadow: 0 0 8px rgba(236, 186, 133, 0.8);
   box-shadow: none;
 }
-.mouseguard.sheet.actor.character > .window-header .mgs-mode-toggle {
+.mouseguard.sheet.actor.mgs-sheet > .window-header .mgs-mode-toggle {
   flex: none;
 }
-.mouseguard.sheet.actor.character > .window-header .mgs-mode-toggle.fa-lock-open {
+.mouseguard.sheet.actor.mgs-sheet > .window-header .mgs-mode-toggle.fa-lock-open {
   --button-text-color: #ecba85;
   color: #ecba85;
 }
-.mouseguard.sheet.actor.character > .window-content {
+.mouseguard.sheet.actor.mgs-sheet > .window-content {
   position: relative;
   display: grid;
   grid-template-columns: clamp(160px, 27%, 300px) minmax(0, 1fr);
@@ -384,27 +384,27 @@
   background-size: cover;
   background-position: center;
 }
-.mouseguard.sheet.actor.character > .window-content > [data-application-part="portrait"] {
+.mouseguard.sheet.actor.mgs-sheet > .window-content > [data-application-part="portrait"] {
   grid-column: 1;
   grid-row: 1 / -1;
 }
-.mouseguard.sheet.actor.character > .window-content > [data-application-part="header"] {
+.mouseguard.sheet.actor.mgs-sheet > .window-content > [data-application-part="header"] {
   grid-column: 2;
   grid-row: 1;
   container: mgs-header / inline-size;
 }
-.mouseguard.sheet.actor.character > .window-content > [data-application-part="tabs"] {
+.mouseguard.sheet.actor.mgs-sheet > .window-content > [data-application-part="tabs"] {
   grid-column: 2;
   grid-row: 2;
 }
-.mouseguard.sheet.actor.character > .window-content > .tab {
+.mouseguard.sheet.actor.mgs-sheet > .window-content > .tab {
   grid-column: 2;
   grid-row: 3;
 }
-.mouseguard.sheet.actor.character input[type="text"],
-.mouseguard.sheet.actor.character input[type="number"],
-.mouseguard.sheet.actor.character textarea,
-.mouseguard.sheet.actor.character select {
+.mouseguard.sheet.actor.mgs-sheet input[type="text"],
+.mouseguard.sheet.actor.mgs-sheet input[type="number"],
+.mouseguard.sheet.actor.mgs-sheet textarea,
+.mouseguard.sheet.actor.mgs-sheet select {
   color: #191813;
   font-family: var(--mgs-font-body);
   background: rgba(255, 250, 240, 0.6);
@@ -412,36 +412,36 @@
   border-radius: 2px;
   box-shadow: none;
 }
-.mouseguard.sheet.actor.character input[type="text"]:focus,
-.mouseguard.sheet.actor.character input[type="number"]:focus,
-.mouseguard.sheet.actor.character textarea:focus,
-.mouseguard.sheet.actor.character select:focus {
+.mouseguard.sheet.actor.mgs-sheet input[type="text"]:focus,
+.mouseguard.sheet.actor.mgs-sheet input[type="number"]:focus,
+.mouseguard.sheet.actor.mgs-sheet textarea:focus,
+.mouseguard.sheet.actor.mgs-sheet select:focus {
   outline: 2px solid rgba(114, 74, 50, 0.35);
   outline-offset: 0;
   box-shadow: none;
 }
-.mouseguard.sheet.actor.character input[type="number"] {
+.mouseguard.sheet.actor.mgs-sheet input[type="number"] {
   text-align: center;
 }
-.mouseguard.sheet.actor.character textarea {
+.mouseguard.sheet.actor.mgs-sheet textarea {
   resize: vertical;
 }
-.mouseguard.sheet.actor.character a[role="button"] {
+.mouseguard.sheet.actor.mgs-sheet a[role="button"] {
   cursor: pointer;
 }
-.mouseguard.sheet.actor.character a[role="button"]:focus-visible,
-.mouseguard.sheet.actor.character .mgs-pip:focus-visible {
+.mouseguard.sheet.actor.mgs-sheet a[role="button"]:focus-visible,
+.mouseguard.sheet.actor.mgs-sheet .mgs-pip:focus-visible {
   outline: 2px solid rgba(114, 74, 50, 0.55);
   outline-offset: 1px;
   border-radius: 2px;
 }
-.mouseguard.sheet.actor.character .mgs-portrait-col {
+.mouseguard.sheet.actor.mgs-sheet .mgs-portrait-col {
   position: relative;
   min-height: 0;
   overflow: hidden;
   isolation: isolate;
 }
-.mouseguard.sheet.actor.character .mgs-portrait-col::before {
+.mouseguard.sheet.actor.mgs-sheet .mgs-portrait-col::before {
   content: "";
   position: absolute;
   left: 0;
@@ -453,7 +453,7 @@
   box-shadow: 1px 0 4px rgba(0, 0, 0, 0.5);
   opacity: 0.9;
 }
-.mouseguard.sheet.actor.character .mgs-portrait-col::after {
+.mouseguard.sheet.actor.mgs-sheet .mgs-portrait-col::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -461,11 +461,11 @@
   pointer-events: none;
   background: radial-gradient(ellipse 85% 70% at 50% 32%, transparent 48%, rgba(7, 6, 5, 0.55) 100%), linear-gradient(to bottom, transparent 52%, rgba(16, 13, 10, 0.88) 86%);
 }
-.mouseguard.sheet.actor.character .mgs-portrait-frame {
+.mouseguard.sheet.actor.mgs-sheet .mgs-portrait-frame {
   position: absolute;
   inset: 0;
 }
-.mouseguard.sheet.actor.character .mgs-portrait {
+.mouseguard.sheet.actor.mgs-sheet .mgs-portrait {
   display: block;
   width: 100%;
   height: 100%;
@@ -479,23 +479,23 @@
   mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 94%), linear-gradient(to left, transparent 0, #000 48px);
   mask-composite: intersect;
 }
-.mouseguard.sheet.actor.character .mgs-portrait.is-icon {
+.mouseguard.sheet.actor.mgs-sheet .mgs-portrait.is-icon {
   object-fit: contain;
   object-position: 50% 22%;
   padding: 40px 34px 48%;
   opacity: 0.5;
   filter: sepia(0.7) brightness(0.95);
 }
-.mouseguard.sheet.actor.character .mgs-portrait[data-action] {
+.mouseguard.sheet.actor.mgs-sheet .mgs-portrait[data-action] {
   cursor: pointer;
 }
-.mouseguard.sheet.actor.character .mgs-portrait[data-action]:hover {
+.mouseguard.sheet.actor.mgs-sheet .mgs-portrait[data-action]:hover {
   filter: brightness(1.08);
 }
-.mouseguard.sheet.actor.character .mgs-portrait.is-icon[data-action]:hover {
+.mouseguard.sheet.actor.mgs-sheet .mgs-portrait.is-icon[data-action]:hover {
   opacity: 0.7;
 }
-.mouseguard.sheet.actor.character .mgs-namecard {
+.mouseguard.sheet.actor.mgs-sheet .mgs-namecard {
   position: absolute;
   left: 0;
   right: 0;
@@ -505,7 +505,7 @@
   text-align: center;
   color: #fcf5df;
 }
-.mouseguard.sheet.actor.character .mgs-name {
+.mouseguard.sheet.actor.mgs-sheet .mgs-name {
   margin: 0 0 6px;
   padding: 0;
   border: 0;
@@ -517,9 +517,9 @@
   overflow-wrap: anywhere;
   text-shadow: 0 2px 6px rgba(0, 0, 0, 0.85), 0 0 2px rgba(0, 0, 0, 0.9);
 }
-.mouseguard.sheet.actor.character .mgs-subtitle,
-.mouseguard.sheet.actor.character .mgs-cloak,
-.mouseguard.sheet.actor.character .mgs-player {
+.mouseguard.sheet.actor.mgs-sheet .mgs-subtitle,
+.mouseguard.sheet.actor.mgs-sheet .mgs-cloak,
+.mouseguard.sheet.actor.mgs-sheet .mgs-player {
   font-family: var(--mgs-font-body);
   font-size: 13px;
   line-height: 1.3;
@@ -530,14 +530,14 @@
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
   overflow-wrap: anywhere;
 }
-.mouseguard.sheet.actor.character .mgs-cloak {
+.mouseguard.sheet.actor.mgs-sheet .mgs-cloak {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   margin-top: 6px;
   font-size: 11px;
 }
-.mouseguard.sheet.actor.character .mgs-cloak .mgs-cloak-swatch {
+.mouseguard.sheet.actor.mgs-sheet .mgs-cloak .mgs-cloak-swatch {
   width: 14px;
   height: 14px;
   flex: none;
@@ -546,21 +546,21 @@
   border: 1px solid rgba(252, 245, 223, 0.65);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
 }
-.mouseguard.sheet.actor.character .mgs-cloak .mgs-cloak-swatch.is-unknown {
+.mouseguard.sheet.actor.mgs-sheet .mgs-cloak .mgs-cloak-swatch.is-unknown {
   background: repeating-linear-gradient(45deg, rgba(252, 245, 223, 0.35) 0 2px, transparent 2px 4px);
 }
-.mouseguard.sheet.actor.character .mgs-player {
+.mouseguard.sheet.actor.mgs-sheet .mgs-player {
   margin-top: 4px;
   font-size: 11px;
   text-transform: none;
   letter-spacing: 0.02em;
   opacity: 0.75;
 }
-.mouseguard.sheet.actor.character .mgs-portrait-col.is-editing .mgs-namecard {
+.mouseguard.sheet.actor.mgs-sheet .mgs-portrait-col.is-editing .mgs-namecard {
   bottom: 10px;
   padding: 0 10px;
 }
-.mouseguard.sheet.actor.character .mgs-identity-form {
+.mouseguard.sheet.actor.mgs-sheet .mgs-identity-form {
   display: flex;
   flex-direction: column;
   gap: 5px;
@@ -571,51 +571,51 @@
   border-radius: 3px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
 }
-.mouseguard.sheet.actor.character .mgs-identity-form input[type="text"],
-.mouseguard.sheet.actor.character .mgs-identity-form input[type="number"] {
+.mouseguard.sheet.actor.mgs-sheet .mgs-identity-form input[type="text"],
+.mouseguard.sheet.actor.mgs-sheet .mgs-identity-form input[type="number"] {
   width: 100%;
   height: 24px;
   color: #fcf5df;
   background: rgba(0, 0, 0, 0.4);
   border-color: rgba(252, 245, 223, 0.3);
 }
-.mouseguard.sheet.actor.character .mgs-identity-form input[type="text"]:focus,
-.mouseguard.sheet.actor.character .mgs-identity-form input[type="number"]:focus {
+.mouseguard.sheet.actor.mgs-sheet .mgs-identity-form input[type="text"]:focus,
+.mouseguard.sheet.actor.mgs-sheet .mgs-identity-form input[type="number"]:focus {
   outline-color: rgba(236, 186, 133, 0.6);
 }
-.mouseguard.sheet.actor.character .mgs-identity-form .mgs-subtitle {
+.mouseguard.sheet.actor.mgs-sheet .mgs-identity-form .mgs-subtitle {
   text-align: center;
 }
-.mouseguard.sheet.actor.character .mgs-identity-form .mgs-name-input {
+.mouseguard.sheet.actor.mgs-sheet .mgs-identity-form .mgs-name-input {
   height: 34px;
   font-family: var(--mgs-font-heading);
   font-size: 22px;
   font-weight: 700;
   text-align: center;
 }
-.mouseguard.sheet.actor.character .mgs-ident-hint {
+.mouseguard.sheet.actor.mgs-sheet .mgs-ident-hint {
   font-size: 10px;
   line-height: 1.3;
   text-align: center;
   color: rgba(252, 245, 223, 0.6);
 }
-.mouseguard.sheet.actor.character .mgs-header {
+.mouseguard.sheet.actor.mgs-sheet .mgs-header {
   padding: 10px 14px 8px 12px;
 }
-.mouseguard.sheet.actor.character .mgs-header-grid {
+.mouseguard.sheet.actor.mgs-sheet .mgs-header-grid {
   display: grid;
   grid-template-columns: 164px minmax(0, 1fr) minmax(190px, 0.72fr);
   align-items: stretch;
   gap: 8px 10px;
 }
-.mouseguard.sheet.actor.character .mgs-actions {
+.mouseguard.sheet.actor.mgs-sheet .mgs-actions {
   min-width: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 6px;
 }
-.mouseguard.sheet.actor.character .mgs-roll-button {
+.mouseguard.sheet.actor.mgs-sheet .mgs-roll-button {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -637,25 +637,25 @@
   text-shadow: none;
   box-shadow: none;
 }
-.mouseguard.sheet.actor.character .mgs-roll-button i {
+.mouseguard.sheet.actor.mgs-sheet .mgs-roll-button i {
   color: #fff;
   margin: 0;
 }
-.mouseguard.sheet.actor.character .mgs-roll-button:hover:not(:disabled),
-.mouseguard.sheet.actor.character .mgs-roll-button:focus-visible {
+.mouseguard.sheet.actor.mgs-sheet .mgs-roll-button:hover:not(:disabled),
+.mouseguard.sheet.actor.mgs-sheet .mgs-roll-button:focus-visible {
   color: #fff;
   background: color-mix(in srgb, #724a32 82%, white);
   border-color: rgba(0, 0, 0, 0.35);
   box-shadow: 0 0 6px #724a32;
 }
-.mouseguard.sheet.actor.character .mgs-roll-button:disabled {
+.mouseguard.sheet.actor.mgs-sheet .mgs-roll-button:disabled {
   opacity: 0.6;
 }
-.mouseguard.sheet.actor.character .mgs-roll-button.active {
+.mouseguard.sheet.actor.mgs-sheet .mgs-roll-button.active {
   background: color-mix(in srgb, #724a32 70%, #c9822f);
   box-shadow: inset 0 0 0 1px rgba(255, 220, 160, 0.55), 0 0 6px rgba(236, 186, 133, 0.55);
 }
-.mouseguard.sheet.actor.character .mgs-note {
+.mouseguard.sheet.actor.mgs-sheet .mgs-note {
   position: relative;
   min-width: 0;
   padding: 8px 14px;
@@ -665,7 +665,7 @@
   border-width: 5px;
   border-image: url("../assets/sheet/paper-note-300.webp") 5 5 5 5 fill stretch stretch;
 }
-.mouseguard.sheet.actor.character .mgs-subhead {
+.mouseguard.sheet.actor.mgs-sheet .mgs-subhead {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -681,24 +681,24 @@
   color: #724a32;
   white-space: nowrap;
 }
-.mouseguard.sheet.actor.character .mgs-subhead::before,
-.mouseguard.sheet.actor.character .mgs-subhead::after {
+.mouseguard.sheet.actor.mgs-sheet .mgs-subhead::before,
+.mouseguard.sheet.actor.mgs-sheet .mgs-subhead::after {
   content: "";
   flex: 1;
   height: 1px;
 }
-.mouseguard.sheet.actor.character .mgs-subhead::before {
+.mouseguard.sheet.actor.mgs-sheet .mgs-subhead::before {
   background: linear-gradient(to right, transparent, rgba(107, 91, 77, 0.65));
 }
-.mouseguard.sheet.actor.character .mgs-subhead::after {
+.mouseguard.sheet.actor.mgs-sheet .mgs-subhead::after {
   background: linear-gradient(to left, transparent, rgba(107, 91, 77, 0.65));
 }
-.mouseguard.sheet.actor.character .mgs-chips {
+.mouseguard.sheet.actor.mgs-sheet .mgs-chips {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
   gap: 5px 6px;
 }
-.mouseguard.sheet.actor.character .mgs-chip {
+.mouseguard.sheet.actor.mgs-sheet .mgs-chip {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -715,7 +715,7 @@
   border-radius: 3px 2px 3px 2px;
   user-select: none;
 }
-.mouseguard.sheet.actor.character .mgs-chip .mgs-chip-icon {
+.mouseguard.sheet.actor.mgs-sheet .mgs-chip .mgs-chip-icon {
   width: 14px;
   height: 14px;
   flex: none;
@@ -723,42 +723,42 @@
   filter: brightness(0);
   opacity: 0.45;
 }
-.mouseguard.sheet.actor.character .mgs-chip:hover {
+.mouseguard.sheet.actor.mgs-sheet .mgs-chip:hover {
   color: rgba(0, 0, 0, 0.75);
 }
-.mouseguard.sheet.actor.character .mgs-chip.active {
+.mouseguard.sheet.actor.mgs-sheet .mgs-chip.active {
   color: #2b2016;
   background: #ecba85;
   border-color: rgba(100, 55, 8, 0.65);
   box-shadow: inset 0 1px 2px rgba(255, 205, 90, 0.12), 0 1px 3px rgba(0, 0, 0, 0.2);
 }
-.mouseguard.sheet.actor.character .mgs-chip.active .mgs-chip-icon {
+.mouseguard.sheet.actor.mgs-sheet .mgs-chip.active .mgs-chip-icon {
   opacity: 0.85;
 }
-.mouseguard.sheet.actor.character .mgs-chip.mgs-chip--healthy {
+.mouseguard.sheet.actor.mgs-sheet .mgs-chip.mgs-chip--healthy {
   cursor: default;
 }
-.mouseguard.sheet.actor.character .mgs-chip.mgs-chip--healthy i {
+.mouseguard.sheet.actor.mgs-sheet .mgs-chip.mgs-chip--healthy i {
   font-size: 11px;
 }
-.mouseguard.sheet.actor.character .mgs-chip.mgs-chip--healthy.active {
+.mouseguard.sheet.actor.mgs-sheet .mgs-chip.mgs-chip--healthy.active {
   background: #bccdaf;
   border-color: rgba(20, 60, 18, 0.55);
 }
-.mouseguard.sheet.actor.character .mgs-reward-grid {
+.mouseguard.sheet.actor.mgs-sheet .mgs-reward-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 4px;
   text-align: center;
 }
-.mouseguard.sheet.actor.character .mgs-reward {
+.mouseguard.sheet.actor.mgs-sheet .mgs-reward {
   display: flex;
   flex-direction: column;
   align-items: center;
   min-width: 0;
 }
-.mouseguard.sheet.actor.character .mgs-reward-value,
-.mouseguard.sheet.actor.character .mgs-reward-input {
+.mouseguard.sheet.actor.mgs-sheet .mgs-reward-value,
+.mouseguard.sheet.actor.mgs-sheet .mgs-reward-input {
   display: block;
   width: 46px;
   height: 30px;
@@ -769,19 +769,19 @@
   text-align: center;
   color: #4f3322;
 }
-.mouseguard.sheet.actor.character .mgs-reward-value {
+.mouseguard.sheet.actor.mgs-sheet .mgs-reward-value {
   border-radius: 50%;
   user-select: none;
 }
-.mouseguard.sheet.actor.character .mgs-reward-value:hover {
+.mouseguard.sheet.actor.mgs-sheet .mgs-reward-value:hover {
   color: #724a32;
   text-shadow: 0 0 6px rgba(236, 186, 133, 0.9);
 }
-.mouseguard.sheet.actor.character .mgs-reward-input {
+.mouseguard.sheet.actor.mgs-sheet .mgs-reward-input {
   padding: 0;
   font-size: 18px;
 }
-.mouseguard.sheet.actor.character .mgs-reward-label {
+.mouseguard.sheet.actor.mgs-sheet .mgs-reward-label {
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -791,7 +791,7 @@
   text-transform: uppercase;
   color: #724a32;
 }
-.mouseguard.sheet.actor.character .mgs-dispo {
+.mouseguard.sheet.actor.mgs-sheet .mgs-dispo {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -802,26 +802,26 @@
   font-size: 12px;
   color: #4f3322;
 }
-.mouseguard.sheet.actor.character .mgs-dispo .mgs-dispo-label {
+.mouseguard.sheet.actor.mgs-sheet .mgs-dispo .mgs-dispo-label {
   margin-right: 4px;
   font-size: 10px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: #724a32;
 }
-.mouseguard.sheet.actor.character .mgs-dispo .mgs-dispo-value {
+.mouseguard.sheet.actor.mgs-sheet .mgs-dispo .mgs-dispo-value {
   font-weight: 700;
   font-size: 14px;
 }
-.mouseguard.sheet.actor.character .mgs-dispo .mgs-dispo-value:hover {
+.mouseguard.sheet.actor.mgs-sheet .mgs-dispo .mgs-dispo-value:hover {
   text-shadow: 0 0 6px rgba(236, 186, 133, 0.9);
 }
-.mouseguard.sheet.actor.character .mgs-dispo input[type="number"] {
+.mouseguard.sheet.actor.mgs-sheet .mgs-dispo input[type="number"] {
   width: 36px;
   height: 20px;
   padding: 0;
 }
-.mouseguard.sheet.actor.character nav.mgs-tabs {
+.mouseguard.sheet.actor.mgs-sheet nav.mgs-tabs {
   margin: 0 14px 0 12px;
   gap: 0;
   line-height: 2.2;
@@ -829,7 +829,7 @@
   border-top: 1px solid rgba(225, 211, 193, 0.28);
   border-bottom: 1px solid rgba(225, 211, 193, 0.28);
 }
-.mouseguard.sheet.actor.character nav.mgs-tabs [data-tab] {
+.mouseguard.sheet.actor.mgs-sheet nav.mgs-tabs [data-tab] {
   flex: 1;
   min-width: 0;
   overflow: hidden;
@@ -841,15 +841,15 @@
   color: #e1d3c1;
   text-shadow: none;
 }
-.mouseguard.sheet.actor.character nav.mgs-tabs [data-tab]:hover {
+.mouseguard.sheet.actor.mgs-sheet nav.mgs-tabs [data-tab]:hover {
   color: #fff;
   text-shadow: 0 0 10px rgba(236, 186, 133, 0.6);
 }
-.mouseguard.sheet.actor.character nav.mgs-tabs [data-tab].active {
+.mouseguard.sheet.actor.mgs-sheet nav.mgs-tabs [data-tab].active {
   color: #fff;
   text-shadow: 0 0 10px rgba(236, 186, 133, 0.85);
 }
-.mouseguard.sheet.actor.character .mgs-tab-body {
+.mouseguard.sheet.actor.mgs-sheet .mgs-tab-body {
   min-height: 0;
   overflow-x: hidden;
   overflow-y: auto;
@@ -857,13 +857,13 @@
   scrollbar-width: thin;
   scrollbar-color: rgba(114, 74, 50, 0.9) transparent;
 }
-.mouseguard.sheet.actor.character .mgs-cards {
+.mouseguard.sheet.actor.mgs-sheet .mgs-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(176px, 1fr));
   gap: 4px;
   align-items: stretch;
 }
-.mouseguard.sheet.actor.character .mgs-card {
+.mouseguard.sheet.actor.mgs-sheet .mgs-card {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -875,7 +875,7 @@
   border-width: 10px;
   border-image: url("../assets/sheet/card-parchment.webp") 10 10 10 10 fill stretch stretch;
 }
-.mouseguard.sheet.actor.character .mgs-ribbon {
+.mouseguard.sheet.actor.mgs-sheet .mgs-ribbon {
   position: relative;
   flex: none;
   height: 30px;
@@ -897,64 +897,64 @@
   background-repeat: no-repeat;
   background-size: 100% 20px;
 }
-.mouseguard.sheet.actor.character .mgs-ribbon--green {
+.mouseguard.sheet.actor.mgs-sheet .mgs-ribbon--green {
   background-image: url("../assets/sheet/header-green.webp");
 }
-.mouseguard.sheet.actor.character .mgs-ribbon--rust {
+.mouseguard.sheet.actor.mgs-sheet .mgs-ribbon--rust {
   background-image: url("../assets/sheet/header-rust.webp");
 }
-.mouseguard.sheet.actor.character .mgs-ribbon--slate {
+.mouseguard.sheet.actor.mgs-sheet .mgs-ribbon--slate {
   background-image: url("../assets/sheet/header-slate.webp");
 }
-.mouseguard.sheet.actor.character .mgs-ribbon--orange {
+.mouseguard.sheet.actor.mgs-sheet .mgs-ribbon--orange {
   background-image: url("../assets/sheet/header-orange.webp");
 }
-.mouseguard.sheet.actor.character .mgs-ribbon--black {
+.mouseguard.sheet.actor.mgs-sheet .mgs-ribbon--black {
   background-image: url("../assets/sheet/header-black.webp");
 }
-.mouseguard.sheet.actor.character .mgs-ribbon .mgs-ribbon-icon {
+.mouseguard.sheet.actor.mgs-sheet .mgs-ribbon .mgs-ribbon-icon {
   position: absolute;
   top: 4px;
   right: 7px;
   font-size: 10px;
   color: rgba(255, 255, 255, 0.85);
 }
-.mouseguard.sheet.actor.character .mgs-ribbon .mgs-ribbon-tools {
+.mouseguard.sheet.actor.mgs-sheet .mgs-ribbon .mgs-ribbon-tools {
   position: absolute;
   top: 3px;
   right: 6px;
   display: flex;
   gap: 6px;
 }
-.mouseguard.sheet.actor.character .mgs-ribbon .mgs-ribbon-btn {
+.mouseguard.sheet.actor.mgs-sheet .mgs-ribbon .mgs-ribbon-btn {
   color: #fff;
   font-size: 10px;
   line-height: 14px;
 }
-.mouseguard.sheet.actor.character .mgs-ribbon .mgs-ribbon-btn:hover {
+.mouseguard.sheet.actor.mgs-sheet .mgs-ribbon .mgs-ribbon-btn:hover {
   color: #efd693;
   text-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
 }
-.mouseguard.sheet.actor.character .mgs-lines {
+.mouseguard.sheet.actor.mgs-sheet .mgs-lines {
   flex: 1;
   margin: 2px 0 0;
   padding: 0 2px;
   list-style: none;
 }
-.mouseguard.sheet.actor.character .mgs-line {
+.mouseguard.sheet.actor.mgs-sheet .mgs-line {
   margin: 0 3px;
   padding: 4px 0 3px;
   list-style: none;
   border-bottom: 1.5px solid var(--mgs-rule);
   color: #000;
 }
-.mouseguard.sheet.actor.character .mgs-line:last-child {
+.mouseguard.sheet.actor.mgs-sheet .mgs-line:last-child {
   border-bottom-color: transparent;
 }
-.mouseguard.sheet.actor.character .mgs-line.draggable {
+.mouseguard.sheet.actor.mgs-sheet .mgs-line.draggable {
   cursor: grab;
 }
-.mouseguard.sheet.actor.character .mgs-line-main {
+.mouseguard.sheet.actor.mgs-sheet .mgs-line-main {
   position: relative;
   display: flex;
   align-items: center;
@@ -963,7 +963,7 @@
   min-height: 22px;
   padding: 0 25px;
 }
-.mouseguard.sheet.actor.character .mgs-line-name {
+.mouseguard.sheet.actor.mgs-sheet .mgs-line-name {
   position: relative;
   flex: 0 1 auto;
   min-width: 0;
@@ -976,15 +976,15 @@
   color: #000;
   overflow-wrap: break-word;
 }
-.mouseguard.sheet.actor.character .mgs-line-name:hover {
+.mouseguard.sheet.actor.mgs-sheet .mgs-line-name:hover {
   color: #724a32;
   text-shadow: 0 0 6px rgba(236, 186, 133, 0.9);
 }
-.mouseguard.sheet.actor.character .mgs-line--ability .mgs-line-name,
-.mouseguard.sheet.actor.character .mgs-line--skill .mgs-line-name {
+.mouseguard.sheet.actor.mgs-sheet .mgs-line--ability .mgs-line-name,
+.mouseguard.sheet.actor.mgs-sheet .mgs-line--skill .mgs-line-name {
   cursor: pointer;
 }
-.mouseguard.sheet.actor.character .mgs-rank {
+.mouseguard.sheet.actor.mgs-sheet .mgs-rank {
   position: absolute;
   left: 0;
   top: 50%;
@@ -1005,28 +1005,28 @@
   background: rgba(0, 0, 0, 0.72);
   border: 1.5px solid rgba(0, 0, 0, 0.5);
 }
-.mouseguard.sheet.actor.character .mgs-rank small {
+.mouseguard.sheet.actor.mgs-sheet .mgs-rank small {
   font-size: 9px;
   font-weight: 400;
   opacity: 0.8;
 }
-.mouseguard.sheet.actor.character .mgs-rank--roman {
+.mouseguard.sheet.actor.mgs-sheet .mgs-rank--roman {
   font-size: 10px;
   letter-spacing: 0.02em;
   background: rgba(79, 51, 34, 0.85);
 }
-.mouseguard.sheet.actor.character .mgs-line.is-unlearned .mgs-line-name {
+.mouseguard.sheet.actor.mgs-sheet .mgs-line.is-unlearned .mgs-line-name {
   color: rgba(0, 0, 0, 0.5);
 }
-.mouseguard.sheet.actor.character .mgs-line.is-unlearned .mgs-rank {
+.mouseguard.sheet.actor.mgs-sheet .mgs-line.is-unlearned .mgs-rank {
   color: rgba(0, 0, 0, 0.4);
   background: rgba(0, 0, 0, 0.08);
   border-color: rgba(0, 0, 0, 0.15);
 }
-.mouseguard.sheet.actor.character .mgs-line--ability.is-taxed .mgs-rank {
+.mouseguard.sheet.actor.mgs-sheet .mgs-line--ability.is-taxed .mgs-rank {
   background: rgba(116, 42, 43, 0.85);
 }
-.mouseguard.sheet.actor.character .mgs-line.is-specialty .mgs-line-name::before {
+.mouseguard.sheet.actor.mgs-sheet .mgs-line.is-specialty .mgs-line-name::before {
   content: "";
   position: absolute;
   inset: -7px -10px;
@@ -1037,7 +1037,7 @@
   background-position: center;
   background-size: 100% 100%;
 }
-.mouseguard.sheet.actor.character .mgs-specialty-mark {
+.mouseguard.sheet.actor.mgs-sheet .mgs-specialty-mark {
   position: absolute;
   right: 2px;
   top: 50%;
@@ -1046,14 +1046,14 @@
   color: #b8862f;
   text-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
 }
-.mouseguard.sheet.actor.character .mgs-line.is-ready .mgs-line-name {
+.mouseguard.sheet.actor.mgs-sheet .mgs-line.is-ready .mgs-line-name {
   color: #3a2414;
   text-shadow: 0 0 5px rgba(232, 170, 40, 0.65), 0 0 12px rgba(232, 170, 40, 0.5);
 }
-.mouseguard.sheet.actor.character .mgs-line.is-spent .mgs-line-name {
+.mouseguard.sheet.actor.mgs-sheet .mgs-line.is-spent .mgs-line-name {
   color: rgba(0, 0, 0, 0.6);
 }
-.mouseguard.sheet.actor.character .mgs-dev {
+.mouseguard.sheet.actor.mgs-sheet .mgs-dev {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -1062,14 +1062,14 @@
   margin-top: 2px;
   min-height: 12px;
 }
-.mouseguard.sheet.actor.character .mgs-track {
+.mouseguard.sheet.actor.mgs-sheet .mgs-track {
   display: inline-flex;
   align-items: center;
   gap: 2px;
   cursor: pointer;
   user-select: none;
 }
-.mouseguard.sheet.actor.character .mgs-track-label {
+.mouseguard.sheet.actor.mgs-sheet .mgs-track-label {
   margin-right: 3px;
   font-family: var(--mgs-font-heading);
   font-size: 9px;
@@ -1078,7 +1078,7 @@
   text-transform: uppercase;
   color: #724a32;
 }
-.mouseguard.sheet.actor.character .mgs-pip {
+.mouseguard.sheet.actor.mgs-sheet .mgs-pip {
   display: inline-block;
   width: 9px;
   height: 9px;
@@ -1087,23 +1087,23 @@
   box-shadow: inset 0 0 0 1px rgba(114, 74, 50, 0.45);
   transition: transform 0.1s ease, background-color 0.15s ease;
 }
-.mouseguard.sheet.actor.character .mgs-pip.on {
+.mouseguard.sheet.actor.mgs-sheet .mgs-pip.on {
   background: #724a32;
   box-shadow: none;
 }
-.mouseguard.sheet.actor.character .mgs-pip:hover {
+.mouseguard.sheet.actor.mgs-sheet .mgs-pip:hover {
   transform: scale(1.3);
 }
-.mouseguard.sheet.actor.character .mgs-track.is-full .mgs-track-label {
+.mouseguard.sheet.actor.mgs-sheet .mgs-track.is-full .mgs-track-label {
   color: #2f6b34;
 }
-.mouseguard.sheet.actor.character .mgs-track.is-full .mgs-pip.on {
+.mouseguard.sheet.actor.mgs-sheet .mgs-track.is-full .mgs-pip.on {
   background: #3f6b3a;
 }
-.mouseguard.sheet.actor.character .mgs-track--learning .mgs-pip.on {
+.mouseguard.sheet.actor.mgs-sheet .mgs-track--learning .mgs-pip.on {
   background: #5c5c92;
 }
-.mouseguard.sheet.actor.character .mgs-badge {
+.mouseguard.sheet.actor.mgs-sheet .mgs-badge {
   padding: 0 4px;
   font-family: var(--mgs-font-heading);
   font-size: 9px;
@@ -1114,7 +1114,7 @@
   background: #724a32;
   border-radius: 2px;
 }
-.mouseguard.sheet.actor.character .mgs-against {
+.mouseguard.sheet.actor.mgs-sheet .mgs-against {
   display: inline-flex;
   align-items: center;
   gap: 2px;
@@ -1123,20 +1123,20 @@
   color: rgba(114, 74, 50, 0.75);
   user-select: none;
 }
-.mouseguard.sheet.actor.character .mgs-against i {
+.mouseguard.sheet.actor.mgs-sheet .mgs-against i {
   font-size: 9px;
 }
-.mouseguard.sheet.actor.character .mgs-against:hover {
+.mouseguard.sheet.actor.mgs-sheet .mgs-against:hover {
   color: #724a32;
 }
-.mouseguard.sheet.actor.character .mgs-against.on {
+.mouseguard.sheet.actor.mgs-sheet .mgs-against.on {
   color: #8f4024;
   text-shadow: 0 0 5px rgba(220, 107, 0, 0.5), 0 0 10px rgba(220, 107, 0, 0.4);
 }
-.mouseguard.sheet.actor.character .mgs-wise-marks {
+.mouseguard.sheet.actor.mgs-sheet .mgs-wise-marks {
   gap: 3px;
 }
-.mouseguard.sheet.actor.character .mgs-mark {
+.mouseguard.sheet.actor.mgs-sheet .mgs-mark {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1152,19 +1152,19 @@
   border-radius: 2px;
   user-select: none;
 }
-.mouseguard.sheet.actor.character .mgs-mark:hover {
+.mouseguard.sheet.actor.mgs-sheet .mgs-mark:hover {
   border-color: #724a32;
 }
-.mouseguard.sheet.actor.character .mgs-mark.on {
+.mouseguard.sheet.actor.mgs-sheet .mgs-mark.on {
   color: #fff;
   background: #724a32;
   border-color: #724a32;
 }
-.mouseguard.sheet.actor.character .mgs-line--wise.is-ready .mgs-mark.on {
+.mouseguard.sheet.actor.mgs-sheet .mgs-line--wise.is-ready .mgs-mark.on {
   background: #3f6b3a;
   border-color: #3f6b3a;
 }
-.mouseguard.sheet.actor.character .mgs-empty {
+.mouseguard.sheet.actor.mgs-sheet .mgs-empty {
   margin: 10px 6px;
   list-style: none;
   font-size: 13px;
@@ -1172,69 +1172,69 @@
   text-align: center;
   color: rgba(0, 0, 0, 0.5);
 }
-.mouseguard.sheet.actor.character .is-editing .mgs-line-main {
+.mouseguard.sheet.actor.mgs-sheet .is-editing .mgs-line-main {
   justify-content: flex-start;
   padding: 0;
 }
-.mouseguard.sheet.actor.character .is-editing .mgs-line-name {
+.mouseguard.sheet.actor.mgs-sheet .is-editing .mgs-line-name {
   margin: 0 auto 0 2px;
   text-align: left;
 }
-.mouseguard.sheet.actor.character .is-editing .mgs-dev {
+.mouseguard.sheet.actor.mgs-sheet .is-editing .mgs-dev {
   position: relative;
   min-height: 16px;
   padding: 0 36px 0 0;
 }
-.mouseguard.sheet.actor.character .is-editing .mgs-dev > .mgs-line-tools {
+.mouseguard.sheet.actor.mgs-sheet .is-editing .mgs-dev > .mgs-line-tools {
   position: absolute;
   right: 0;
   top: 50%;
   transform: translateY(-50%);
   margin: 0;
 }
-.mouseguard.sheet.actor.character .mgs-num-inputs {
+.mouseguard.sheet.actor.mgs-sheet .mgs-num-inputs {
   display: inline-flex;
   align-items: center;
   gap: 1px;
   flex: none;
 }
-.mouseguard.sheet.actor.character .mgs-num-inputs input[type="number"] {
+.mouseguard.sheet.actor.mgs-sheet .mgs-num-inputs input[type="number"] {
   width: 30px;
   height: 20px;
   padding: 0;
   font-size: 12px;
 }
-.mouseguard.sheet.actor.character .mgs-num-inputs .mgs-num-sep {
+.mouseguard.sheet.actor.mgs-sheet .mgs-num-inputs .mgs-num-sep {
   font-size: 11px;
   color: #724a32;
 }
-.mouseguard.sheet.actor.character .mgs-line-tools {
+.mouseguard.sheet.actor.mgs-sheet .mgs-line-tools {
   display: inline-flex;
   gap: 6px;
   flex: none;
   margin-left: 4px;
 }
-.mouseguard.sheet.actor.character .mgs-tool {
+.mouseguard.sheet.actor.mgs-sheet .mgs-tool {
   font-size: 11px;
   color: rgba(114, 74, 50, 0.7);
 }
-.mouseguard.sheet.actor.character .mgs-tool:hover {
+.mouseguard.sheet.actor.mgs-sheet .mgs-tool:hover {
   color: #724a32;
   text-shadow: 0 0 4px rgba(236, 186, 133, 0.9);
 }
-.mouseguard.sheet.actor.character .mgs-star {
+.mouseguard.sheet.actor.mgs-sheet .mgs-star {
   color: rgba(114, 74, 50, 0.35);
 }
-.mouseguard.sheet.actor.character .mgs-star.on {
+.mouseguard.sheet.actor.mgs-sheet .mgs-star.on {
   color: #b8862f;
 }
-.mouseguard.sheet.actor.character .mgs-quests {
+.mouseguard.sheet.actor.mgs-sheet .mgs-quests {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
   gap: 4px;
   margin-top: 6px;
 }
-.mouseguard.sheet.actor.character .mgs-quest {
+.mouseguard.sheet.actor.mgs-sheet .mgs-quest {
   display: flex;
   flex-direction: column;
   min-width: 0;
@@ -1243,7 +1243,7 @@
   border-width: 10px;
   border-image: url("../assets/sheet/card-parchment.webp") 10 10 10 10 fill stretch stretch;
 }
-.mouseguard.sheet.actor.character .mgs-quest textarea {
+.mouseguard.sheet.actor.mgs-sheet .mgs-quest textarea {
   width: 100%;
   min-height: 54px;
   margin: 2px 0;
@@ -1251,7 +1251,7 @@
   font-size: 18px;
   line-height: 1.15;
 }
-.mouseguard.sheet.actor.character .mgs-quest-title {
+.mouseguard.sheet.actor.mgs-sheet .mgs-quest-title {
   margin: 0 2px 3px;
   padding: 2px;
   border: 0;
@@ -1265,7 +1265,7 @@
   color: #724a32;
   background-color: rgba(114, 74, 50, 0.2);
 }
-.mouseguard.sheet.actor.character .mgs-hand {
+.mouseguard.sheet.actor.mgs-sheet .mgs-hand {
   margin: 0;
   padding: 2px 10px;
   font-family: var(--mgs-font-hand);
@@ -1276,10 +1276,10 @@
   overflow-wrap: anywhere;
   -webkit-font-smoothing: antialiased;
 }
-.mouseguard.sheet.actor.character .mgs-hand.is-empty {
+.mouseguard.sheet.actor.mgs-sheet .mgs-hand.is-empty {
   color: rgba(79, 51, 34, 0.45);
 }
-.mouseguard.sheet.actor.character .mgs-quest-hint {
+.mouseguard.sheet.actor.mgs-sheet .mgs-quest-hint {
   margin: auto 0 0;
   padding-top: 2px;
   overflow: hidden;
@@ -1292,7 +1292,7 @@
   white-space: nowrap;
   color: rgba(114, 74, 50, 0.8);
 }
-.mouseguard.sheet.actor.character .mgs-paper {
+.mouseguard.sheet.actor.mgs-sheet .mgs-paper {
   min-width: 0;
   padding: 6px 12px 14px;
   font-family: var(--mgs-font-body);
@@ -1302,17 +1302,17 @@
   border-width: 10px;
   border-image: url("../assets/sheet/paper-dialog.webp") 10 10 10 10 fill stretch stretch;
 }
-.mouseguard.sheet.actor.character .mgs-paper h1,
-.mouseguard.sheet.actor.character .mgs-paper h2,
-.mouseguard.sheet.actor.character .mgs-paper h3,
-.mouseguard.sheet.actor.character .mgs-paper h4,
-.mouseguard.sheet.actor.character .mgs-paper h5,
-.mouseguard.sheet.actor.character .mgs-paper h6 {
+.mouseguard.sheet.actor.mgs-sheet .mgs-paper h1,
+.mouseguard.sheet.actor.mgs-sheet .mgs-paper h2,
+.mouseguard.sheet.actor.mgs-sheet .mgs-paper h3,
+.mouseguard.sheet.actor.mgs-sheet .mgs-paper h4,
+.mouseguard.sheet.actor.mgs-sheet .mgs-paper h5,
+.mouseguard.sheet.actor.mgs-sheet .mgs-paper h6 {
   font-family: var(--mgs-font-heading);
   color: #742a2b;
   border: 0;
 }
-.mouseguard.sheet.actor.character .mgs-with-line {
+.mouseguard.sheet.actor.mgs-sheet .mgs-with-line {
   display: flex;
   align-items: center;
   margin: 2px 0 8px;
@@ -1320,7 +1320,7 @@
   font-weight: 900;
   text-transform: uppercase;
 }
-.mouseguard.sheet.actor.character .mgs-with-line::after {
+.mouseguard.sheet.actor.mgs-sheet .mgs-with-line::after {
   content: "";
   display: inline-block;
   flex: none;
@@ -1330,19 +1330,19 @@
   background-image: url("../assets/sheet/header-backline.webp");
   background-repeat: no-repeat;
 }
-.mouseguard.sheet.actor.character .mgs-bio-grid {
+.mouseguard.sheet.actor.mgs-sheet .mgs-bio-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 6px;
   align-items: start;
 }
-.mouseguard.sheet.actor.character .mgs-detail-list {
+.mouseguard.sheet.actor.mgs-sheet .mgs-detail-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
   gap: 3px 16px;
   margin: 0;
 }
-.mouseguard.sheet.actor.character .mgs-detail {
+.mouseguard.sheet.actor.mgs-sheet .mgs-detail {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -1350,7 +1350,7 @@
   min-height: 26px;
   border-bottom: 1px solid var(--mgs-rule);
 }
-.mouseguard.sheet.actor.character .mgs-detail dt {
+.mouseguard.sheet.actor.mgs-sheet .mgs-detail dt {
   flex: 0 0 42%;
   min-width: 0;
   margin: 0;
@@ -1359,87 +1359,87 @@
   text-transform: uppercase;
   color: #724a32;
 }
-.mouseguard.sheet.actor.character .mgs-detail dt label {
+.mouseguard.sheet.actor.mgs-sheet .mgs-detail dt label {
   cursor: inherit;
 }
-.mouseguard.sheet.actor.character .mgs-detail dd {
+.mouseguard.sheet.actor.mgs-sheet .mgs-detail dd {
   flex: 1;
   min-width: 0;
   margin: 0;
 }
-.mouseguard.sheet.actor.character .mgs-detail dd input {
+.mouseguard.sheet.actor.mgs-sheet .mgs-detail dd input {
   width: 100%;
   height: 22px;
 }
-.mouseguard.sheet.actor.character .mgs-detail-value {
+.mouseguard.sheet.actor.mgs-sheet .mgs-detail-value {
   display: block;
   font-style: italic;
   color: #191813;
   overflow-wrap: anywhere;
 }
-.mouseguard.sheet.actor.character .mgs-detail-value.is-empty {
+.mouseguard.sheet.actor.mgs-sheet .mgs-detail-value.is-empty {
   color: rgba(0, 0, 0, 0.35);
 }
-.mouseguard.sheet.actor.character .mgs-card--contacts {
+.mouseguard.sheet.actor.mgs-sheet .mgs-card--contacts {
   min-height: 0;
   height: 100%;
 }
-.mouseguard.sheet.actor.character .mgs-contact {
+.mouseguard.sheet.actor.mgs-sheet .mgs-contact {
   margin: 0 3px;
   padding: 4px 0;
   list-style: none;
   border-bottom: 1.5px solid var(--mgs-rule);
 }
-.mouseguard.sheet.actor.character .mgs-contact:last-child {
+.mouseguard.sheet.actor.mgs-sheet .mgs-contact:last-child {
   border-bottom-color: transparent;
 }
-.mouseguard.sheet.actor.character .mgs-contact.draggable {
+.mouseguard.sheet.actor.mgs-sheet .mgs-contact.draggable {
   cursor: grab;
 }
-.mouseguard.sheet.actor.character .mgs-contact-main {
+.mouseguard.sheet.actor.mgs-sheet .mgs-contact-main {
   display: flex;
   align-items: center;
   gap: 4px;
 }
-.mouseguard.sheet.actor.character .mgs-contact-main .mgs-line-name {
+.mouseguard.sheet.actor.mgs-sheet .mgs-contact-main .mgs-line-name {
   margin: 0 auto;
 }
-.mouseguard.sheet.actor.character .mgs-excerpt {
+.mouseguard.sheet.actor.mgs-sheet .mgs-excerpt {
   margin: 1px 0 0;
   font-size: 11px;
   line-height: 1.25;
   text-align: center;
   color: rgba(0, 0, 0, 0.55);
 }
-.mouseguard.sheet.actor.character .mgs-biography,
-.mouseguard.sheet.actor.character .mgs-notes {
+.mouseguard.sheet.actor.mgs-sheet .mgs-biography,
+.mouseguard.sheet.actor.mgs-sheet .mgs-notes {
   margin-top: 6px;
   min-height: 240px;
 }
-.mouseguard.sheet.actor.character .mgs-tab-notes .mgs-notes {
+.mouseguard.sheet.actor.mgs-sheet .mgs-tab-notes .mgs-notes {
   margin-top: 0;
   min-height: 100%;
 }
-.mouseguard.sheet.actor.character .mgs-prose prose-mirror,
-.mouseguard.sheet.actor.character .mgs-prose .mgs-prose-content {
+.mouseguard.sheet.actor.mgs-sheet .mgs-prose prose-mirror,
+.mouseguard.sheet.actor.mgs-sheet .mgs-prose .mgs-prose-content {
   display: block;
   min-height: 180px;
   color: #4e432d;
   font-size: 14px;
   line-height: 1.45;
 }
-.mouseguard.sheet.actor.character .mgs-prose prose-mirror .editor-content {
+.mouseguard.sheet.actor.mgs-sheet .mgs-prose prose-mirror .editor-content {
   min-height: 160px;
 }
-.mouseguard.sheet.actor.character .mgs-prose prose-mirror.active {
+.mouseguard.sheet.actor.mgs-sheet .mgs-prose prose-mirror.active {
   min-height: 260px;
 }
-.mouseguard.sheet.actor.character .mgs-card--gear,
-.mouseguard.sheet.actor.character .mgs-card--others {
+.mouseguard.sheet.actor.mgs-sheet .mgs-card--gear,
+.mouseguard.sheet.actor.mgs-sheet .mgs-card--others {
   min-height: 0;
   margin-bottom: 6px;
 }
-.mouseguard.sheet.actor.character .mgs-card-hint {
+.mouseguard.sheet.actor.mgs-sheet .mgs-card-hint {
   margin: 4px 8px 6px;
   font-size: 12px;
   font-style: italic;
@@ -1447,22 +1447,22 @@
   text-align: center;
   color: rgba(0, 0, 0, 0.55);
 }
-.mouseguard.sheet.actor.character .mgs-gear-list {
+.mouseguard.sheet.actor.mgs-sheet .mgs-gear-list {
   margin: 0;
   padding: 0 4px;
   list-style: none;
 }
-.mouseguard.sheet.actor.character .mgs-gear-head,
-.mouseguard.sheet.actor.character .mgs-gear-row {
+.mouseguard.sheet.actor.mgs-sheet .mgs-gear-head,
+.mouseguard.sheet.actor.mgs-sheet .mgs-gear-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 72px 72px 52px;
   align-items: center;
   gap: 6px;
 }
-.mouseguard.sheet.actor.character .mgs-card--others .mgs-gear-row {
+.mouseguard.sheet.actor.mgs-sheet .mgs-card--others .mgs-gear-row {
   grid-template-columns: minmax(0, 1fr) auto 52px;
 }
-.mouseguard.sheet.actor.character .mgs-gear-head {
+.mouseguard.sheet.actor.mgs-sheet .mgs-gear-head {
   margin: 0 4px;
   padding: 0 0 2px;
   font-family: var(--mgs-font-heading);
@@ -1473,54 +1473,54 @@
   color: #724a32;
   border-bottom: 1px solid rgba(114, 74, 50, 0.35);
 }
-.mouseguard.sheet.actor.character .mgs-gear-row {
+.mouseguard.sheet.actor.mgs-sheet .mgs-gear-row {
   min-height: 30px;
   padding: 3px 0;
   list-style: none;
   border-bottom: 1.5px solid var(--mgs-rule);
 }
-.mouseguard.sheet.actor.character .mgs-gear-row.draggable {
+.mouseguard.sheet.actor.mgs-sheet .mgs-gear-row.draggable {
   cursor: grab;
 }
-.mouseguard.sheet.actor.character .mgs-gear-name {
+.mouseguard.sheet.actor.mgs-sheet .mgs-gear-name {
   display: flex;
   align-items: center;
   gap: 6px;
   min-width: 0;
 }
-.mouseguard.sheet.actor.character .mgs-gear-name .mgs-line-name {
+.mouseguard.sheet.actor.mgs-sheet .mgs-gear-name .mgs-line-name {
   margin: 0;
   text-align: left;
 }
-.mouseguard.sheet.actor.character .mgs-gear-img {
+.mouseguard.sheet.actor.mgs-sheet .mgs-gear-img {
   width: 24px;
   height: 24px;
   flex: none;
   border: 0;
   object-fit: contain;
 }
-.mouseguard.sheet.actor.character .mgs-gear-num {
+.mouseguard.sheet.actor.mgs-sheet .mgs-gear-num {
   text-align: center;
   font-size: 13px;
 }
-.mouseguard.sheet.actor.character .mgs-gear-num input[type="number"] {
+.mouseguard.sheet.actor.mgs-sheet .mgs-gear-num input[type="number"] {
   width: 100%;
   height: 22px;
 }
-.mouseguard.sheet.actor.character .mgs-gear-type {
+.mouseguard.sheet.actor.mgs-sheet .mgs-gear-type {
   font-size: 10px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: #724a32;
 }
-.mouseguard.sheet.actor.character .mgs-gear-tools {
+.mouseguard.sheet.actor.mgs-sheet .mgs-gear-tools {
   display: flex;
   justify-content: flex-end;
 }
-.mouseguard.sheet.actor.character .mgs-gear-tools .mgs-line-tools {
+.mouseguard.sheet.actor.mgs-sheet .mgs-gear-tools .mgs-line-tools {
   margin: 0;
 }
-.mouseguard.sheet.actor.character .mgs-gear-total {
+.mouseguard.sheet.actor.mgs-sheet .mgs-gear-total {
   display: flex;
   justify-content: flex-end;
   align-items: baseline;
@@ -1531,30 +1531,349 @@
   text-transform: uppercase;
   color: #724a32;
 }
-.mouseguard.sheet.actor.character .mgs-gear-total strong {
+.mouseguard.sheet.actor.mgs-sheet .mgs-gear-total strong {
   font-size: 15px;
   color: #4f3322;
 }
 @container mgs-header (max-width: 600px) {
-  .mouseguard.sheet.actor.character .mgs-header-grid {
+  .mouseguard.sheet.actor.mgs-sheet .mgs-header-grid {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
-  .mouseguard.sheet.actor.character .mgs-actions {
+  .mouseguard.sheet.actor.mgs-sheet .mgs-actions {
     grid-column: 1 / -1;
     flex-direction: row;
   }
-  .mouseguard.sheet.actor.character .mgs-roll-button {
+  .mouseguard.sheet.actor.mgs-sheet .mgs-roll-button {
     flex: 1 1 0;
     min-width: 0;
   }
 }
 @container mgs-header (max-width: 380px) {
-  .mouseguard.sheet.actor.character .mgs-header-grid {
+  .mouseguard.sheet.actor.mgs-sheet .mgs-header-grid {
     grid-template-columns: minmax(0, 1fr);
   }
-  .mouseguard.sheet.actor.character .mgs-actions {
+  .mouseguard.sheet.actor.mgs-sheet .mgs-actions {
     flex-direction: column;
   }
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-npc-box,
+.mouseguard.sheet.actor.mgs-sheet .mgs-animal-nature {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-reward-grid--two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-reward-value.is-static {
+  cursor: default;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-reward-value.is-static:hover {
+  color: #4f3322;
+  text-shadow: none;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-key-chip {
+  align-self: center;
+  margin-top: 6px;
+  padding: 1px 10px;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-key-chip i {
+  font-size: 10px;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-key-chip.active i {
+  color: #8f5a12;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-box-hint {
+  margin: 4px 0 0;
+  font-size: 10.5px;
+  font-style: italic;
+  line-height: 1.25;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.55);
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-box-button {
+  align-self: center;
+  width: auto;
+  margin-top: 6px;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-nature-value {
+  display: flex;
+  justify-content: center;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-nature-value .mgs-reward-value,
+.mouseguard.sheet.actor.mgs-sheet .mgs-nature-value .mgs-reward-input {
+  width: 64px;
+  height: 42px;
+  font-size: 32px;
+  line-height: 42px;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-nature-value .mgs-reward-input {
+  font-size: 24px;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-key-mark,
+.mouseguard.sheet.actor.mgs-sheet .mgs-order-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #efd693;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-key-mark i,
+.mouseguard.sheet.actor.mgs-sheet .mgs-order-mark i {
+  font-size: 10px;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-order-mark.is-mighty {
+  color: #ecba85;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-nature-aspects {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin-top: 3px;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-aspects {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 3px 4px;
+  padding: 0 2px;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-aspects.is-default .mgs-aspect {
+  color: rgba(0, 0, 0, 0.5);
+  border-style: dashed;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-aspect {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 0 6px;
+  font-size: 12px;
+  font-style: italic;
+  line-height: 18px;
+  color: #2b2016;
+  background: rgba(239, 214, 147, 0.55);
+  border: 1px solid rgba(100, 55, 8, 0.3);
+  border-radius: 3px 2px 3px 2px;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-aspect-remove {
+  font-size: 9px;
+  color: rgba(114, 74, 50, 0.7);
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-aspect-remove:hover {
+  color: #742a2b;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-aspect-empty {
+  font-size: 12px;
+  font-style: italic;
+  color: rgba(0, 0, 0, 0.45);
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-aspect-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-aspect-add input[type="text"] {
+  width: 120px;
+  height: 20px;
+  padding: 0 4px;
+  font-size: 12px;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-card--aspects .mgs-aspects {
+  gap: 5px 6px;
+  margin: 4px 4px 0;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-card--aspects .mgs-aspects .mgs-aspect {
+  padding: 2px 10px;
+  font-size: 14px;
+  line-height: 20px;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-npc-hint {
+  margin: 8px 4px 0;
+  font-size: 12px;
+  font-style: italic;
+  text-align: center;
+  color: rgba(225, 211, 193, 0.85);
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-npc-hint i {
+  font-size: 10px;
+  color: #efd693;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-npc-note {
+  margin: 8px 0 0;
+  font-size: 11.5px;
+  font-style: italic;
+  line-height: 1.35;
+  color: rgba(0, 0, 0, 0.55);
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-card--weapons {
+  min-height: 0;
+  margin-bottom: 6px;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-tab-animal .mgs-card--weapons,
+.mouseguard.sheet.actor.mgs-sheet .mgs-tab-animal .mgs-card--aspects,
+.mouseguard.sheet.actor.mgs-sheet .mgs-tab-animal .mgs-card--order {
+  min-height: 300px;
+  margin-bottom: 0;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-weapons {
+  padding: 0 4px;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-weapon {
+  margin: 0 3px;
+  padding: 4px 0;
+  list-style: none;
+  border-bottom: 1.5px solid var(--mgs-rule);
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-weapon:last-child {
+  border-bottom-color: transparent;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-weapon.draggable {
+  cursor: grab;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-weapon-main {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-weapon-main .mgs-line-tools {
+  margin-left: auto;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-weapon-name {
+  flex: 0 1 auto;
+  min-width: 0;
+  font-size: 14.5px;
+  font-style: italic;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #000;
+  overflow-wrap: break-word;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-weapon-name:hover {
+  color: #724a32;
+  text-shadow: 0 0 6px rgba(236, 186, 133, 0.9);
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-weapon-cat {
+  flex: none;
+  padding: 0 4px;
+  font-family: var(--mgs-font-heading);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  background: rgba(114, 74, 50, 0.8);
+  border-radius: 2px;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-weapon--armor .mgs-weapon-cat {
+  background: rgba(74, 85, 96, 0.85);
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-weapon-effect {
+  margin: 2px 0 0 30px;
+  font-size: 13px;
+  line-height: 1.3;
+  color: #4f3322;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-weapon-effect-input {
+  display: block;
+  width: calc(100% - 30px);
+  height: 22px;
+  margin: 3px 0 0 30px;
+  font-size: 12.5px;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-order {
+  flex: 1;
+  margin: 0;
+  padding: 0 4px;
+  list-style: none;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-order-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 2px 4px;
+  list-style: none;
+  border-bottom: 1px solid var(--mgs-rule);
+  font-size: 12px;
+  line-height: 1.25;
+  color: rgba(0, 0, 0, 0.7);
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-order-row[data-action] {
+  cursor: pointer;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-order-row[data-action]:hover {
+  background: rgba(114, 74, 50, 0.08);
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-order-row.is-mouse .mgs-order-names {
+  font-weight: 700;
+  color: #4f3322;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-order-row.is-current {
+  color: #2b2016;
+  background: rgba(236, 186, 133, 0.7);
+  border-radius: 2px;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-order-row.is-current .mgs-order-level {
+  color: #fff;
+  background: #724a32;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-order-level {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  font-family: var(--mgs-font-heading);
+  font-size: 11px;
+  font-weight: 700;
+  color: #724a32;
+  background: rgba(114, 74, 50, 0.12);
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-order-names {
+  flex: 1;
+  min-width: 0;
+  font-style: italic;
+  overflow-wrap: anywhere;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-order-names::first-letter {
+  text-transform: uppercase;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-order-relation {
+  margin: 6px 6px 0;
+  font-family: var(--mgs-font-heading);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+  color: #724a32;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-order-relation.is-mighty {
+  color: #742a2b;
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-order-relation.is-unknown {
+  font-weight: 400;
+  font-style: italic;
+  text-transform: none;
+  color: rgba(0, 0, 0, 0.5);
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-animal-rules .mgs-rule.is-mighty .mgs-quest-title {
+  color: #fff;
+  background-color: rgba(116, 42, 43, 0.85);
+}
+.mouseguard.sheet.actor.mgs-sheet .mgs-rule-text {
+  margin: 0;
+  padding: 2px 8px 4px;
+  font-size: 13px;
+  line-height: 1.35;
+  text-align: center;
+  color: #4f3322;
 }
 .mouseguard.sheet.item {
   --mgi-ink: #2b2016;
@@ -2406,6 +2725,18 @@
   color: #fff;
   border-color: rgba(0, 0, 0, 0.35);
   box-shadow: 0 0 6px #724a32;
+}
+.mouseguard.sheet.item .mgi-effect {
+  margin: 2px 0;
+  font: italic 14px/1.35 var(--mgi-font-body);
+  text-align: center;
+}
+.mouseguard.sheet.item .mgi-effect strong {
+  font-style: normal;
+  color: var(--mgi-brown-dark);
+}
+.mouseguard.sheet.item .mgi-muted {
+  color: rgba(0, 0, 0, 0.5);
 }
 /* -------------------------------------------- */
 /*  Test dialog                                 */
