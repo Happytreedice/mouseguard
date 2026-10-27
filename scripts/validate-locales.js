@@ -446,7 +446,7 @@ for (const key of typeLabelKeys) {
 /* -------------------------------------------- */
 
 const SOURCE_RULES = [
-    { dir: "module", ext: [".js", ".mjs", ".svelte", ".hbs", ".html"] },
+    { dir: "module", ext: [".js", ".mjs", ".hbs", ".html"] },
     { dir: "templates", ext: [".hbs", ".html"] },
     { dir: "tours", ext: [".json"] },
     { dir: "src/packs", ext: [".yml", ".yaml", ".json"], bare: true }

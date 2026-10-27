@@ -1,7 +1,6 @@
 const gulp = require('gulp');
 const less = require('gulp-less');
 const esbuild = require('esbuild');
-const esbuildSvelte = require("esbuild-svelte");
 
 
 /* ----------------------------------------- */
@@ -26,7 +25,6 @@ async function buildCode() {
     minify: false,
     format: "esm",
     platform: "browser",
-    plugins: [esbuildSvelte()],
     external: ["../assets/*"],
   });
 }
@@ -37,7 +35,7 @@ const build = gulp.series(compileLESS, buildCode, buildPacks);
 exports.build = build;
 exports.packs = buildPacks;
 
-const SYSTEM_FILES = ["module/**/*.js", "module/*.js", "module/**/*.svelte", "styles/*.less"];
+const SYSTEM_FILES = ["module/**/*.js", "module/*.js", "styles/*.less"];
 
 /* ----------------------------------------- */
 /*  Watch Updates

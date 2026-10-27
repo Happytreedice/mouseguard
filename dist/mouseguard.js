@@ -1833,17 +1833,17 @@ var MouseGuardActor = class extends Actor {
       failed: int4(item.system.advancement?.failed)
     };
     advancement[field] = Math.clamp(advancement[field] + int4(delta), 0, cap);
-    const update2 = { "system.advancement.passed": advancement.passed, "system.advancement.failed": advancement.failed };
+    const update = { "system.advancement.passed": advancement.passed, "system.advancement.failed": advancement.failed };
     const result = { itemId, field, ...advancement, leveledUp: false, value: null };
     const target = levelUp && delta > 0 ? this.#advancementTarget(item, advancement) : null;
     if (target) {
-      update2[`system.${target.field}`] = target.to;
-      if (target.field === "max") update2["system.rating"] = Math.min(target.to, int4(item.system.rating) + 1);
-      update2["system.advancement.passed"] = 0;
-      update2["system.advancement.failed"] = 0;
+      update[`system.${target.field}`] = target.to;
+      if (target.field === "max") update["system.rating"] = Math.min(target.to, int4(item.system.rating) + 1);
+      update["system.advancement.passed"] = 0;
+      update["system.advancement.failed"] = 0;
       Object.assign(result, { passed: 0, failed: 0, leveledUp: true, value: target.to });
     }
-    await item.update(update2);
+    await item.update(update);
     if (result.leveledUp && notify) {
       ui.notifications.info(fmt4("MOUSEGUARD.Test.Note.Advanced", { name: item.displayName ?? itemLabel(item), value: result.value }));
     }
@@ -3260,14 +3260,14 @@ var MouseGuardCharacterSheet = class _MouseGuardCharacterSheet extends Handlebar
   /** Entries usable by v14 (label/visible/onClick) and v13 (name/condition/callback) without deprecation warnings. */
   #getItemContextOptions() {
     const itemOf = (el) => this.actor.items.get((el instanceof HTMLElement ? el : el?.[0])?.closest("[data-item-id]")?.dataset.itemId);
-    const entry = (label, icon, visible, run2) => ({
+    const entry = (label, icon, visible, run) => ({
       label,
       name: label,
       icon: `<i class="${icon}"></i>`,
       visible: (el) => !!itemOf(el) && visible(itemOf(el)),
       condition: (el) => !!itemOf(el) && visible(itemOf(el)),
-      onClick: (event, el) => run2(itemOf(el), event),
-      callback: (el) => run2(itemOf(el))
+      onClick: (event, el) => run(itemOf(el), event),
+      callback: (el) => run(itemOf(el))
     });
     const rollable = (i) => i.type === "skill" || i.type === "ability";
     const editable = () => this.isEditable;
@@ -4068,7 +4068,7 @@ var MouseGuardNPCBaseSheet = class _MouseGuardNPCBaseSheet extends HandlebarsApp
    * @param {(item: Item, event?: Event) => any} run
    * @protected
    */
-  _contextEntry(label, icon, visible, run2) {
+  _contextEntry(label, icon, visible, run) {
     const itemOf = (el) => this.actor.items.get((el instanceof HTMLElement ? el : el?.[0])?.closest("[data-item-id]")?.dataset.itemId);
     return {
       label,
@@ -4076,8 +4076,8 @@ var MouseGuardNPCBaseSheet = class _MouseGuardNPCBaseSheet extends HandlebarsApp
       icon: `<i class="${icon}"></i>`,
       visible: (el) => !!itemOf(el) && visible(itemOf(el)),
       condition: (el) => !!itemOf(el) && visible(itemOf(el)),
-      onClick: (event, el) => run2(itemOf(el), event),
-      callback: (el) => run2(itemOf(el))
+      onClick: (event, el) => run(itemOf(el), event),
+      callback: (el) => run(itemOf(el))
     };
   }
   /**
@@ -4801,11 +4801,11 @@ var MouseCombatant = class extends Combatant {
   async _preCreate(data, options, user) {
     const allowed = await super._preCreate(data, options, user);
     if (allowed === false) return false;
-    let init2 = 0;
+    let init = 0;
     const actor = this.actor ?? game.actors.get(data.actorId);
-    if (actor?.type === "character") init2 = 1;
+    if (actor?.type === "character") init = 1;
     this.updateSource({
-      initiative: init2,
+      initiative: init,
       flags: {
         mouseguard: {
           ConflictCaptain: false,
@@ -5407,394 +5407,6 @@ var EffectsPanel = class extends HandlebarsApplicationMixin6(ApplicationV23) {
   }
 };
 
-// node_modules/svelte/internal/index.mjs
-function noop() {
-}
-function run(fn) {
-  return fn();
-}
-function blank_object() {
-  return /* @__PURE__ */ Object.create(null);
-}
-function run_all(fns) {
-  fns.forEach(run);
-}
-function is_function(thing) {
-  return typeof thing === "function";
-}
-function safe_not_equal(a, b) {
-  return a != a ? b == b : a !== b || (a && typeof a === "object" || typeof a === "function");
-}
-function is_empty(obj) {
-  return Object.keys(obj).length === 0;
-}
-var is_hydrating = false;
-function start_hydrating() {
-  is_hydrating = true;
-}
-function end_hydrating() {
-  is_hydrating = false;
-}
-function detach(node) {
-  if (node.parentNode) {
-    node.parentNode.removeChild(node);
-  }
-}
-function children(element) {
-  return Array.from(element.childNodes);
-}
-var current_component;
-function set_current_component(component) {
-  current_component = component;
-}
-var dirty_components = [];
-var binding_callbacks = [];
-var render_callbacks = [];
-var flush_callbacks = [];
-var resolved_promise = Promise.resolve();
-var update_scheduled = false;
-function schedule_update() {
-  if (!update_scheduled) {
-    update_scheduled = true;
-    resolved_promise.then(flush);
-  }
-}
-function add_render_callback(fn) {
-  render_callbacks.push(fn);
-}
-var seen_callbacks = /* @__PURE__ */ new Set();
-var flushidx = 0;
-function flush() {
-  if (flushidx !== 0) {
-    return;
-  }
-  const saved_component = current_component;
-  do {
-    try {
-      while (flushidx < dirty_components.length) {
-        const component = dirty_components[flushidx];
-        flushidx++;
-        set_current_component(component);
-        update(component.$$);
-      }
-    } catch (e) {
-      dirty_components.length = 0;
-      flushidx = 0;
-      throw e;
-    }
-    set_current_component(null);
-    dirty_components.length = 0;
-    flushidx = 0;
-    while (binding_callbacks.length)
-      binding_callbacks.pop()();
-    for (let i = 0; i < render_callbacks.length; i += 1) {
-      const callback = render_callbacks[i];
-      if (!seen_callbacks.has(callback)) {
-        seen_callbacks.add(callback);
-        callback();
-      }
-    }
-    render_callbacks.length = 0;
-  } while (dirty_components.length);
-  while (flush_callbacks.length) {
-    flush_callbacks.pop()();
-  }
-  update_scheduled = false;
-  seen_callbacks.clear();
-  set_current_component(saved_component);
-}
-function update($$) {
-  if ($$.fragment !== null) {
-    $$.update();
-    run_all($$.before_update);
-    const dirty = $$.dirty;
-    $$.dirty = [-1];
-    $$.fragment && $$.fragment.p($$.ctx, dirty);
-    $$.after_update.forEach(add_render_callback);
-  }
-}
-var outroing = /* @__PURE__ */ new Set();
-function transition_in(block, local) {
-  if (block && block.i) {
-    outroing.delete(block);
-    block.i(local);
-  }
-}
-var globals = typeof window !== "undefined" ? window : typeof globalThis !== "undefined" ? globalThis : global;
-function mount_component(component, target, anchor, customElement) {
-  const { fragment, after_update } = component.$$;
-  fragment && fragment.m(target, anchor);
-  if (!customElement) {
-    add_render_callback(() => {
-      const new_on_destroy = component.$$.on_mount.map(run).filter(is_function);
-      if (component.$$.on_destroy) {
-        component.$$.on_destroy.push(...new_on_destroy);
-      } else {
-        run_all(new_on_destroy);
-      }
-      component.$$.on_mount = [];
-    });
-  }
-  after_update.forEach(add_render_callback);
-}
-function destroy_component(component, detaching) {
-  const $$ = component.$$;
-  if ($$.fragment !== null) {
-    run_all($$.on_destroy);
-    $$.fragment && $$.fragment.d(detaching);
-    $$.on_destroy = $$.fragment = null;
-    $$.ctx = [];
-  }
-}
-function make_dirty(component, i) {
-  if (component.$$.dirty[0] === -1) {
-    dirty_components.push(component);
-    schedule_update();
-    component.$$.dirty.fill(0);
-  }
-  component.$$.dirty[i / 31 | 0] |= 1 << i % 31;
-}
-function init(component, options, instance, create_fragment, not_equal, props, append_styles, dirty = [-1]) {
-  const parent_component = current_component;
-  set_current_component(component);
-  const $$ = component.$$ = {
-    fragment: null,
-    ctx: [],
-    // state
-    props,
-    update: noop,
-    not_equal,
-    bound: blank_object(),
-    // lifecycle
-    on_mount: [],
-    on_destroy: [],
-    on_disconnect: [],
-    before_update: [],
-    after_update: [],
-    context: new Map(options.context || (parent_component ? parent_component.$$.context : [])),
-    // everything else
-    callbacks: blank_object(),
-    dirty,
-    skip_bound: false,
-    root: options.target || parent_component.$$.root
-  };
-  append_styles && append_styles($$.root);
-  let ready = false;
-  $$.ctx = instance ? instance(component, options.props || {}, (i, ret, ...rest) => {
-    const value = rest.length ? rest[0] : ret;
-    if ($$.ctx && not_equal($$.ctx[i], $$.ctx[i] = value)) {
-      if (!$$.skip_bound && $$.bound[i])
-        $$.bound[i](value);
-      if (ready)
-        make_dirty(component, i);
-    }
-    return ret;
-  }) : [];
-  $$.update();
-  ready = true;
-  run_all($$.before_update);
-  $$.fragment = create_fragment ? create_fragment($$.ctx) : false;
-  if (options.target) {
-    if (options.hydrate) {
-      start_hydrating();
-      const nodes = children(options.target);
-      $$.fragment && $$.fragment.l(nodes);
-      nodes.forEach(detach);
-    } else {
-      $$.fragment && $$.fragment.c();
-    }
-    if (options.intro)
-      transition_in(component.$$.fragment);
-    mount_component(component, options.target, options.anchor, options.customElement);
-    end_hydrating();
-    flush();
-  }
-  set_current_component(parent_component);
-}
-var SvelteElement;
-if (typeof HTMLElement === "function") {
-  SvelteElement = class extends HTMLElement {
-    constructor() {
-      super();
-      this.attachShadow({ mode: "open" });
-    }
-    connectedCallback() {
-      const { on_mount } = this.$$;
-      this.$$.on_disconnect = on_mount.map(run).filter(is_function);
-      for (const key in this.$$.slotted) {
-        this.appendChild(this.$$.slotted[key]);
-      }
-    }
-    attributeChangedCallback(attr, _oldValue, newValue) {
-      this[attr] = newValue;
-    }
-    disconnectedCallback() {
-      run_all(this.$$.on_disconnect);
-    }
-    $destroy() {
-      destroy_component(this, 1);
-      this.$destroy = noop;
-    }
-    $on(type, callback) {
-      if (!is_function(callback)) {
-        return noop;
-      }
-      const callbacks = this.$$.callbacks[type] || (this.$$.callbacks[type] = []);
-      callbacks.push(callback);
-      return () => {
-        const index = callbacks.indexOf(callback);
-        if (index !== -1)
-          callbacks.splice(index, 1);
-      };
-    }
-    $set($$props) {
-      if (this.$$set && !is_empty($$props)) {
-        this.$$.skip_bound = true;
-        this.$$set($$props);
-        this.$$.skip_bound = false;
-      }
-    }
-  };
-}
-var SvelteComponent = class {
-  $destroy() {
-    destroy_component(this, 1);
-    this.$destroy = noop;
-  }
-  $on(type, callback) {
-    if (!is_function(callback)) {
-      return noop;
-    }
-    const callbacks = this.$$.callbacks[type] || (this.$$.callbacks[type] = []);
-    callbacks.push(callback);
-    return () => {
-      const index = callbacks.indexOf(callback);
-      if (index !== -1)
-        callbacks.splice(index, 1);
-    };
-  }
-  $set($$props) {
-    if (this.$$set && !is_empty($$props)) {
-      this.$$.skip_bound = true;
-      this.$$set($$props);
-      this.$$.skip_bound = false;
-    }
-  }
-};
-
-// module/svelte/MouseGuardConflictManager.svelte
-var MouseGuardConflictManager = class extends SvelteComponent {
-  constructor(options) {
-    super();
-    init(this, options, null, null, safe_not_equal, {});
-  }
-};
-var MouseGuardConflictManager_default = MouseGuardConflictManager;
-
-// node_modules/svelte/store/index.mjs
-var subscriber_queue = [];
-function writable(value, start = noop) {
-  let stop;
-  const subscribers = /* @__PURE__ */ new Set();
-  function set(new_value) {
-    if (safe_not_equal(value, new_value)) {
-      value = new_value;
-      if (stop) {
-        const run_queue = !subscriber_queue.length;
-        for (const subscriber of subscribers) {
-          subscriber[1]();
-          subscriber_queue.push(subscriber, value);
-        }
-        if (run_queue) {
-          for (let i = 0; i < subscriber_queue.length; i += 2) {
-            subscriber_queue[i][0](subscriber_queue[i + 1]);
-          }
-          subscriber_queue.length = 0;
-        }
-      }
-    }
-  }
-  function update2(fn) {
-    set(fn(value));
-  }
-  function subscribe2(run2, invalidate = noop) {
-    const subscriber = [run2, invalidate];
-    subscribers.add(subscriber);
-    if (subscribers.size === 1) {
-      stop = start(set) || noop;
-    }
-    run2(value);
-    return () => {
-      subscribers.delete(subscriber);
-      if (subscribers.size === 0) {
-        stop();
-        stop = null;
-      }
-    };
-  }
-  return { set, update: update2, subscribe: subscribe2 };
-}
-
-// module/mouse-conflict-manager.js
-var { ApplicationV2: ApplicationV24 } = foundry.applications.api;
-var MouseConflictManager = class extends ApplicationV24 {
-  /** @inheritDoc */
-  static DEFAULT_OPTIONS = {
-    id: "mouseguard-conflict-panel",
-    classes: ["mouseguard"],
-    window: {
-      title: "MOUSEGUARD.Conflict.Manager"
-    },
-    position: {
-      width: 850,
-      height: 600
-    }
-  };
-  app = null;
-  dataStore = null;
-  /**
-   * Debounce request to re-render.
-   */
-  refresh = foundry.utils.debounce(() => {
-    if (this.rendered) this.render(false);
-  }, 100);
-  /** @inheritDoc */
-  async _prepareContext(options) {
-    return {};
-  }
-  /** @override */
-  async _renderHTML(context, options) {
-    return "";
-  }
-  /** @override */
-  _replaceHTML(result, content, options) {
-  }
-  /** @inheritDoc */
-  _onRender(context, options) {
-    super._onRender(context, options);
-    if (!this.app) {
-      this.dataStore = writable(context);
-      this.app = new MouseGuardConflictManager_default({
-        target: this.element,
-        props: {
-          dataStore: this.dataStore
-        }
-      });
-    } else {
-      this.dataStore?.set(context);
-    }
-  }
-  /** @inheritDoc */
-  _onClose(options) {
-    if (this.app) {
-      this.app.$destroy();
-      this.app = null;
-      this.dataStore = null;
-    }
-    super._onClose(options);
-  }
-};
-
 // module/details/details-data.js
 var HOMES = Object.freeze([
   {
@@ -6256,7 +5868,7 @@ function generateNPCDetails(overrides = {}, isKeyCharacter = false) {
 }
 
 // module/details/details-dialog.js
-var { HandlebarsApplicationMixin: HandlebarsApplicationMixin7, ApplicationV2: ApplicationV25 } = foundry.applications.api;
+var { HandlebarsApplicationMixin: HandlebarsApplicationMixin7, ApplicationV2: ApplicationV24 } = foundry.applications.api;
 var TEMPLATE = "systems/mouseguard/templates/actor/dialog-fill-details.hbs";
 function isEmptyValue(val) {
   if (val === null || val === void 0) return true;
@@ -6264,7 +5876,7 @@ function isEmptyValue(val) {
   if (typeof val === "number") return val <= 0;
   return false;
 }
-var MouseGuardDetailsDialog = class _MouseGuardDetailsDialog extends HandlebarsApplicationMixin7(ApplicationV25) {
+var MouseGuardDetailsDialog = class _MouseGuardDetailsDialog extends HandlebarsApplicationMixin7(ApplicationV24) {
   /**
    * @param {object} options
    * @param {Actor} options.actor
@@ -6686,7 +6298,6 @@ Hooks.once("init", async function() {
     MouseDie,
     MouseRoll,
     ConflictTracker,
-    MouseConflictManager,
     MouseGuardDetailsDialog,
     effectPanel: new EffectsPanel()
   };

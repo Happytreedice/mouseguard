@@ -19,7 +19,6 @@ import MouseCombat from "./mouse-combat.js";
 import MouseCombatTracker from "./mouse-combat-tracker.js";
 import MouseSocket from "./socket.js";
 import { EffectsPanel } from "./mouse-effects.js";
-import { MouseConflictManager } from "./mouse-conflict-manager.js";
 import { statusEffects } from "./status-effects.js";
 import { MouseGuardDetailsDialog } from "./details/details-dialog.js";
 import {
@@ -56,7 +55,6 @@ Hooks.once("init", async function () {
         MouseDie,
         MouseRoll,
         ConflictTracker,
-        MouseConflictManager,
         MouseGuardDetailsDialog,
         effectPanel: new EffectsPanel()
     };

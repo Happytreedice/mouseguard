@@ -1,6 +1,6 @@
 /**
  * Shared constants and label helpers for abilities, conditions and tests.
- * Safe to import from Svelte components and data code (no side effects).
+ * Safe to import from sheet components and data code (no side effects).
  */
 
 /** Ability keys in display order. */

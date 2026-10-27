@@ -16,7 +16,7 @@
     ],
     "esmodules": ["dist/mouseguard.js"],
     "socket": true,
-    "styles": ["styles/mouseguard.css", "dist/mouseguard.css"],
+    "styles": ["styles/mouseguard.css"],
     "documentTypes": {
         "Actor": {
             "character": {},
