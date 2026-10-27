@@ -2871,7 +2871,8 @@ var MouseGuardCharacterSheet = class _MouseGuardCharacterSheet extends Handlebar
       itemCreate: _MouseGuardCharacterSheet.#onItemCreate,
       itemEdit: _MouseGuardCharacterSheet.#onItemEdit,
       itemDelete: _MouseGuardCharacterSheet.#onItemDelete,
-      openCompendium: _MouseGuardCharacterSheet.#onOpenCompendium
+      openCompendium: _MouseGuardCharacterSheet.#onOpenCompendium,
+      openDetails: _MouseGuardCharacterSheet.#onOpenDetails
     }
   };
   /** @override */
@@ -2928,6 +2929,12 @@ var MouseGuardCharacterSheet = class _MouseGuardCharacterSheet extends Handlebar
       button.className = "header-control icon fa-solid fa-lock mgs-mode-toggle";
       button.dataset.action = "toggleMode";
       title.before(button);
+      const detailsBtn = document.createElement("button");
+      detailsBtn.type = "button";
+      detailsBtn.className = "header-control icon fa-solid fa-feather-pointed mgs-details-toggle";
+      detailsBtn.dataset.action = "openDetails";
+      detailsBtn.dataset.tooltip = "MOUSEGUARD.DetailsDialog.ButtonHint";
+      title.before(detailsBtn);
     }
     return frame;
   }
@@ -3414,6 +3421,12 @@ var MouseGuardCharacterSheet = class _MouseGuardCharacterSheet extends Handlebar
     if (!this.isEditable) return;
     this.#editMode = !this.isEditMode;
     this.render();
+  }
+  /** Open details fill and generator dialog. */
+  static #onOpenDetails(event) {
+    event.preventDefault();
+    const dlg = game.mouseguard?.MouseGuardDetailsDialog;
+    if (dlg) dlg.open(this.actor);
   }
   /** Click on a skill or ability name: Test dialog; Shift+click (or quick mode): roll at once. */
   static async #onRoll(event, target) {
@@ -4278,7 +4291,8 @@ var MouseGuardNPCSheet = class _MouseGuardNPCSheet extends MouseGuardNPCBaseShee
     actions: {
       newSession: _MouseGuardNPCSheet.#onNewSession,
       traitUse: { handler: _MouseGuardNPCSheet.#onTraitUse, buttons: [0, 2] },
-      toggleKey: _MouseGuardNPCSheet.#onToggleKey
+      toggleKey: _MouseGuardNPCSheet.#onToggleKey,
+      openDetails: _MouseGuardNPCSheet.#onOpenDetails
     }
   };
   /** @override */
@@ -4311,6 +4325,20 @@ var MouseGuardNPCSheet = class _MouseGuardNPCSheet extends MouseGuardNPCBaseShee
       initial: "main"
     }
   };
+  /** @override */
+  async _renderFrame(options) {
+    const frame = await super._renderFrame(options);
+    const title = frame.querySelector(".window-header .window-title");
+    if (title && this.isEditable && this.actor.type === "mouse") {
+      const detailsBtn = document.createElement("button");
+      detailsBtn.type = "button";
+      detailsBtn.className = "header-control icon fa-solid fa-feather-pointed mgs-details-toggle";
+      detailsBtn.dataset.action = "openDetails";
+      detailsBtn.dataset.tooltip = "MOUSEGUARD.DetailsDialog.ButtonHint";
+      title.before(detailsBtn);
+    }
+    return frame;
+  }
   /* -------------------------------------------- */
   /** @inheritDoc */
   _initializeApplicationOptions(options) {
@@ -4483,6 +4511,12 @@ var MouseGuardNPCSheet = class _MouseGuardNPCSheet extends MouseGuardNPCBaseShee
     event.preventDefault();
     if (!this.isEditable) return;
     return this.actor.update({ "system.keyCharacter": !this.actor.system.keyCharacter });
+  }
+  /** Open details fill and generator dialog. */
+  static #onOpenDetails(event) {
+    event.preventDefault();
+    const dlg = game.mouseguard?.MouseGuardDetailsDialog;
+    if (dlg) dlg.open(this.actor);
   }
 };
 
@@ -5761,6 +5795,858 @@ var MouseConflictManager = class extends ApplicationV24 {
   }
 };
 
+// module/details/details-data.js
+var HOMES = Object.freeze([
+  {
+    key: "barkstone",
+    name: "\u0414\u0440\u0435\u0432\u043E\u0433\u0440\u0430\u0434",
+    nameEn: "Barkstone",
+    skills: ["\u0413\u043E\u043D\u0447\u0430\u0440", "\u041F\u043B\u043E\u0442\u043D\u0438\u043A", "\u0421\u0442\u0435\u043A\u043E\u043B\u044C\u0449\u0438\u043A"],
+    trait: "\u0417\u043E\u043B\u043E\u0442\u044B\u0435 \u043B\u0430\u043F\u044B",
+    hint: "\u041A\u0440\u0443\u043F\u043D\u044B\u0439 \u0442\u043E\u0440\u0433\u043E\u0432\u044B\u0439 \u0443\u0437\u0435\u043B, \u0440\u0435\u043C\u0435\u0441\u043B\u0435\u043D\u043D\u044B\u0439 \u0446\u0435\u043D\u0442\u0440 (\u0413\u043E\u043D\u0447\u0430\u0440, \u041F\u043B\u043E\u0442\u043D\u0438\u043A, \u0421\u0442\u0435\u043A\u043E\u043B\u044C\u0449\u0438\u043A \xB7 \u0417\u043E\u043B\u043E\u0442\u044B\u0435 \u043B\u0430\u043F\u044B)"
+  },
+  {
+    key: "copperwood_flintrust",
+    name: "\u041A\u0440\u0435\u043C\u043D\u0435\u0440\u0436\u0430\u0432\u044C",
+    nameEn: "Copperwood / Flintrust",
+    skills: ["\u041A\u0443\u0437\u043D\u0435\u0446", "\u0420\u0430\u0437\u043D\u043E\u0440\u0430\u0431\u043E\u0447\u0438\u0439"],
+    traits: ["\u0411\u0435\u0437\u0440\u0430\u0441\u0441\u0443\u0434\u043D\u044B\u0439", "\u0420\u0435\u0448\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u0439"],
+    hint: "\u0411\u0435\u0434\u043D\u044B\u0439 \u0433\u043E\u0440\u043D\u044F\u0446\u043A\u0438\u0439 \u0433\u043E\u0440\u043E\u0434\u043E\u043A \u0443 \u0441\u0442\u0430\u0440\u044B\u0445 \u0448\u0430\u0445\u0442 (\u041A\u0443\u0437\u043D\u0435\u0446, \u0420\u0430\u0437\u043D\u043E\u0440\u0430\u0431\u043E\u0447\u0438\u0439 \xB7 \u0411\u0435\u0437\u0440\u0430\u0441\u0441\u0443\u0434\u043D\u044B\u0439, \u0420\u0435\u0448\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u0439)"
+  },
+  {
+    key: "lockhaven",
+    name: "\u041B\u043E\u043A\u0445\u044D\u0439\u0432\u0435\u043D",
+    nameEn: "Lockhaven",
+    skills: ["\u041E\u0440\u0443\u0436\u0435\u0439\u043D\u0438\u043A", "\u0422\u043A\u0430\u0447"],
+    traits: ["\u0414\u043E\u0432\u0435\u0440\u0438\u0435 \u0421\u0442\u0440\u0430\u0436\u0438", "\u0429\u0435\u0434\u0440\u044B\u0439"],
+    hint: "\u0426\u0438\u0442\u0430\u0434\u0435\u043B\u044C \u041C\u044B\u0448\u0438\u043D\u043E\u0439 \u0421\u0442\u0440\u0430\u0436\u0438 (\u041E\u0440\u0443\u0436\u0435\u0439\u043D\u0438\u043A, \u0422\u043A\u0430\u0447 \xB7 \u0414\u043E\u0432\u0435\u0440\u0438\u0435 \u0421\u0442\u0440\u0430\u0436\u0438, \u0429\u0435\u0434\u0440\u044B\u0439)"
+  },
+  {
+    key: "copperwood",
+    name: "\u041C\u0435\u0434\u043D\u043E\u043B\u0435\u0441\u044C\u0435",
+    nameEn: "Copperwood",
+    skills: ["\u041A\u0443\u0437\u043D\u0435\u0446", "\u0422\u043E\u0440\u0433\u0430\u0448"],
+    traits: ["\u041D\u0435\u0437\u0430\u0432\u0438\u0441\u0438\u043C\u044B\u0439"],
+    hint: "\u041E\u0434\u0438\u043D \u0438\u0437 \u0441\u0442\u0430\u0440\u0435\u0439\u0448\u0438\u0445 \u0433\u043E\u0440\u043E\u0434\u043E\u0432, \u043C\u0435\u0434\u043D\u044B\u0435 \u0440\u0443\u0434\u043D\u0438\u043A\u0438 (\u041A\u0443\u0437\u043D\u0435\u0446, \u0422\u043E\u0440\u0433\u0430\u0448 \xB7 \u041D\u0435\u0437\u0430\u0432\u0438\u0441\u0438\u043C\u044B\u0439)"
+  },
+  {
+    key: "elmoss",
+    name: "\u041C\u043E\u0445\u043E\u0432\u044F\u0437",
+    nameEn: "Elmoss",
+    skills: ["\u041F\u043B\u043E\u0442\u043D\u0438\u043A", "\u0421\u0431\u043E\u0440\u0449\u0438\u043A"],
+    traits: ["\u0411\u0434\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u0439"],
+    hint: "\u0413\u043E\u0440\u043E\u0434 \u0446\u0435\u043B\u0435\u0431\u043D\u043E\u0433\u043E \u043C\u0445\u0430 \u0438 \u0441\u0431\u043E\u0440\u0430 \u0442\u0440\u0430\u0432 (\u041F\u043B\u043E\u0442\u043D\u0438\u043A, \u0421\u0431\u043E\u0440\u0449\u0438\u043A \xB7 \u0411\u0434\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u0439)"
+  },
+  {
+    key: "sandy_ford",
+    name: "\u041F\u0435\u0441\u0447\u0430\u043D\u044B\u0439 \u0414\u043E\u043C",
+    nameEn: "Sandy Ford",
+    skills: ["\u041D\u0430\u0431\u043B\u044E\u0434\u0430\u0442\u0435\u043B\u044C \u0437\u0430 \u043F\u043E\u0433\u043E\u0434\u043E\u0439", "\u0421\u0442\u0435\u043A\u043E\u043B\u044C\u0449\u0438\u043A"],
+    traits: ["\u0421\u043E\u0432\u0430", "\u0422\u0438\u0445\u0438\u0439"],
+    hint: "\u041F\u043E\u0441\u0435\u043B\u0435\u043D\u0438\u0435 \u043D\u043E\u0447\u043D\u044B\u0445 \u043C\u044B\u0448\u0435\u0439 \u0443 \u0440\u0435\u0447\u043D\u043E\u0433\u043E \u0431\u0440\u043E\u0434\u0430 (\u041D\u0430\u0431\u043B\u044E\u0434\u0430\u0442\u0435\u043B\u044C \u0437\u0430 \u043F\u043E\u0433\u043E\u0434\u043E\u0439, \u0421\u0442\u0435\u043A\u043E\u043B\u044C\u0449\u0438\u043A \xB7 \u0421\u043E\u0432\u0430, \u0422\u0438\u0445\u0438\u0439)"
+  },
+  {
+    key: "ivydale",
+    name: "\u041F\u043B\u044E\u0449\u0438",
+    nameEn: "Ivydale",
+    skills: ["\u041F\u0435\u043A\u0430\u0440\u044C", "\u0421\u0431\u043E\u0440\u0449\u0438\u043A"],
+    traits: ["\u0422\u0440\u0443\u0434\u043E\u043B\u044E\u0431\u0438\u0432\u044B\u0439"],
+    hint: "\u0416\u0438\u0442\u043D\u0438\u0446\u0430 \u0422\u0435\u0440\u0440\u0438\u0442\u043E\u0440\u0438\u0439, \u0441\u043B\u0430\u0432\u0438\u0442\u0441\u044F \u0445\u043B\u0435\u0431\u043E\u043C \u0438 \u043F\u0435\u043A\u0430\u0440\u043D\u044F\u043C\u0438 (\u041F\u0435\u043A\u0430\u0440\u044C, \u0421\u0431\u043E\u0440\u0449\u0438\u043A \xB7 \u0422\u0440\u0443\u0434\u043E\u043B\u044E\u0431\u0438\u0432\u044B\u0439)"
+  },
+  {
+    key: "spruce_ford",
+    name: "\u041F\u043E\u0434\u044A\u0435\u043B\u044C\u043D\u0438\u043A",
+    nameEn: "Spruce Ford",
+    skills: ["\u0417\u043D\u0430\u0442\u043E\u043A \u0437\u0432\u0435\u0440\u0435\u0439", "\u0423\u0447\u0451\u043D\u044B\u0439"],
+    traits: ["\u0414\u043E\u0442\u043E\u0448\u043D\u044B\u0439", "\u0420\u0430\u0446\u0438\u043E\u043D\u0430\u043B\u044C\u043D\u044B\u0439"],
+    hint: "\u0413\u043E\u0440\u043E\u0434 \u0443\u0447\u0451\u043D\u044B\u0445, \u043B\u0435\u043A\u0430\u0440\u0435\u0439 \u0438 \u0441\u043E\u0441\u0442\u0430\u0432\u0430 \u0434\u043B\u044F \u041F\u0430\u0445\u0443\u0447\u0435\u0439 \u0413\u0440\u0430\u043D\u0438\u0446\u044B (\u0417\u043D\u0430\u0442\u043E\u043A \u0437\u0432\u0435\u0440\u0435\u0439, \u0423\u0447\u0451\u043D\u044B\u0439 \xB7 \u0414\u043E\u0442\u043E\u0448\u043D\u044B\u0439, \u0420\u0430\u0446\u0438\u043E\u043D\u0430\u043B\u044C\u043D\u044B\u0439)"
+  },
+  {
+    key: "port_sumac",
+    name: "\u041F\u043E\u0440\u0442-\u0421\u0443\u043C\u0430\u0445",
+    nameEn: "Port Sumac",
+    skills: ["\u041A\u043E\u0440\u0430\u0431\u0435\u043B", "\u041D\u0430\u0431\u043B\u044E\u0434\u0430\u0442\u0435\u043B\u044C \u0437\u0430 \u043F\u043E\u0433\u043E\u0434\u043E\u0439"],
+    traits: ["\u041A\u0440\u0435\u043F\u043A\u0438\u0439", "\u041C\u0435\u0442\u0435\u043E\u0447\u0443\u0432\u0441\u0442\u0432\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u0439"],
+    hint: "\u0428\u0443\u043C\u043D\u044B\u0439 \u043F\u043E\u0440\u0442 \u043C\u0435\u0436\u0434\u0443 \u0422\u0435\u043C\u043D\u043E\u0432\u043E\u0434\u044C\u0435\u043C \u0438 \u0420\u0436\u0430\u0432\u043E\u043B\u0438\u0441\u0442\u043E\u043C (\u041A\u043E\u0440\u0430\u0431\u0435\u043B, \u041D\u0430\u0431\u043B\u044E\u0434\u0430\u0442\u0435\u043B\u044C \u0437\u0430 \u043F\u043E\u0433\u043E\u0434\u043E\u0439 \xB7 \u041A\u0440\u0435\u043F\u043A\u0438\u0439, \u041C\u0435\u0442\u0435\u043E\u0447\u0443\u0432\u0441\u0442\u0432\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u0439)"
+  },
+  {
+    key: "shale_burrow",
+    name: "\u0421\u043B\u0430\u043D\u0446\u0435\u0432\u0430\u044F \u041D\u043E\u0440\u0430",
+    nameEn: "Shale Burrow",
+    skills: ["\u041A\u0430\u043C\u0435\u043D\u0449\u0438\u043A", "\u041C\u0435\u043B\u044C\u043D\u0438\u043A", "\u0421\u0431\u043E\u0440\u0449\u0438\u043A"],
+    traits: ["\u041E\u0442\u043A\u0440\u044B\u0442\u044B\u0439"],
+    hint: "\u0422\u0440\u0430\u0434\u0438\u0446\u0438\u043E\u043D\u043D\u044B\u0439 \u0433\u043E\u0440\u043E\u0434 \u043A\u0430\u043C\u0435\u043D\u043D\u044B\u0445 \u043D\u043E\u0440, \u0441\u043B\u0430\u0432\u0438\u0442\u0441\u044F \u043D\u0430\u043F\u0438\u0442\u043A\u0430\u043C\u0438 (\u041A\u0430\u043C\u0435\u043D\u0449\u0438\u043A, \u041C\u0435\u043B\u044C\u043D\u0438\u043A, \u0421\u0431\u043E\u0440\u0449\u0438\u043A \xB7 \u041E\u0442\u043A\u0440\u044B\u0442\u044B\u0439)"
+  },
+  {
+    key: "grasslake",
+    name: "\u0422\u0440\u0430\u0432\u043E\u043E\u0437\u0451\u0440\u044C\u0435",
+    nameEn: "Grasslake",
+    skills: ["\u0412\u043E\u0435\u043D\u043D\u044B\u0439", "\u041D\u0430\u0441\u0435\u043A\u043E\u043C\u043E\u0432\u043E\u0434"],
+    traits: ["\u0417\u0430\u0449\u0438\u0442\u043D\u0438\u043A", "\u041F\u0440\u043E\u0432\u043E\u0440\u043D\u044B\u0439"],
+    hint: "\u0413\u043E\u0440\u043E\u0434 \u043D\u0430 \u043E\u0437\u0435\u0440\u0435 \u0441 \u0432\u043E\u0438\u043D\u0441\u0442\u0432\u0435\u043D\u043D\u044B\u043C \u043D\u0440\u0430\u0432\u043E\u043C (\u0412\u043E\u0435\u043D\u043D\u044B\u0439, \u041D\u0430\u0441\u0435\u043A\u043E\u043C\u043E\u0432\u043E\u0434 \xB7 \u0417\u0430\u0449\u0438\u0442\u043D\u0438\u043A, \u041F\u0440\u043E\u0432\u043E\u0440\u043D\u044B\u0439)"
+  }
+]);
+var GUARD_RANKS = Object.freeze([
+  {
+    name: "\xAB\u041B\u0430\u043F\u0430 \u043F\u043E\u043C\u043E\u0449\u0438\xBB",
+    nameEn: "Tenderfoot",
+    minAge: 14,
+    maxAge: 17,
+    birthMin: 1135,
+    birthMax: 1138,
+    allowsCloak: false,
+    hint: "\u041D\u043E\u0432\u043E\u0431\u0440\u0430\u043D\u0435\u0446 (14\u201317 \u043B\u0435\u0442). \u041F\u043B\u0430\u0449 \u043D\u0435 \u043F\u043E\u043B\u043E\u0436\u0435\u043D."
+  },
+  {
+    name: "\u0421\u0442\u0440\u0430\u0436",
+    nameEn: "Guardmouse",
+    minAge: 18,
+    maxAge: 25,
+    birthMin: 1127,
+    birthMax: 1134,
+    allowsCloak: true,
+    hint: "\u0420\u044F\u0434\u043E\u0432\u043E\u0439 \u0441\u0442\u0440\u0430\u0436 (18\u201325 \u043B\u0435\u0442). \u041F\u043E\u043B\u0443\u0447\u0430\u0435\u0442 \u043F\u043B\u0430\u0449 \u043E\u0442 \u043D\u0430\u0441\u0442\u0430\u0432\u043D\u0438\u043A\u0430."
+  },
+  {
+    name: "\u041F\u0430\u0442\u0440\u0443\u043B\u044C\u043D\u044B\u0439",
+    nameEn: "Patrol Guard",
+    minAge: 21,
+    maxAge: 50,
+    birthMin: 1102,
+    birthMax: 1131,
+    allowsCloak: true,
+    hint: "\u041E\u043F\u044B\u0442\u043D\u044B\u0439 \u0431\u043E\u0435\u0446 \u0438 \u0441\u043B\u0435\u0434\u043E\u043F\u044B\u0442 (21\u201350 \u043B\u0435\u0442)."
+  },
+  {
+    name: "\u041B\u0438\u0434\u0435\u0440 \u043F\u0430\u0442\u0440\u0443\u043B\u044F",
+    nameEn: "Patrol Leader",
+    minAge: 21,
+    maxAge: 60,
+    birthMin: 1092,
+    birthMax: 1131,
+    allowsCloak: true,
+    hint: "\u041A\u043E\u043C\u0430\u043D\u0434\u0438\u0440 \u043F\u0430\u0442\u0440\u0443\u043B\u044F (21\u201360 \u043B\u0435\u0442)."
+  },
+  {
+    name: "\u041A\u0430\u043F\u0438\u0442\u0430\u043D \u0421\u0442\u0440\u0430\u0436\u0438",
+    nameEn: "Guard Captain",
+    minAge: 41,
+    maxAge: 60,
+    birthMin: 1092,
+    birthMax: 1111,
+    allowsCloak: true,
+    hint: "\u0412\u044B\u0441\u0448\u0438\u0439 \u043E\u0444\u0438\u0446\u0435\u0440 \u0421\u0442\u0440\u0430\u0436\u0438 (41\u201360 \u043B\u0435\u0442)."
+  }
+]);
+var FUR_COLORS = Object.freeze([
+  { name: "\u041A\u043E\u0440\u0438\u0447\u043D\u0435\u0432\u044B\u0439", weight: 30, rarity: "common" },
+  { name: "\u0420\u0443\u0441\u044B\u0439", weight: 25, rarity: "common" },
+  { name: "\u0421\u0435\u0440\u044B\u0439", weight: 25, rarity: "common" },
+  { name: "\u0427\u0451\u0440\u043D\u044B\u0439", weight: 10, rarity: "uncommon" },
+  { name: "\u0411\u0435\u043B\u044B\u0439", weight: 8, rarity: "uncommon" },
+  { name: "\u0420\u044B\u0436\u0438\u0439", weight: 2, rarity: "rare" }
+]);
+var CLOAK_COLORS = Object.freeze([
+  { name: "\u042F\u0440\u043A\u043E-\u0436\u0451\u043B\u0442\u044B\u0439", meaning: "\u0429\u0435\u0434\u0440\u043E\u0441\u0442\u044C, \u043E\u0442\u0437\u044B\u0432\u0447\u0438\u0432\u043E\u0441\u0442\u044C \u0438 \u0442\u0435\u043F\u043B\u043E\u0442\u0430 \u0445\u0430\u0440\u0430\u043A\u0442\u0435\u0440\u0430" },
+  { name: "\u0421\u043B\u0438\u0432\u043E\u0432\u044B\u0439", meaning: "\u0412\u0434\u0443\u043C\u0447\u0438\u0432\u043E\u0441\u0442\u044C, \u0432\u0435\u0440\u043D\u043E\u0441\u0442\u044C \u0438 \u0440\u0430\u0441\u0441\u0443\u0434\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u044C" },
+  { name: "\u0421\u0430\u043B\u0430\u0442\u043E\u0432\u044B\u0439", meaning: "\u041C\u043E\u043B\u043E\u0434\u043E\u0441\u0442\u044C, \u0435\u0434\u0438\u043D\u0435\u043D\u0438\u0435 \u0441 \u043F\u0440\u0438\u0440\u043E\u0434\u043E\u0439" },
+  { name: "\u041B\u0435\u0441\u043D\u043E\u0439 \u0437\u0435\u043B\u0451\u043D\u044B\u0439", meaning: "\u0421\u043A\u0440\u044B\u0442\u043D\u043E\u0441\u0442\u044C, \u043B\u0435\u0441\u043D\u0430\u044F \u0432\u044B\u0443\u0447\u043A\u0430, \u0443\u043F\u043E\u0440\u0441\u0442\u0432\u043E" },
+  { name: "\u041A\u0440\u0430\u0441\u043D\u044B\u0439", meaning: "\u0425\u0440\u0430\u0431\u0440\u043E\u0441\u0442\u044C, \u043F\u044B\u043B\u043A\u043E\u0441\u0442\u044C \u0438 \u0431\u043E\u0435\u0432\u0430\u044F \u0440\u0435\u0448\u0438\u043C\u043E\u0441\u0442\u044C" },
+  { name: "\u0410\u043B\u044B\u0439", meaning: "\u041D\u0435\u0443\u0441\u0442\u0440\u0430\u0448\u0438\u043C\u043E\u0441\u0442\u044C \u0438 \u043B\u0438\u0434\u0435\u0440\u0441\u0442\u0432\u043E" },
+  { name: "\u0412\u0430\u0441\u0438\u043B\u044C\u043A\u043E\u0432\u044B\u0439", meaning: "\u0421\u043F\u043E\u043A\u043E\u0439\u0441\u0442\u0432\u0438\u0435, \u043D\u0430\u0434\u0435\u0436\u043D\u043E\u0441\u0442\u044C \u0438 \u0445\u043B\u0430\u0434\u043D\u043E\u043A\u0440\u043E\u0432\u0438\u0435" },
+  { name: "\u0421\u0438\u043D\u0438\u0439", meaning: "\u041C\u0443\u0434\u0440\u043E\u0441\u0442\u044C, \u0441\u0442\u043E\u0439\u043A\u043E\u0441\u0442\u044C \u0438 \u043F\u0440\u0435\u0434\u0430\u043D\u043D\u043E\u0441\u0442\u044C \u0443\u0441\u0442\u0430\u0432\u0443" },
+  { name: "\u0421\u0435\u0440\u044B\u0439", meaning: "\u0421\u043A\u0440\u043E\u043C\u043D\u043E\u0441\u0442\u044C, \u0432\u044B\u043D\u043E\u0441\u043B\u0438\u0432\u043E\u0441\u0442\u044C \u0438 \u043D\u0435\u043F\u0440\u0438\u0445\u043E\u0442\u043B\u0438\u0432\u043E\u0441\u0442\u044C" },
+  { name: "\u041A\u0443\u0437\u043D\u0438\u0447\u043D\u043E-\u0436\u0451\u043B\u0442\u044B\u0439", meaning: "\u0422\u0440\u0443\u0434\u043E\u043B\u044E\u0431\u0438\u0435, \u0443\u043F\u043E\u0440\u0441\u0442\u0432\u043E \u0438 \u043C\u0430\u0441\u0442\u0435\u0440\u0441\u0442\u0432\u043E" },
+  { name: "\u041E\u0440\u0430\u043D\u0436\u0435\u0432\u044B\u0439", meaning: "\u041E\u043F\u0442\u0438\u043C\u0438\u0437\u043C, \u043D\u0435\u0443\u043A\u0440\u043E\u0442\u0438\u043C\u0430\u044F \u044D\u043D\u0435\u0440\u0433\u0438\u044F" },
+  { name: "\u0418\u043D\u0434\u0438\u0433\u043E", meaning: "\u0413\u043B\u0443\u0431\u043E\u043A\u0430\u044F \u0438\u043D\u0442\u0443\u0438\u0446\u0438\u044F, \u043D\u0435\u0437\u0430\u0432\u0438\u0441\u0438\u043C\u043E\u0441\u0442\u044C" },
+  { name: "\u041E\u043B\u0438\u0432\u043A\u043E\u0432\u044B\u0439", meaning: "\u041C\u0438\u0440\u043E\u043B\u044E\u0431\u0438\u0435, \u043D\u0430\u0431\u043B\u044E\u0434\u0430\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u044C \u0438 \u043E\u0441\u0442\u043E\u0440\u043E\u0436\u043D\u043E\u0441\u0442\u044C" },
+  { name: "\u041A\u043E\u0440\u0438\u0447\u043D\u0435\u0432\u044B\u0439", meaning: "\u041F\u0440\u0430\u043A\u0442\u0438\u0447\u043D\u043E\u0441\u0442\u044C, \u043D\u0430\u0434\u0435\u0436\u043D\u043E\u0441\u0442\u044C \u0438 \u0441\u0432\u044F\u0437\u044C \u0441 \u0437\u0435\u043C\u043B\u0435\u0439" }
+]);
+var CRAFTS = Object.freeze([
+  "\u0410\u0440\u0445\u0438\u0432\u0430\u0440\u0438\u0443\u0441",
+  "\u0413\u043E\u043D\u0447\u0430\u0440",
+  "\u041A\u0430\u043C\u0435\u043D\u0449\u0438\u043A",
+  "\u041A\u0430\u0440\u0442\u043E\u0433\u0440\u0430\u0444",
+  "\u041A\u043E\u0440\u0430\u0431\u0435\u043B",
+  "\u041A\u0443\u0437\u043D\u0435\u0446",
+  "\u041B\u0435\u043A\u0430\u0440\u044C",
+  "\u041C\u0435\u043B\u044C\u043D\u0438\u043A",
+  "\u041D\u0430\u0441\u0435\u043A\u043E\u043C\u043E\u0432\u043E\u0434",
+  "\u041E\u0440\u0443\u0436\u0435\u0439\u043D\u0438\u043A",
+  "\u041F\u0435\u043A\u0430\u0440\u044C",
+  "\u041F\u0438\u0432\u043E\u0432\u0430\u0440",
+  "\u041F\u043B\u043E\u0442\u043D\u0438\u043A",
+  "\u041F\u043E\u0432\u0430\u0440",
+  "\u041F\u0447\u0435\u043B\u043E\u0432\u043E\u0434",
+  "\u0420\u0430\u0437\u043D\u043E\u0440\u0430\u0431\u043E\u0447\u0438\u0439",
+  "\u0421\u0431\u043E\u0440\u0449\u0438\u043A",
+  "\u0421\u0442\u0435\u043A\u043E\u043B\u044C\u0449\u0438\u043A",
+  "\u0422\u043A\u0430\u0447"
+]);
+var NPC_ROLES = Object.freeze({
+  craftsmen: [
+    "\u0410\u0434\u043C\u0438\u043D\u0438\u0441\u0442\u0440\u0430\u0442\u043E\u0440",
+    "\u0410\u0440\u0445\u0438\u0432\u0430\u0440\u0438\u0443\u0441",
+    "\u0413\u043E\u043D\u0447\u0430\u0440",
+    "\u0416\u043D\u0435\u0446",
+    "\u0416\u0443\u043A\u043E\u043F\u0430\u0441",
+    "\u041A\u0430\u043C\u0435\u043D\u0449\u0438\u043A",
+    "\u041A\u0430\u0440\u0442\u043E\u0433\u0440\u0430\u0444",
+    "\u041A\u043E\u0440\u0430\u0431\u0435\u043B",
+    "\u041A\u0443\u0437\u043D\u0435\u0446",
+    "\u041B\u0435\u043A\u0430\u0440\u044C",
+    "\u041C\u0435\u043B\u044C\u043D\u0438\u043A",
+    "\u041D\u0430\u0441\u0435\u043A\u043E\u043C\u043E\u0432\u043E\u0434",
+    "\u041E\u0440\u0443\u0436\u0435\u0439\u043D\u0438\u043A",
+    "\u041F\u0435\u043A\u0430\u0440\u044C",
+    "\u041F\u0438\u0432\u043E\u0432\u0430\u0440",
+    "\u041F\u043B\u043E\u0442\u043D\u0438\u043A",
+    "\u041F\u043E\u0432\u0430\u0440",
+    "\u041F\u0447\u0435\u043B\u043E\u0432\u043E\u0434",
+    "\u0420\u0430\u0437\u043D\u043E\u0440\u0430\u0431\u043E\u0447\u0438\u0439",
+    "\u0421\u0431\u043E\u0440\u0449\u0438\u043A",
+    "\u0421\u0442\u0435\u043A\u043E\u043B\u044C\u0449\u0438\u043A",
+    "\u0422\u043A\u0430\u0447",
+    "\u0422\u043E\u0440\u0433\u0430\u0448",
+    "\u0422\u0440\u0430\u043A\u0442\u0438\u0440\u0449\u0438\u043A"
+  ],
+  guard: [
+    "\xAB\u041B\u0430\u043F\u0430 \u043F\u043E\u043C\u043E\u0449\u0438\xBB (\u0440\u0435\u043A\u0440\u0443\u0442)",
+    "\u0421\u0442\u0440\u0430\u0436 \u043F\u0430\u0442\u0440\u0443\u043B\u044F",
+    "\u041F\u0430\u0442\u0440\u0443\u043B\u044C\u043D\u044B\u0439-\u0432\u0435\u0442\u0435\u0440\u0430\u043D",
+    "\u041A\u0430\u043F\u0438\u0442\u0430\u043D \u0433\u043E\u0440\u043E\u0434\u0441\u043A\u043E\u0433\u043E \u043E\u043F\u043E\u043B\u0447\u0435\u043D\u0438\u044F",
+    "\u041E\u043F\u043E\u043B\u0447\u0435\u043D\u0435\u0446",
+    "\u0421\u0442\u0440\u0430\u0436 \u0432 \u043E\u0442\u0441\u0442\u0430\u0432\u043A\u0435"
+  ],
+  special: [
+    "\u0411\u0430\u043D\u0434\u0438\u0442",
+    "\u0411\u0440\u043E\u0434\u044F\u0433\u0430",
+    "\u0414\u0438\u043A\u0430\u044F \u043C\u044B\u0448\u044C",
+    "\u041A\u0443\u043F\u0435\u0446-\u043A\u0430\u0440\u0430\u0432\u0430\u043D\u0449\u0438\u043A",
+    "\u0421\u0442\u0430\u0440\u0435\u0439\u0448\u0438\u043D\u0430 \u043F\u043E\u0441\u0435\u043B\u0435\u043D\u0438\u044F",
+    "\u0411\u0435\u0433\u043B\u0435\u0446",
+    "\u041C\u043E\u043D\u0430\u0445-\u043B\u0435\u0442\u043E\u043F\u0438\u0441\u0435\u0446"
+  ]
+});
+var MOUSE_NAMES = Object.freeze({
+  male: [
+    "\u0410\u043B\u0433\u043E\u043C\u0438\u043D",
+    "\u0410\u0440\u0440\u043E\u043D",
+    "\u0411\u0438\u0433\u0430\u043D",
+    "\u0411\u0440\u044D\u043D\u0434",
+    "\u0412\u0430\u0440\u0434",
+    "\u0412\u043E\u043B\u043C\u043E\u043D\u0434",
+    "\u0413\u0430\u043C\u043B\u0438\u043D",
+    "\u0413\u0430\u0440\u043D\u044C\u0435",
+    "\u0413\u0430\u0440\u0440\u043E\u0443",
+    "\u0413\u0440\u044D\u0445\u0430\u043C",
+    "\u0413\u0443\u0440\u043D\u0438",
+    "\u0414\u0436\u0430\u0441\u043F\u0435\u0440",
+    "\u0414\u0436\u043E\u0437\u0435\u0444",
+    "\u041A\u0430\u043B\u043B\u0435\u043D",
+    "\u041A\u0435\u043B\u043B",
+    "\u041A\u043E\u043D\u043D\u043E\u0440",
+    "\u041A\u043E\u0443\u043B",
+    "\u041A\u0443\u0440\u0442",
+    "\u041B\u044D\u0440\u0434",
+    "\u041D\u043E\u043B\u0430\u043D",
+    "\u0421\u0435\u0442",
+    "\u0421\u0438\u043C\u043E\u043D",
+    "\u0421\u043B\u043E\u0443\u043D",
+    "\u0422\u0430\u043D\u0434\u0435\u0440",
+    "\u0422\u0438\u0437\u043E\u043D",
+    "\u0422\u043E\u043C",
+    "\u0422\u0440\u0435\u0432\u043E\u0440",
+    "\u0424\u0430\u043E\u043B\u0430\u043D",
+    "\u0424\u0438\u043D\u043D",
+    "\u0424\u043E\u043B\u043A\u0435\u0440",
+    "\u0425\u044D\u0439\u043B",
+    "\u0425\u044D\u043D\u0441\u043E\u043D",
+    "\u042D\u043D\u0433\u0443\u0441"
+  ],
+  female: [
+    "\u0410\u0433\u043D\u0435\u0442\u0430",
+    "\u0410\u0439\u0432\u0438",
+    "\u0411\u0430\u044D\u043B\u0438\u044F",
+    "\u0411\u0440\u0438\u043D\u043D\u0430",
+    "\u0412\u0435\u0440\u0430",
+    "\u0413\u0435\u0439\u043B\u0430",
+    "\u0414\u0430\u043B\u0438\u044F",
+    "\u0414\u0435\u0432\u043E\u043D\u0430",
+    "\u0414\u0436\u0443\u043B\u0438\u044F",
+    "\u0416\u043E\u0437\u0435\u0444\u0438\u043D\u0430",
+    "\u0418\u043D\u0433\u0440\u0438\u0434",
+    "\u041A\u0432\u0438\u043D\u043D",
+    "\u041A\u0435\u0439\u043B\u0438",
+    "\u041A\u0438\u0440\u0430",
+    "\u041A\u043B\u043E\u0443\u0431\u0438",
+    "\u041B\u043E\u0440\u0435\u043B\u044C",
+    "\u041B\u0438\u043B\u043B\u0438",
+    "\u041B\u043E\u0440\u0435\u043B\u0435\u0439",
+    "\u041B\u0443\u043D\u0438\u0441",
+    "\u041C\u0430\u0440\u0435\u043D\u0430",
+    "\u041C\u0438\u043B\u043B\u0438\u0441\u0435\u043D\u0442\u0430",
+    "\u041C\u043E\u0439\u0440\u0430",
+    "\u041D\u043E\u043B\u0430",
+    "\u0420\u043E\u0437\u0430\u043B\u0438\u043D\u0430",
+    "\u0420\u043E\u043D\u0430",
+    "\u0421\u0438\u0431\u0438\u043B\u043B\u0430",
+    "\u0421\u0438\u043B\u044C\u0432\u0438\u044F",
+    "\u0421\u043B\u043E\u0443\u043D\u0438",
+    "\u0421\u044C\u0435\u0440\u0440\u0430",
+    "\u0422\u0430\u0440\u0438\u043D\u0430",
+    "\u0422\u0438\u043D\u0430\u0431\u0435\u043B\u044C",
+    "\u042D\u0434\u0430"
+  ]
+});
+var BELIEF_SAMPLES = Object.freeze([
+  "\u041C\u044B\u0448\u0438\u043D\u0430\u044F \u0421\u0442\u0440\u0430\u0436\u0430 \u0437\u0430\u0449\u0438\u0449\u0430\u0435\u0442 \u0442\u0435\u0445, \u043A\u0442\u043E \u043D\u0435 \u0432 \u0441\u0438\u043B\u0430\u0445 \u043F\u043E\u0441\u0442\u043E\u044F\u0442\u044C \u0437\u0430 \u0441\u0435\u0431\u044F.",
+  "\u041A\u043B\u0438\u043D\u043E\u043A \u2014 \u043A\u0440\u0430\u0439\u043D\u0435\u0435 \u0441\u0440\u0435\u0434\u0441\u0442\u0432\u043E; \u0441\u043D\u0430\u0447\u0430\u043B\u0430 \u043D\u0443\u0436\u043D\u043E \u0434\u043E\u0433\u043E\u0432\u043E\u0440\u0438\u0442\u044C\u0441\u044F.",
+  "\u0422\u043E\u043B\u044C\u043A\u043E \u0432 \u0435\u0434\u0438\u043D\u0441\u0442\u0432\u0435 \u043F\u0430\u0442\u0440\u0443\u043B\u044F \u0437\u0430\u043B\u043E\u0433 \u0432\u044B\u0436\u0438\u0432\u0430\u043D\u0438\u044F \u043D\u0430 \u0422\u0435\u0440\u0440\u0438\u0442\u043E\u0440\u0438\u044F\u0445.",
+  "\u0427\u0435\u0441\u0442\u044C \u0438 \u0434\u043E\u043B\u0433 \u0441\u0442\u0440\u0430\u0436\u0430 \u043F\u0440\u0435\u0432\u044B\u0448\u0435 \u043B\u0438\u0447\u043D\u043E\u0433\u043E \u0431\u043B\u0430\u0433\u043E\u043F\u043E\u043B\u0443\u0447\u0438\u044F.",
+  "\u0414\u0430\u0436\u0435 \u0441\u0430\u043C\u044B\u0439 \u0433\u0440\u043E\u0437\u043D\u044B\u0439 \u0445\u0438\u0449\u043D\u0438\u043A \u043E\u0442\u0441\u0442\u0443\u043F\u0438\u0442 \u043F\u0435\u0440\u0435\u0434 \u043E\u0442\u0432\u0430\u0433\u043E\u0439 \u0438 \u0441\u043C\u0435\u043A\u0430\u043B\u043A\u043E\u0439.",
+  "\u0417\u0430\u043A\u043E\u043D\u044B \u041B\u043E\u043A\u0445\u044D\u0439\u0432\u0435\u043D\u0430 \u0434\u043E\u043B\u0436\u043D\u044B \u0441\u043E\u0431\u043B\u044E\u0434\u0430\u0442\u044C\u0441\u044F \u0432 \u043A\u0430\u0436\u0434\u043E\u043C \u0443\u0433\u043E\u043B\u043A\u0435 \u0422\u0435\u0440\u0440\u0438\u0442\u043E\u0440\u0438\u0439.",
+  "\u0414\u043E\u0431\u0440\u043E\u0435 \u0438\u043C\u044F \u0421\u0442\u0440\u0430\u0436\u0438 \u0437\u0430\u0440\u0430\u0431\u0430\u0442\u044B\u0432\u0430\u0435\u0442\u0441\u044F \u0434\u043E\u0431\u0440\u044B\u043C\u0438 \u0434\u0435\u043B\u0430\u043C\u0438."
+]);
+var GOAL_SAMPLES = Object.freeze([
+  "\u0414\u043E\u0441\u0442\u0430\u0432\u0438\u0442\u044C \u043F\u043E\u0441\u043B\u0430\u043D\u0438\u0435 \u041C\u0430\u0442\u0440\u0438\u0430\u0440\u0445\u0430 \u0432\u043E\u0432\u0440\u0435\u043C\u044F, \u043D\u0435\u0432\u0437\u0438\u0440\u0430\u044F \u043D\u0430 \u043D\u0435\u043F\u043E\u0433\u043E\u0434\u0443.",
+  "\u041E\u0431\u0435\u0441\u043F\u0435\u0447\u0438\u0442\u044C \u0431\u0435\u0437\u043E\u043F\u0430\u0441\u043D\u043E\u0441\u0442\u044C \u043A\u0430\u0440\u0430\u0432\u0430\u043D\u0430 \u0434\u043E \u0441\u0430\u043C\u044B\u0445 \u0432\u043E\u0440\u043E\u0442 \u041B\u043E\u043A\u0445\u044D\u0439\u0432\u0435\u043D\u0430.",
+  "\u0420\u0430\u0437\u0443\u0437\u043D\u0430\u0442\u044C \u043F\u0440\u0438\u0447\u0438\u043D\u0443 \u0431\u0435\u0441\u043F\u043E\u043A\u043E\u0439\u0441\u0442\u0432\u0430 \u0434\u0438\u043A\u0438\u0445 \u0437\u0432\u0435\u0440\u0435\u0439 \u0432 \u0432\u043E\u0441\u0442\u043E\u0447\u043D\u043E\u043C \u043B\u0435\u0441\u0443.",
+  "\u0423\u0431\u0435\u0440\u0435\u0447\u044C \u0442\u043E\u0432\u0430\u0440\u0438\u0449\u0435\u0439 \u043F\u043E \u043F\u0430\u0442\u0440\u0443\u043B\u044E \u043E\u0442 \u043B\u044E\u0431\u044B\u0445 \u0440\u0430\u043D\u0435\u043D\u0438\u0439 \u0438 \u043E\u043F\u0430\u0441\u043D\u043E\u0441\u0442\u0435\u0439.",
+  "\u041D\u0430\u0439\u0442\u0438 \u0431\u0435\u0437\u043E\u043F\u0430\u0441\u043D\u044B\u0439 \u043E\u0431\u0445\u043E\u0434\u043D\u043E\u0439 \u043F\u0443\u0442\u044C \u0447\u0435\u0440\u0435\u0437 \u0440\u0430\u0437\u043B\u0438\u0432\u0448\u0443\u044E\u0441\u044F \u0440\u0435\u043A\u0443.",
+  "\u041F\u043E\u043C\u043E\u0447\u044C \u0436\u0438\u0442\u0435\u043B\u044F\u043C \u043F\u043E\u0441\u0435\u043B\u0435\u043D\u0438\u044F \u043F\u043E\u0447\u0438\u043D\u0438\u0442\u044C \u0440\u0430\u0437\u0440\u0443\u0448\u0435\u043D\u043D\u044B\u0435 \u0443\u043A\u0440\u0435\u043F\u043B\u0435\u043D\u0438\u044F."
+]);
+var INSTINCT_SAMPLES = Object.freeze([
+  "\u0412\u0441\u0435\u0433\u0434\u0430 \u043E\u0431\u043D\u0430\u0436\u0430\u0442\u044C \u043E\u0440\u0443\u0436\u0438\u0435 \u043F\u0440\u0438 \u043F\u0435\u0440\u0432\u043E\u043C \u043F\u0440\u0438\u0437\u043D\u0430\u043A\u0435 \u0443\u0433\u0440\u043E\u0437\u044B.",
+  "\u0412\u0441\u0435\u0433\u0434\u0430 \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u0442\u044C \u0441\u043D\u0430\u0440\u044F\u0436\u0435\u043D\u0438\u0435 \u0438 \u043F\u0440\u0438\u043F\u0430\u0441\u044B \u043F\u0435\u0440\u0435\u0434 \u0432\u044B\u0445\u043E\u0434\u043E\u043C \u0432 \u043F\u0443\u0442\u044C.",
+  "\u041D\u0438\u043A\u043E\u0433\u0434\u0430 \u043D\u0435 \u0434\u043E\u0432\u0435\u0440\u044F\u0442\u044C \u043D\u0435\u0437\u043D\u0430\u043A\u043E\u043C\u044B\u043C \u043C\u044B\u0448\u0430\u043C \u0432 \u043E\u0442\u043A\u0440\u044B\u0442\u043E\u043C \u043F\u043E\u043B\u0435.",
+  "\u0412\u0441\u0435\u0433\u0434\u0430 \u0437\u0430\u0449\u0438\u0449\u0430\u0442\u044C \u0441\u0430\u043C\u043E\u0433\u043E \u0441\u043B\u0430\u0431\u043E\u0433\u043E \u0441\u043F\u0443\u0442\u043D\u0438\u043A\u0430 \u0432 \u043E\u0442\u0440\u044F\u0434\u0435.",
+  "\u0412\u0441\u0435\u0433\u0434\u0430 \u043E\u0441\u043C\u0430\u0442\u0440\u0438\u0432\u0430\u0442\u044C \u0432\u0435\u0442\u0432\u0438 \u0438 \u043D\u0435\u0431\u043E \u043D\u0430 \u043F\u0440\u0435\u0434\u043C\u0435\u0442 \u0445\u0438\u0449\u043D\u044B\u0445 \u043F\u0442\u0438\u0446.",
+  "\u0412\u0441\u0435\u0433\u0434\u0430 \u043F\u0440\u0435\u0434\u0443\u043F\u0440\u0435\u0436\u0434\u0430\u0442\u044C \u043B\u0438\u0434\u0435\u0440\u0430 \u043F\u0430\u0442\u0440\u0443\u043B\u044F \u043F\u0435\u0440\u0435\u0434 \u043B\u044E\u0431\u044B\u043C \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0435\u043C."
+]);
+
+// module/details/details-generator.js
+function sample(array) {
+  if (!Array.isArray(array) || !array.length) return "";
+  const index = Math.floor(Math.random() * array.length);
+  return array[index];
+}
+function sampleWeighted(items) {
+  if (!Array.isArray(items) || !items.length) return "";
+  const total = items.reduce((sum, item) => sum + (item.weight ?? 1), 0);
+  let roll = Math.random() * total;
+  for (const item of items) {
+    roll -= item.weight ?? 1;
+    if (roll <= 0) return item.name;
+  }
+  return items[items.length - 1].name;
+}
+function randomName(gender = "any") {
+  if (gender === "male") return sample(MOUSE_NAMES.male);
+  if (gender === "female") return sample(MOUSE_NAMES.female);
+  return Math.random() < 0.5 ? sample(MOUSE_NAMES.male) : sample(MOUSE_NAMES.female);
+}
+var DEFAULT_CAMPAIGN_YEAR = 1152;
+function generateCharacterDetails(overrides = {}, campaignYear = DEFAULT_CAMPAIGN_YEAR) {
+  const rankObj = overrides.guard_rank ? GUARD_RANKS.find((r) => r.name === overrides.guard_rank) ?? sample(GUARD_RANKS) : sample(GUARD_RANKS);
+  const guard_rank = overrides.guard_rank || rankObj.name;
+  let age = overrides.age;
+  if (!age || age <= 0) {
+    const minA = rankObj.minAge ?? 18;
+    const maxA = rankObj.maxAge ?? 35;
+    age = Math.floor(Math.random() * (maxA - minA + 1)) + minA;
+  }
+  const birth_year = overrides.birth_year && overrides.birth_year > 0 ? overrides.birth_year : campaignYear - age;
+  const homeObj = overrides.home ? HOMES.find((h) => h.name === overrides.home) ?? sample(HOMES) : sample(HOMES);
+  const home = overrides.home || homeObj.name;
+  const fur_color = overrides.fur_color || sampleWeighted(FUR_COLORS);
+  let cloak_color = "";
+  if (rankObj.allowsCloak) {
+    cloak_color = overrides.cloak_color || sample(CLOAK_COLORS).name;
+  }
+  let parents = overrides.parents;
+  if (!parents) {
+    const craft = sample(CRAFTS);
+    const mother = randomName("female");
+    const father = randomName("male");
+    parents = `${father} \u0438 ${mother} (${craft})`;
+  }
+  let senior_artisan = overrides.senior_artisan;
+  if (!senior_artisan) {
+    const craft = sample(CRAFTS);
+    const artisanName = randomName();
+    senior_artisan = `\u041C\u0430\u0441\u0442\u0435\u0440 ${craft.toLowerCase()} ${artisanName} (\u041B\u043E\u043A\u0445\u044D\u0439\u0432\u0435\u043D)`;
+  }
+  let mentor = overrides.mentor;
+  if (!mentor) {
+    const mentorName = randomName();
+    const mentorRank = sample(["\u041F\u0430\u0442\u0440\u0443\u043B\u044C\u043D\u044B\u0439", "\u041B\u0438\u0434\u0435\u0440 \u043F\u0430\u0442\u0440\u0443\u043B\u044F", "\u0412\u0435\u0442\u0435\u0440\u0430\u043D"]);
+    mentor = `${mentorName} (${mentorRank})`;
+  }
+  let friend = overrides.friend;
+  if (!friend) {
+    const fName = randomName();
+    const fTown = sample(HOMES).name;
+    const fCraft = sample(CRAFTS);
+    friend = `${fName}, ${fCraft.toLowerCase()} \u0438\u0437 \u0433. ${fTown}`;
+  }
+  let enemy = overrides.enemy;
+  if (!enemy) {
+    const eName = randomName();
+    const eTown = sample(HOMES).name;
+    const reason = sample(["\u0441\u043E\u043F\u0435\u0440\u043D\u0438\u043A \u043D\u0430 \u0441\u043B\u0443\u0436\u0431\u0435", "\u0441\u0442\u0430\u0440\u0430\u044F \u043E\u0431\u0438\u0434\u0430", "\u043D\u0435\u0434\u043E\u0432\u0435\u0440\u0438\u0435", "\u0434\u0435\u043B\u043E\u0432\u043E\u0439 \u0441\u043F\u043E\u0440"]);
+    enemy = `${eName} \u0438\u0437 \u0433. ${eTown} (${reason})`;
+  }
+  const belief = overrides.belief || sample(BELIEF_SAMPLES);
+  const goal = overrides.goal || sample(GOAL_SAMPLES);
+  const instinct = overrides.instinct || sample(INSTINCT_SAMPLES);
+  return {
+    details: {
+      age,
+      birth_year,
+      home,
+      fur_color,
+      guard_rank,
+      cloak_color,
+      parents,
+      senior_artisan,
+      mentor,
+      friend,
+      enemy
+    },
+    rewards: {
+      belief,
+      goal,
+      instinct
+    }
+  };
+}
+function generateNPCDetails(overrides = {}, isKeyCharacter = false) {
+  let role = overrides.role;
+  if (!role) {
+    const categoryRoll = Math.random();
+    if (categoryRoll < 0.65) role = sample(NPC_ROLES.craftsmen);
+    else if (categoryRoll < 0.85) role = sample(NPC_ROLES.guard);
+    else role = sample(NPC_ROLES.special);
+  }
+  const home = overrides.home || sample(HOMES).name;
+  const age = overrides.age && overrides.age > 0 ? overrides.age : Math.floor(Math.random() * 35) + 18;
+  const fur_color = overrides.fur_color || sampleWeighted(FUR_COLORS);
+  let cloak_color = overrides.cloak_color || "";
+  if (!cloak_color && (role.toLowerCase().includes("\u0441\u0442\u0440\u0430\u0436") || role.toLowerCase().includes("\u043E\u043F\u043E\u043B\u0447") || role.toLowerCase().includes("\u043F\u0430\u0442\u0440\u0443\u043B\u044C"))) {
+    cloak_color = sample(CLOAK_COLORS).name;
+  }
+  const result = {
+    details: {
+      role,
+      home,
+      age,
+      fur_color,
+      cloak_color
+    }
+  };
+  if (isKeyCharacter) {
+    result.motivation = {
+      belief: overrides.belief || sample(BELIEF_SAMPLES),
+      goal: overrides.goal || sample(GOAL_SAMPLES),
+      instinct: overrides.instinct || sample(INSTINCT_SAMPLES)
+    };
+  }
+  return result;
+}
+
+// module/details/details-dialog.js
+var { HandlebarsApplicationMixin: HandlebarsApplicationMixin7, ApplicationV2: ApplicationV25 } = foundry.applications.api;
+var TEMPLATE = "systems/mouseguard/templates/actor/dialog-fill-details.hbs";
+function isEmptyValue(val) {
+  if (val === null || val === void 0) return true;
+  if (typeof val === "string") return val.trim() === "";
+  if (typeof val === "number") return val <= 0;
+  return false;
+}
+var MouseGuardDetailsDialog = class _MouseGuardDetailsDialog extends HandlebarsApplicationMixin7(ApplicationV25) {
+  /**
+   * @param {object} options
+   * @param {Actor} options.actor
+   */
+  constructor({ actor, ...options } = {}) {
+    super({ id: _MouseGuardDetailsDialog.idFor(actor), ...options });
+    this.actor = actor;
+    this.onlyEmpty = true;
+    this.formState = this.#getInitialState();
+  }
+  /** @override */
+  static DEFAULT_OPTIONS = {
+    classes: ["mouseguard", "mgs-details-dialog", "themed", "theme-light"],
+    tag: "div",
+    window: {
+      title: "MOUSEGUARD.DetailsDialog.Title",
+      icon: "fa-solid fa-feather-pointed",
+      resizable: true
+    },
+    position: { width: 560, height: "auto" },
+    actions: {
+      generateAll: _MouseGuardDetailsDialog.#onGenerateAll,
+      randomizeField: _MouseGuardDetailsDialog.#onRandomizeField,
+      resetForm: _MouseGuardDetailsDialog.#onResetForm,
+      toggleKey: _MouseGuardDetailsDialog.#onToggleKey,
+      closeDialog: _MouseGuardDetailsDialog.#onCloseDialog
+    }
+  };
+  /** @override */
+  static PARTS = {
+    dialog: { template: TEMPLATE, scrollable: [".mgs-dialog-form"] }
+  };
+  /** Unique window ID per actor to avoid duplicate dialogs. */
+  static idFor(actor) {
+    return `mgs-details-${String(actor?.uuid ?? "none").replace(/[^A-Za-z0-9_-]/g, "-")}`;
+  }
+  /**
+   * Open (or focus) the details dialog for an actor.
+   * @param {Actor} actor
+   * @returns {Promise<MouseGuardDetailsDialog>}
+   */
+  static async open(actor) {
+    if (!actor) return null;
+    if (!actor.isOwner) {
+      ui.notifications.warn(game.i18n.localize("MOUSEGUARD.Test.Error.NotOwner"));
+      return null;
+    }
+    const existing = foundry.applications.instances?.get(_MouseGuardDetailsDialog.idFor(actor));
+    if (existing instanceof _MouseGuardDetailsDialog) {
+      existing.formState = existing.#getInitialState();
+      await existing.render({ force: true });
+      existing.bringToFront?.();
+      return existing;
+    }
+    const app = new _MouseGuardDetailsDialog({ actor });
+    await app.render({ force: true });
+    return app;
+  }
+  /** @override */
+  get title() {
+    return game.i18n.format("MOUSEGUARD.DetailsDialog.TitleFor", { name: this.actor?.name ?? "" });
+  }
+  /** Gather current actor values into a clean working state. */
+  #getInitialState() {
+    const actor = this.actor;
+    const system = actor.system ?? {};
+    const details = system.details ?? {};
+    const isCharacter = actor.type === "character";
+    if (isCharacter) {
+      const rewards = system.rewards ?? {};
+      return {
+        guard_rank: details.guard_rank || "\u0421\u0442\u0440\u0430\u0436",
+        home: details.home || "",
+        age: details.age || 0,
+        birth_year: details.birth_year || 0,
+        fur_color: details.fur_color || "",
+        cloak_color: details.cloak_color || "",
+        parents: details.parents || "",
+        senior_artisan: details.senior_artisan || "",
+        mentor: details.mentor || "",
+        friend: details.friend || "",
+        enemy: details.enemy || "",
+        belief: rewards.belief || "",
+        goal: rewards.goal || "",
+        instinct: rewards.instinct || ""
+      };
+    }
+    const motivation = system.motivation ?? {};
+    return {
+      role: details.role || "",
+      home: details.home || "",
+      age: details.age || 0,
+      fur_color: details.fur_color || "",
+      cloak_color: details.cloak_color || "",
+      keyCharacter: Boolean(system.keyCharacter),
+      belief: motivation.belief || "",
+      goal: motivation.goal || "",
+      instinct: motivation.instinct || ""
+    };
+  }
+  /** @override */
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options);
+    const isCharacter = this.actor.type === "character";
+    const allNpcRoles = [
+      ...NPC_ROLES.craftsmen,
+      ...NPC_ROLES.guard,
+      ...NPC_ROLES.special
+    ];
+    const isTenderfoot = isCharacter && (this.formState.guard_rank?.toLowerCase().includes("\u043B\u0430\u043F\u0430 \u043F\u043E\u043C\u043E\u0449\u0438") || false);
+    return {
+      ...context,
+      actor: this.actor,
+      isCharacter,
+      isNPC: !isCharacter,
+      form: this.formState,
+      onlyEmpty: this.onlyEmpty,
+      isTenderfoot,
+      ranks: GUARD_RANKS,
+      homes: HOMES,
+      furColors: FUR_COLORS,
+      cloakColors: CLOAK_COLORS,
+      crafts: CRAFTS,
+      allNpcRoles,
+      beliefs: BELIEF_SAMPLES,
+      goals: GOAL_SAMPLES,
+      instincts: INSTINCT_SAMPLES
+    };
+  }
+  /** @override */
+  _onRender(context, options) {
+    super._onRender(context, options);
+    const html = this.element;
+    html.querySelectorAll("input, select").forEach((input) => {
+      input.addEventListener("input", (e) => {
+        const name = e.target.name;
+        if (!name) return;
+        if (name === "onlyEmpty") {
+          this.onlyEmpty = e.target.checked;
+          return;
+        }
+        if (name === "keyCharacter") {
+          this.formState.keyCharacter = e.target.checked;
+          return;
+        }
+        const val = e.target.type === "number" ? Number(e.target.value) || 0 : e.target.value;
+        this.formState[name] = val;
+      });
+    });
+    const form = html.querySelector("form.mgs-dialog-form");
+    if (form) {
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        this.#handleFormSubmit();
+      });
+    }
+  }
+  /* -------------------------------------------- */
+  /*  Action Handlers                             */
+  /* -------------------------------------------- */
+  /** Generate all fields (or only empty fields if toggle is active). */
+  static async #onGenerateAll(event, target) {
+    const isCharacter = this.actor.type === "character";
+    const overrides = {};
+    if (this.onlyEmpty) {
+      for (const [key, val] of Object.entries(this.formState)) {
+        if (!isEmptyValue(val)) {
+          overrides[key] = val;
+        }
+      }
+    }
+    if (isCharacter) {
+      const generated = generateCharacterDetails(overrides);
+      Object.assign(this.formState, generated.details, generated.rewards);
+    } else {
+      const isKey = this.formState.keyCharacter;
+      const generated = generateNPCDetails(overrides, isKey);
+      Object.assign(this.formState, generated.details);
+      if (generated.motivation) {
+        Object.assign(this.formState, generated.motivation);
+      }
+    }
+    this.render();
+  }
+  /** Randomize a single specific field. */
+  static async #onRandomizeField(event, target) {
+    const field = target.dataset.field;
+    if (!field) return;
+    const isCharacter = this.actor.type === "character";
+    switch (field) {
+      case "guard_rank": {
+        const rankObj = sample(GUARD_RANKS);
+        this.formState.guard_rank = rankObj.name;
+        if (!rankObj.allowsCloak) this.formState.cloak_color = "";
+        if (this.formState.age < rankObj.minAge || this.formState.age > rankObj.maxAge) {
+          this.formState.age = Math.floor(Math.random() * (rankObj.maxAge - rankObj.minAge + 1)) + rankObj.minAge;
+          this.formState.birth_year = 1152 - this.formState.age;
+        }
+        break;
+      }
+      case "home":
+        this.formState.home = sample(HOMES).name;
+        break;
+      case "age": {
+        if (isCharacter) {
+          const r = GUARD_RANKS.find((item) => item.name === this.formState.guard_rank) ?? GUARD_RANKS[1];
+          this.formState.age = Math.floor(Math.random() * (r.maxAge - r.minAge + 1)) + r.minAge;
+        } else {
+          this.formState.age = Math.floor(Math.random() * 35) + 18;
+        }
+        if (this.formState.birth_year) this.formState.birth_year = 1152 - this.formState.age;
+        break;
+      }
+      case "birth_year": {
+        const age = this.formState.age > 0 ? this.formState.age : 22;
+        this.formState.birth_year = 1152 - age;
+        break;
+      }
+      case "fur_color":
+        this.formState.fur_color = sampleWeighted(FUR_COLORS);
+        break;
+      case "cloak_color": {
+        const isTenderfoot = isCharacter && this.formState.guard_rank?.includes("\u041B\u0430\u043F\u0430 \u043F\u043E\u043C\u043E\u0449\u0438");
+        if (isTenderfoot) {
+          this.formState.cloak_color = "";
+        } else {
+          this.formState.cloak_color = sample(CLOAK_COLORS).name;
+        }
+        break;
+      }
+      case "parents": {
+        const craft = sample(CRAFTS);
+        const father = randomName("male");
+        const mother = randomName("female");
+        this.formState.parents = `${father} \u0438 ${mother} (${craft})`;
+        break;
+      }
+      case "senior_artisan": {
+        const craft = sample(CRAFTS);
+        const name = randomName();
+        this.formState.senior_artisan = `\u041C\u0430\u0441\u0442\u0435\u0440 ${craft.toLowerCase()} ${name} (\u041B\u043E\u043A\u0445\u044D\u0439\u0432\u0435\u043D)`;
+        break;
+      }
+      case "mentor": {
+        const name = randomName();
+        const rank = sample(["\u041F\u0430\u0442\u0440\u0443\u043B\u044C\u043D\u044B\u0439", "\u041B\u0438\u0434\u0435\u0440 \u043F\u0430\u0442\u0440\u0443\u043B\u044F", "\u0412\u0435\u0442\u0435\u0440\u0430\u043D"]);
+        this.formState.mentor = `${name} (${rank})`;
+        break;
+      }
+      case "friend": {
+        const fName = randomName();
+        const fTown = sample(HOMES).name;
+        const fCraft = sample(CRAFTS);
+        this.formState.friend = `${fName}, ${fCraft.toLowerCase()} \u0438\u0437 \u0433. ${fTown}`;
+        break;
+      }
+      case "enemy": {
+        const eName = randomName();
+        const eTown = sample(HOMES).name;
+        const reason = sample(["\u0441\u043E\u043F\u0435\u0440\u043D\u0438\u043A \u043D\u0430 \u0441\u043B\u0443\u0436\u0431\u0435", "\u0441\u0442\u0430\u0440\u0430\u044F \u043E\u0431\u0438\u0434\u0430", "\u043D\u0435\u0434\u043E\u0432\u0435\u0440\u0438\u0435", "\u0434\u0435\u043B\u043E\u0432\u043E\u0439 \u0441\u043F\u043E\u0440"]);
+        this.formState.enemy = `${eName} \u0438\u0437 \u0433. ${eTown} (${reason})`;
+        break;
+      }
+      case "belief":
+        this.formState.belief = sample(BELIEF_SAMPLES);
+        break;
+      case "goal":
+        this.formState.goal = sample(GOAL_SAMPLES);
+        break;
+      case "instinct":
+        this.formState.instinct = sample(INSTINCT_SAMPLES);
+        break;
+      case "role": {
+        const roll = Math.random();
+        if (roll < 0.6) this.formState.role = sample(NPC_ROLES.craftsmen);
+        else if (roll < 0.85) this.formState.role = sample(NPC_ROLES.guard);
+        else this.formState.role = sample(NPC_ROLES.special);
+        break;
+      }
+    }
+    this.render();
+  }
+  /** Reset form state to current database values. */
+  static async #onResetForm(event, target) {
+    this.formState = this.#getInitialState();
+    this.render();
+  }
+  /** Toggle key character for NPC. */
+  static async #onToggleKey(event, target) {
+    this.formState.keyCharacter = target.checked;
+    this.render();
+  }
+  /** Close dialog without saving. */
+  static async #onCloseDialog(event, target) {
+    this.close();
+  }
+  /** Save updates to actor. */
+  async #handleFormSubmit() {
+    if (!this.actor?.isOwner) {
+      ui.notifications.error(game.i18n.localize("MOUSEGUARD.Test.Error.NotOwner"));
+      return;
+    }
+    const isCharacter = this.actor.type === "character";
+    const currentSystem = this.actor.system ?? {};
+    const currentDetails = currentSystem.details ?? {};
+    const updateData = {};
+    if (isCharacter) {
+      const charKeys = [
+        "guard_rank",
+        "home",
+        "age",
+        "birth_year",
+        "fur_color",
+        "cloak_color",
+        "parents",
+        "senior_artisan",
+        "mentor",
+        "friend",
+        "enemy"
+      ];
+      for (const key of charKeys) {
+        const currentVal = currentDetails[key];
+        const newVal = this.formState[key];
+        if (this.onlyEmpty && !isEmptyValue(currentVal)) continue;
+        if (newVal !== void 0 && newVal !== currentVal) {
+          updateData[`system.details.${key}`] = newVal;
+        }
+      }
+      const currentRewards = currentSystem.rewards ?? {};
+      const rewardKeys = ["belief", "goal", "instinct"];
+      for (const key of rewardKeys) {
+        const currentVal = currentRewards[key];
+        const newVal = this.formState[key];
+        if (this.onlyEmpty && !isEmptyValue(currentVal)) continue;
+        if (newVal !== void 0 && newVal !== currentVal) {
+          updateData[`system.rewards.${key}`] = newVal;
+        }
+      }
+    } else {
+      const npcKeys = ["role", "home", "age", "fur_color", "cloak_color"];
+      for (const key of npcKeys) {
+        const currentVal = currentDetails[key];
+        const newVal = this.formState[key];
+        if (this.onlyEmpty && !isEmptyValue(currentVal)) continue;
+        if (newVal !== void 0 && newVal !== currentVal) {
+          updateData[`system.details.${key}`] = newVal;
+        }
+      }
+      if (this.formState.keyCharacter !== void 0 && this.formState.keyCharacter !== currentSystem.keyCharacter) {
+        updateData["system.keyCharacter"] = Boolean(this.formState.keyCharacter);
+      }
+      if (this.formState.keyCharacter) {
+        const currentMotivation = currentSystem.motivation ?? {};
+        const motKeys = ["belief", "goal", "instinct"];
+        for (const key of motKeys) {
+          const currentVal = currentMotivation[key];
+          const newVal = this.formState[key];
+          if (this.onlyEmpty && !isEmptyValue(currentVal)) continue;
+          if (newVal !== void 0 && newVal !== currentVal) {
+            updateData[`system.motivation.${key}`] = newVal;
+          }
+        }
+      }
+    }
+    if (foundry.utils.isEmpty(updateData)) {
+      ui.notifications.info(game.i18n.localize("MOUSEGUARD.DetailsDialog.NoChanges"));
+      this.close();
+      return;
+    }
+    try {
+      await this.actor.update(updateData);
+      ui.notifications.info(
+        game.i18n.format("MOUSEGUARD.DetailsDialog.SuccessApplied", { name: this.actor.name })
+      );
+      this.close();
+    } catch (err) {
+      console.error("Mouse Guard | Error updating actor details:", err);
+      ui.notifications.error(game.i18n.localize("MOUSEGUARD.DetailsDialog.ErrorUpdate"));
+    }
+  }
+};
+
 // module/mouseguard.js
 Hooks.once("init", async function() {
   console.log("Mouse Guard | Initializing Mouse Guard System");
@@ -5779,6 +6665,7 @@ Hooks.once("init", async function() {
     MouseRoll,
     ConflictTracker,
     MouseConflictManager,
+    MouseGuardDetailsDialog,
     effectPanel: new EffectsPanel()
   };
   CONFIG.Actor.documentClass = MouseGuardActor;
@@ -6026,6 +6913,24 @@ Hooks.once("ready", async () => {
 });
 Hooks.on("canvasReady", () => {
   game.mouseguard.effectPanel.render(true);
+});
+Hooks.on("getActorDirectoryEntryContext", (html, entryOptions) => {
+  entryOptions.push({
+    name: "MOUSEGUARD.DetailsDialog.ContextMenu",
+    icon: '<i class="fa-solid fa-feather-pointed"></i>',
+    condition: (header) => {
+      const el = header instanceof HTMLElement ? header : header?.[0];
+      const id = el?.dataset?.documentId ?? el?.dataset?.entryId;
+      const actor = game.actors?.get(id);
+      return Boolean(actor && ["character", "mouse"].includes(actor.type) && actor.isOwner);
+    },
+    callback: (header) => {
+      const el = header instanceof HTMLElement ? header : header?.[0];
+      const id = el?.dataset?.documentId ?? el?.dataset?.entryId;
+      const actor = game.actors?.get(id);
+      if (actor) MouseGuardDetailsDialog.open(actor);
+    }
+  });
 });
 async function registerTours() {
   try {

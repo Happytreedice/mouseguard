@@ -21,6 +21,7 @@ import MouseSocket from "./socket.js";
 import { EffectsPanel } from "./mouse-effects.js";
 import { MouseConflictManager } from "./mouse-conflict-manager.js";
 import { statusEffects } from "./status-effects.js";
+import { MouseGuardDetailsDialog } from "./details/details-dialog.js";
 import {
     CharacterData,
     NPCActorData,
@@ -56,6 +57,7 @@ Hooks.once("init", async function () {
         MouseRoll,
         ConflictTracker,
         MouseConflictManager,
+        MouseGuardDetailsDialog,
         effectPanel: new EffectsPanel()
     };
 
@@ -373,6 +375,25 @@ Hooks.once("ready", async () => {
 
 Hooks.on("canvasReady", () => {
     game.mouseguard.effectPanel.render(true);
+});
+
+Hooks.on("getActorDirectoryEntryContext", (html, entryOptions) => {
+    entryOptions.push({
+        name: "MOUSEGUARD.DetailsDialog.ContextMenu",
+        icon: '<i class="fa-solid fa-feather-pointed"></i>',
+        condition: (header) => {
+            const el = header instanceof HTMLElement ? header : header?.[0];
+            const id = el?.dataset?.documentId ?? el?.dataset?.entryId;
+            const actor = game.actors?.get(id);
+            return Boolean(actor && ["character", "mouse"].includes(actor.type) && actor.isOwner);
+        },
+        callback: (header) => {
+            const el = header instanceof HTMLElement ? header : header?.[0];
+            const id = el?.dataset?.documentId ?? el?.dataset?.entryId;
+            const actor = game.actors?.get(id);
+            if (actor) MouseGuardDetailsDialog.open(actor);
+        }
+    });
 });
 
 /* -------------------------------------------- */

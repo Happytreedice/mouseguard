@@ -248,7 +248,8 @@ export class MouseGuardCharacterSheet extends HandlebarsApplicationMixin(ActorSh
             itemCreate: MouseGuardCharacterSheet.#onItemCreate,
             itemEdit: MouseGuardCharacterSheet.#onItemEdit,
             itemDelete: MouseGuardCharacterSheet.#onItemDelete,
-            openCompendium: MouseGuardCharacterSheet.#onOpenCompendium
+            openCompendium: MouseGuardCharacterSheet.#onOpenCompendium,
+            openDetails: MouseGuardCharacterSheet.#onOpenDetails
         }
     };
 
@@ -312,6 +313,13 @@ export class MouseGuardCharacterSheet extends HandlebarsApplicationMixin(ActorSh
             button.className = "header-control icon fa-solid fa-lock mgs-mode-toggle";
             button.dataset.action = "toggleMode";
             title.before(button);
+
+            const detailsBtn = document.createElement("button");
+            detailsBtn.type = "button";
+            detailsBtn.className = "header-control icon fa-solid fa-feather-pointed mgs-details-toggle";
+            detailsBtn.dataset.action = "openDetails";
+            detailsBtn.dataset.tooltip = "MOUSEGUARD.DetailsDialog.ButtonHint";
+            title.before(detailsBtn);
         }
         return frame;
     }
@@ -796,6 +804,13 @@ export class MouseGuardCharacterSheet extends HandlebarsApplicationMixin(ActorSh
         if (!this.isEditable) return;
         this.#editMode = !this.isEditMode;
         this.render();
+    }
+
+    /** Open details fill and generator dialog. */
+    static #onOpenDetails(event) {
+        event.preventDefault();
+        const dlg = game.mouseguard?.MouseGuardDetailsDialog;
+        if (dlg) dlg.open(this.actor);
     }
 
     /** Click on a skill or ability name: Test dialog; Shift+click (or quick mode): roll at once. */

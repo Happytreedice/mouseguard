@@ -3269,3 +3269,260 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
+/* -------------------------------------------- */
+/*  Mouse Guard Details Fill & Generator Dialog */
+/* -------------------------------------------- */
+.mgs-details-dialog {
+  --mg-dialog-bg: #f8f2e4;
+  --mg-dialog-card: #fffdf8;
+  --mg-dialog-border: #c8b598;
+  --mg-dialog-accent: #6f4228;
+  --mg-dialog-ink: #32251a;
+  --mg-dialog-muted: #786956;
+  --mg-dialog-highlight: #d97d26;
+  /* Dialog Header */
+  /* Options Bar */
+  /* Form Container */
+  /* Fieldset Card */
+  /* Grids */
+  /* Dice randomize button */
+  /* Buttons */
+  /* Dialog Footer */
+}
+.mgs-details-dialog .window-content {
+  padding: 0;
+  background: var(--mg-dialog-bg);
+  color: var(--mg-dialog-ink);
+  font-family: var(--mg-body);
+  overflow: hidden;
+}
+.mgs-details-dialog .mgs-details-dialog-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 85vh;
+  overflow: hidden;
+}
+.mgs-details-dialog .mgs-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  background: linear-gradient(180deg, #ede1ca 0%, #e2d1b2 100%);
+  border-bottom: 2px solid var(--mg-dialog-border);
+}
+.mgs-details-dialog .mgs-dialog-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.mgs-details-dialog .mgs-dialog-actor-name {
+  margin: 0;
+  font-family: var(--mg-heading);
+  font-size: 20px;
+  color: var(--mg-dialog-accent);
+  line-height: 1.1;
+}
+.mgs-details-dialog .mgs-dialog-subtitle {
+  font-size: 12px;
+  color: var(--mg-dialog-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.mgs-details-dialog .mgs-dialog-toolbar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.mgs-details-dialog .mgs-dialog-options-bar {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  background: #f1e6d0;
+  border-bottom: 1px solid var(--mg-dialog-border);
+  font-size: 13px;
+}
+.mgs-details-dialog .mgs-dialog-options-bar .mgs-checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  font-weight: 600;
+  color: var(--mg-dialog-ink);
+}
+.mgs-details-dialog .mgs-dialog-options-bar .mgs-checkbox-label input[type="checkbox"] {
+  margin: 0;
+  accent-color: var(--mg-dialog-highlight);
+}
+.mgs-details-dialog .mgs-dialog-form {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.mgs-details-dialog .mgs-fieldset {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--mg-dialog-border);
+  border-radius: 4px;
+  background: var(--mg-dialog-card);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+.mgs-details-dialog .mgs-fieldset .mgs-legend {
+  font-family: var(--mg-heading);
+  font-size: 15px;
+  color: var(--mg-dialog-accent);
+  padding: 0 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.mgs-details-dialog .mgs-fieldset .mgs-fieldset-hint {
+  margin: 0 0 8px;
+  font-size: 12px;
+  color: var(--mg-dialog-muted);
+  font-style: italic;
+}
+.mgs-details-dialog .mgs-form-grid {
+  display: grid;
+  gap: 10px 14px;
+}
+.mgs-details-dialog .mgs-form-grid--2col {
+  grid-template-columns: repeat(2, 1fr);
+}
+.mgs-details-dialog .mgs-form-grid--1col {
+  grid-template-columns: 1fr;
+}
+.mgs-details-dialog .mgs-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.mgs-details-dialog .mgs-form-group--full {
+  grid-column: -1;
+}
+.mgs-details-dialog .mgs-form-group label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--mg-dialog-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.mgs-details-dialog .mgs-form-group .mgs-hint-tag {
+  font-size: 11px;
+  font-weight: normal;
+  color: var(--mg-dialog-muted);
+  text-transform: none;
+}
+.mgs-details-dialog .mgs-input-with-btn {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.mgs-details-dialog .mgs-input-with-btn input,
+.mgs-details-dialog .mgs-input-with-btn select {
+  flex: 1;
+  min-width: 0;
+  height: 28px;
+  padding: 2px 8px;
+  font-family: var(--mg-body);
+  font-size: 13px;
+  color: var(--mg-dialog-ink);
+  background: #fff;
+  border: 1px solid var(--mg-dialog-border);
+  border-radius: 3px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.mgs-details-dialog .mgs-input-with-btn input:focus,
+.mgs-details-dialog .mgs-input-with-btn select:focus {
+  border-color: var(--mg-dialog-highlight);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(217, 125, 38, 0.2);
+}
+.mgs-details-dialog .mgs-dice-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background: #eedec3;
+  border: 1px solid var(--mg-dialog-border);
+  border-radius: 3px;
+  color: var(--mg-dialog-accent);
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s, color 0.15s;
+}
+.mgs-details-dialog .mgs-dice-btn:hover {
+  background: var(--mg-dialog-highlight);
+  color: #fff;
+  border-color: #ba6415;
+  transform: scale(1.05);
+}
+.mgs-details-dialog .mgs-dice-btn:active {
+  transform: scale(0.95);
+}
+.mgs-details-dialog .mgs-checkbox-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-family: var(--mg-heading);
+  font-size: 15px;
+  color: var(--mg-dialog-accent);
+}
+.mgs-details-dialog .mgs-checkbox-inline input[type="checkbox"] {
+  margin: 0;
+  accent-color: var(--mg-dialog-highlight);
+}
+.mgs-details-dialog .mgs-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 28px;
+  padding: 2px 12px;
+  font-family: var(--mg-body);
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.mgs-details-dialog .mgs-btn--action {
+  background: #e68a35;
+  color: #fff;
+  border: 1px solid #b86214;
+}
+.mgs-details-dialog .mgs-btn--action:hover {
+  background: #cf7420;
+  box-shadow: 0 2px 6px rgba(184, 98, 20, 0.3);
+}
+.mgs-details-dialog .mgs-btn--secondary {
+  background: #e3d3b7;
+  color: var(--mg-dialog-ink);
+  border: 1px solid var(--mg-dialog-border);
+}
+.mgs-details-dialog .mgs-btn--secondary:hover {
+  background: #d6be9a;
+}
+.mgs-details-dialog .mgs-btn--primary {
+  background: #466c3e;
+  color: #fff;
+  border: 1px solid #33502d;
+}
+.mgs-details-dialog .mgs-btn--primary:hover {
+  background: #395932;
+  box-shadow: 0 2px 6px rgba(51, 80, 45, 0.3);
+}
+.mgs-details-dialog .mgs-dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid var(--mg-dialog-border);
+}

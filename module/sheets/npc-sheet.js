@@ -42,7 +42,8 @@ export class MouseGuardNPCSheet extends MouseGuardNPCBaseSheet {
         actions: {
             newSession: MouseGuardNPCSheet.#onNewSession,
             traitUse: { handler: MouseGuardNPCSheet.#onTraitUse, buttons: [0, 2] },
-            toggleKey: MouseGuardNPCSheet.#onToggleKey
+            toggleKey: MouseGuardNPCSheet.#onToggleKey,
+            openDetails: MouseGuardNPCSheet.#onOpenDetails
         }
     };
 
@@ -77,6 +78,21 @@ export class MouseGuardNPCSheet extends MouseGuardNPCBaseSheet {
             initial: "main"
         }
     };
+
+    /** @override */
+    async _renderFrame(options) {
+        const frame = await super._renderFrame(options);
+        const title = frame.querySelector(".window-header .window-title");
+        if (title && this.isEditable && this.actor.type === "mouse") {
+            const detailsBtn = document.createElement("button");
+            detailsBtn.type = "button";
+            detailsBtn.className = "header-control icon fa-solid fa-feather-pointed mgs-details-toggle";
+            detailsBtn.dataset.action = "openDetails";
+            detailsBtn.dataset.tooltip = "MOUSEGUARD.DetailsDialog.ButtonHint";
+            title.before(detailsBtn);
+        }
+        return frame;
+    }
 
     /* -------------------------------------------- */
 
@@ -268,5 +284,12 @@ export class MouseGuardNPCSheet extends MouseGuardNPCBaseSheet {
         event.preventDefault();
         if (!this.isEditable) return;
         return this.actor.update({ "system.keyCharacter": !this.actor.system.keyCharacter });
+    }
+
+    /** Open details fill and generator dialog. */
+    static #onOpenDetails(event) {
+        event.preventDefault();
+        const dlg = game.mouseguard?.MouseGuardDetailsDialog;
+        if (dlg) dlg.open(this.actor);
     }
 }

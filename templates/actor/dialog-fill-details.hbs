@@ -1,0 +1,387 @@
+{{!-- Mouse Guard Details Fill & Generator Dialog (ApplicationV2) --}}
+<div class="mgs-details-dialog-content">
+    <header class="mgs-dialog-header">
+        <div class="mgs-dialog-title-block">
+            <h2 class="mgs-dialog-actor-name">{{actor.name}}</h2>
+            <span class="mgs-dialog-subtitle">
+                {{#if isCharacter}}
+                    {{localize "MOUSEGUARD.DetailsDialog.SubtitleCharacter"}}
+                {{else}}
+                    {{localize "MOUSEGUARD.DetailsDialog.SubtitleNPC"}}
+                {{/if}}
+            </span>
+        </div>
+
+        <div class="mgs-dialog-toolbar">
+            <button type="button" class="mgs-btn mgs-btn--action" data-action="generateAll"
+                    data-tooltip="{{localize 'MOUSEGUARD.DetailsDialog.GenerateAllHint'}}">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span>{{localize "MOUSEGUARD.DetailsDialog.GenerateAll"}}</span>
+            </button>
+            <button type="button" class="mgs-btn mgs-btn--secondary" data-action="resetForm"
+                    data-tooltip="{{localize 'MOUSEGUARD.DetailsDialog.ResetHint'}}">
+                <i class="fa-solid fa-rotate-left"></i>
+                <span>{{localize "MOUSEGUARD.DetailsDialog.Reset"}}</span>
+            </button>
+        </div>
+    </header>
+
+    <div class="mgs-dialog-options-bar">
+        <label class="mgs-checkbox-label" data-tooltip="{{localize 'MOUSEGUARD.DetailsDialog.OnlyEmptyHint'}}">
+            <input type="checkbox" name="onlyEmpty" {{#if onlyEmpty}}checked{{/if}}>
+            <span>{{localize "MOUSEGUARD.DetailsDialog.OnlyEmpty"}}</span>
+        </label>
+    </div>
+
+    <form class="mgs-dialog-form" autocomplete="off">
+        {{#if isCharacter}}
+        {{!-- Character / Player Mouse Fields --}}
+        <fieldset class="mgs-fieldset">
+            <legend class="mgs-legend"><i class="fa-solid fa-shield-halved"></i> {{localize "MOUSEGUARD.DetailsDialog.SectionService"}}</legend>
+            <div class="mgs-form-grid mgs-form-grid--2col">
+                <div class="mgs-form-group">
+                    <label for="mgs-guard-rank">{{localize "MOUSEGUARD.Sheet.GuardRank"}}</label>
+                    <div class="mgs-input-with-btn">
+                        <select id="mgs-guard-rank" name="guard_rank" data-field="guard_rank">
+                            {{#each ranks as |r|}}
+                            <option value="{{r.name}}" {{#ifEquals @root.form.guard_rank r.name}}selected{{/ifEquals}}>
+                                {{r.name}} ({{r.minAge}}–{{r.maxAge}} {{localize 'MOUSEGUARD.DetailsDialog.YearsShort'}})
+                            </option>
+                            {{/each}}
+                        </select>
+                        <button type="button" class="mgs-dice-btn" data-action="randomizeField" data-field="guard_rank"
+                                data-tooltip="{{localize 'MOUSEGUARD.DetailsDialog.Randomize'}}">
+                            <i class="fa-solid fa-dice"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mgs-form-group">
+                    <label for="mgs-home">{{localize "MOUSEGUARD.Sheet.Home"}}</label>
+                    <div class="mgs-input-with-btn">
+                        <input id="mgs-home" type="text" name="home" value="{{form.home}}" list="mgs-homes-list">
+                        <datalist id="mgs-homes-list">
+                            {{#each homes as |h|}}
+                            <option value="{{h.name}}">{{h.hint}}</option>
+                            {{/each}}
+                        </datalist>
+                        <button type="button" class="mgs-dice-btn" data-action="randomizeField" data-field="home"
+                                data-tooltip="{{localize 'MOUSEGUARD.DetailsDialog.Randomize'}}">
+                            <i class="fa-solid fa-dice"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mgs-form-group">
+                    <label for="mgs-age">{{localize "MOUSEGUARD.Sheet.Age"}}</label>
+                    <div class="mgs-input-with-btn">
+                        <input id="mgs-age" type="number" name="age" value="{{form.age}}" min="14" max="80" step="1">
+                        <button type="button" class="mgs-dice-btn" data-action="randomizeField" data-field="age"
+                                data-tooltip="{{localize 'MOUSEGUARD.DetailsDialog.Randomize'}}">
+                            <i class="fa-solid fa-dice"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mgs-form-group">
+                    <label for="mgs-birth-year">{{localize "MOUSEGUARD.Sheet.BirthYear"}}</label>
+                    <div class="mgs-input-with-btn">
+                        <input id="mgs-birth-year" type="number" name="birth_year" value="{{form.birth_year}}" step="1">
+                        <button type="button" class="mgs-dice-btn" data-action="randomizeField" data-field="birth_year"
+                                data-tooltip="{{localize 'MOUSEGUARD.DetailsDialog.Randomize'}}">
+                            <i class="fa-solid fa-dice"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mgs-form-group">
+                    <label for="mgs-fur-color">{{localize "MOUSEGUARD.Sheet.FurColor"}}</label>
+                    <div class="mgs-input-with-btn">
+                        <input id="mgs-fur-color" type="text" name="fur_color" value="{{form.fur_color}}" list="mgs-furs-list">
+                        <datalist id="mgs-furs-list">
+                            {{#each furColors as |f|}}
+                            <option value="{{f.name}}"></option>
+                            {{/each}}
+                        </datalist>
+                        <button type="button" class="mgs-dice-btn" data-action="randomizeField" data-field="fur_color"
+                                data-tooltip="{{localize 'MOUSEGUARD.DetailsDialog.Randomize'}}">
+                            <i class="fa-solid fa-dice"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mgs-form-group">
+                    <label for="mgs-cloak-color">
+                        {{localize "MOUSEGUARD.Sheet.CloakColor"}}
+                        {{#if isTenderfoot}}<small class="mgs-hint-tag">({{localize "MOUSEGUARD.DetailsDialog.NoCloakForTenderfoot"}})</small>{{/if}}
+                    </label>
+                    <div class="mgs-input-with-btn">
+                        <input id="mgs-cloak-color" type="text" name="cloak_color" value="{{form.cloak_color}}" list="mgs-cloaks-list"
+                               placeholder="{{#if isTenderfoot}}{{localize 'MOUSEGUARD.DetailsDialog.NoCloak'}}{{else}}{{localize 'MOUSEGUARD.DetailsDialog.CloakPlaceholder'}}{{/if}}">
+                        <datalist id="mgs-cloaks-list">
+                            {{#each cloakColors as |c|}}
+                            <option value="{{c.name}}">{{c.meaning}}</option>
+                            {{/each}}
+                        </datalist>
+                        <button type="button" class="mgs-dice-btn" data-action="randomizeField" data-field="cloak_color"
+                                data-tooltip="{{localize 'MOUSEGUARD.DetailsDialog.Randomize'}}">
+                            <i class="fa-solid fa-dice"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="mgs-fieldset">
+            <legend class="mgs-legend"><i class="fa-solid fa-users"></i> {{localize "MOUSEGUARD.DetailsDialog.SectionEnvironment"}}</legend>
+            <div class="mgs-form-grid mgs-form-grid--1col">
+                <div class="mgs-form-group">
+                    <label for="mgs-parents">{{localize "MOUSEGUARD.Sheet.Parents"}}</label>
+                    <div class="mgs-input-with-btn">
+                        <input id="mgs-parents" type="text" name="parents" value="{{form.parents}}"
+                               placeholder="{{localize 'MOUSEGUARD.DetailsDialog.ParentsPlaceholder'}}">
+                        <button type="button" class="mgs-dice-btn" data-action="randomizeField" data-field="parents"
+                                data-tooltip="{{localize 'MOUSEGUARD.DetailsDialog.Randomize'}}">
+                            <i class="fa-solid fa-dice"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mgs-form-group">
+                    <label for="mgs-senior">{{localize "MOUSEGUARD.Sheet.SeniorArtisan"}}</label>
+                    <div class="mgs-input-with-btn">
+                        <input id="mgs-senior" type="text" name="senior_artisan" value="{{form.senior_artisan}}"
+                               placeholder="{{localize 'MOUSEGUARD.DetailsDialog.SeniorPlaceholder'}}">
+                        <button type="button" class="mgs-dice-btn" data-action="randomizeField" data-field="senior_artisan"
+                                data-tooltip="{{localize 'MOUSEGUARD.DetailsDialog.Randomize'}}">
+                            <i class="fa-solid fa-dice"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mgs-form-group">
+                    <label for="mgs-mentor">{{localize "MOUSEGUARD.Sheet.Mentor"}}</label>
+                    <div class="mgs-input-with-btn">
+                        <input id="mgs-mentor" type="text" name="mentor" value="{{form.mentor}}"
+                               placeholder="{{localize 'MOUSEGUARD.DetailsDialog.MentorPlaceholder'}}">
+                        <button type="button" class="mgs-dice-btn" data-action="randomizeField" data-field="mentor"
+                                data-tooltip="{{localize 'MOUSEGUARD.DetailsDialog.Randomize'}}">
+                            <i class="fa-solid fa-dice"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mgs-form-group">
+                    <label for="mgs-friend">{{localize "MOUSEGUARD.Sheet.Friend"}}</label>
+                    <div class="mgs-input-with-btn">
+                        <input id="mgs-friend" type="text" name="friend" value="{{form.friend}}"
+                               placeholder="{{localize 'MOUSEGUARD.DetailsDialog.FriendPlaceholder'}}">
+                        <button type="button" class="mgs-dice-btn" data-action="randomizeField" data-field="friend"
+                                data-tooltip="{{localize 'MOUSEGUARD.DetailsDialog.Randomize'}}">
+                            <i class="fa-solid fa-dice"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mgs-form-group">
+                    <label for="mgs-enemy">{{localize "MOUSEGUARD.Sheet.Enemy"}}</label>
+                    <div class="mgs-input-with-btn">
+                        <input id="mgs-enemy" type="text" name="enemy" value="{{form.enemy}}"
+                               placeholder="{{localize 'MOUSEGUARD.DetailsDialog.EnemyPlaceholder'}}">
+                        <button type="button" class="mgs-dice-btn" data-action="randomizeField" data-field="enemy"
+                                data-tooltip="{{localize 'MOUSEGUARD.DetailsDialog.Randomize'}}">
+                            <i class="fa-solid fa-dice"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="mgs-fieldset">
+            <legend class="mgs-legend"><i class="fa-solid fa-compass"></i> {{localize "MOUSEGUARD.DetailsDialog.SectionMotivation"}}</legend>
+            <div class="mgs-form-grid mgs-form-grid--1col">
+                <div class="mgs-form-group">
+                    <label for="mgs-belief">{{localize "MOUSEGUARD.Sheet.Belief"}}</label>
+                    <div class="mgs-input-with-btn">
+                        <input id="mgs-belief" type="text" name="belief" value="{{form.belief}}" list="mgs-beliefs-list">
+                        <datalist id="mgs-beliefs-list">
+                            {{#each beliefs as |b|}}<option value="{{b}}"></option>{{/each}}
+                        </datalist>
+                        <button type="button" class="mgs-dice-btn" data-action="randomizeField" data-field="belief"
+                                data-tooltip="{{localize 'MOUSEGUARD.DetailsDialog.Randomize'}}">
+                            <i class="fa-solid fa-dice"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mgs-form-group">
+                    <label for="mgs-goal">{{localize "MOUSEGUARD.Sheet.Goal"}}</label>
+                    <div class="mgs-input-with-btn">
+                        <input id="mgs-goal" type="text" name="goal" value="{{form.goal}}" list="mgs-goals-list">
+                        <datalist id="mgs-goals-list">
+                            {{#each goals as |g|}}<option value="{{g}}"></option>{{/each}}
+                        </datalist>
+                        <button type="button" class="mgs-dice-btn" data-action="randomizeField" data-field="goal"
+                                data-tooltip="{{localize 'MOUSEGUARD.DetailsDialog.Randomize'}}">
+                            <i class="fa-solid fa-dice"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mgs-form-group">
+                    <label for="mgs-instinct">{{localize "MOUSEGUARD.Sheet.Instinct"}}</label>
+                    <div class="mgs-input-with-btn">
+                        <input id="mgs-instinct" type="text" name="instinct" value="{{form.instinct}}" list="mgs-instincts-list">
+                        <datalist id="mgs-instincts-list">
+                            {{#each instincts as |i|}}<option value="{{i}}"></option>{{/each}}
+                        </datalist>
+                        <button type="button" class="mgs-dice-btn" data-action="randomizeField" data-field="instinct"
+                                data-tooltip="{{localize 'MOUSEGUARD.DetailsDialog.Randomize'}}">
+                            <i class="fa-solid fa-dice"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+        {{else}}
+        {{!-- NPC Mouse Fields --}}
+        <fieldset class="mgs-fieldset">
+            <legend class="mgs-legend"><i class="fa-solid fa-id-card"></i> {{localize "MOUSEGUARD.NPCSheet.Details"}}</legend>
+            <div class="mgs-form-grid mgs-form-grid--2col">
+                <div class="mgs-form-group">
+                    <label for="mgs-npc-role">{{localize "MOUSEGUARD.NPCSheet.Role"}}</label>
+                    <div class="mgs-input-with-btn">
+                        <input id="mgs-npc-role" type="text" name="role" value="{{form.role}}" list="mgs-roles-list">
+                        <datalist id="mgs-roles-list">
+                            {{#each allNpcRoles as |r|}}<option value="{{r}}"></option>{{/each}}
+                        </datalist>
+                        <button type="button" class="mgs-dice-btn" data-action="randomizeField" data-field="role"
+                                data-tooltip="{{localize 'MOUSEGUARD.DetailsDialog.Randomize'}}">
+                            <i class="fa-solid fa-dice"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mgs-form-group">
+                    <label for="mgs-npc-home">{{localize "MOUSEGUARD.Sheet.Home"}}</label>
+                    <div class="mgs-input-with-btn">
+                        <input id="mgs-npc-home" type="text" name="home" value="{{form.home}}" list="mgs-homes-list">
+                        <datalist id="mgs-homes-list">
+                            {{#each homes as |h|}}<option value="{{h.name}}">{{h.hint}}</option>{{/each}}
+                        </datalist>
+                        <button type="button" class="mgs-dice-btn" data-action="randomizeField" data-field="home"
+                                data-tooltip="{{localize 'MOUSEGUARD.DetailsDialog.Randomize'}}">
+                            <i class="fa-solid fa-dice"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mgs-form-group">
+                    <label for="mgs-npc-age">{{localize "MOUSEGUARD.Sheet.Age"}}</label>
+                    <div class="mgs-input-with-btn">
+                        <input id="mgs-npc-age" type="number" name="age" value="{{form.age}}" min="1" max="80" step="1">
+                        <button type="button" class="mgs-dice-btn" data-action="randomizeField" data-field="age"
+                                data-tooltip="{{localize 'MOUSEGUARD.DetailsDialog.Randomize'}}">
+                            <i class="fa-solid fa-dice"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mgs-form-group">
+                    <label for="mgs-npc-fur">{{localize "MOUSEGUARD.Sheet.FurColor"}}</label>
+                    <div class="mgs-input-with-btn">
+                        <input id="mgs-npc-fur" type="text" name="fur_color" value="{{form.fur_color}}" list="mgs-furs-list">
+                        <datalist id="mgs-furs-list">
+                            {{#each furColors as |f|}}<option value="{{f.name}}"></option>{{/each}}
+                        </datalist>
+                        <button type="button" class="mgs-dice-btn" data-action="randomizeField" data-field="fur_color"
+                                data-tooltip="{{localize 'MOUSEGUARD.DetailsDialog.Randomize'}}">
+                            <i class="fa-solid fa-dice"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mgs-form-group mgs-form-group--full">
+                    <label for="mgs-npc-cloak">{{localize "MOUSEGUARD.Sheet.CloakColor"}}</label>
+                    <div class="mgs-input-with-btn">
+                        <input id="mgs-npc-cloak" type="text" name="cloak_color" value="{{form.cloak_color}}" list="mgs-cloaks-list">
+                        <datalist id="mgs-cloaks-list">
+                            {{#each cloakColors as |c|}}<option value="{{c.name}}">{{c.meaning}}</option>{{/each}}
+                        </datalist>
+                        <button type="button" class="mgs-dice-btn" data-action="randomizeField" data-field="cloak_color"
+                                data-tooltip="{{localize 'MOUSEGUARD.DetailsDialog.Randomize'}}">
+                            <i class="fa-solid fa-dice"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="mgs-fieldset">
+            <legend class="mgs-legend">
+                <label class="mgs-checkbox-inline">
+                    <input type="checkbox" name="keyCharacter" {{#if form.keyCharacter}}checked{{/if}} data-action="toggleKey">
+                    <span>{{localize "MOUSEGUARD.NPCSheet.KeyCharacter"}}</span>
+                </label>
+            </legend>
+            <p class="mgs-fieldset-hint">{{localize "MOUSEGUARD.NPCSheet.KeyCharacterHint"}}</p>
+
+            {{#if form.keyCharacter}}
+            <div class="mgs-form-grid mgs-form-grid--1col">
+                <div class="mgs-form-group">
+                    <label for="mgs-npc-belief">{{localize "MOUSEGUARD.Sheet.Belief"}}</label>
+                    <div class="mgs-input-with-btn">
+                        <input id="mgs-npc-belief" type="text" name="belief" value="{{form.belief}}" list="mgs-beliefs-list">
+                        <datalist id="mgs-beliefs-list">
+                            {{#each beliefs as |b|}}<option value="{{b}}"></option>{{/each}}
+                        </datalist>
+                        <button type="button" class="mgs-dice-btn" data-action="randomizeField" data-field="belief"
+                                data-tooltip="{{localize 'MOUSEGUARD.DetailsDialog.Randomize'}}">
+                            <i class="fa-solid fa-dice"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mgs-form-group">
+                    <label for="mgs-npc-goal">{{localize "MOUSEGUARD.Sheet.Goal"}}</label>
+                    <div class="mgs-input-with-btn">
+                        <input id="mgs-npc-goal" type="text" name="goal" value="{{form.goal}}" list="mgs-goals-list">
+                        <datalist id="mgs-goals-list">
+                            {{#each goals as |g|}}<option value="{{g}}"></option>{{/each}}
+                        </datalist>
+                        <button type="button" class="mgs-dice-btn" data-action="randomizeField" data-field="goal"
+                                data-tooltip="{{localize 'MOUSEGUARD.DetailsDialog.Randomize'}}">
+                            <i class="fa-solid fa-dice"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mgs-form-group">
+                    <label for="mgs-npc-instinct">{{localize "MOUSEGUARD.Sheet.Instinct"}}</label>
+                    <div class="mgs-input-with-btn">
+                        <input id="mgs-npc-instinct" type="text" name="instinct" value="{{form.instinct}}" list="mgs-instincts-list">
+                        <datalist id="mgs-instincts-list">
+                            {{#each instincts as |i|}}<option value="{{i}}"></option>{{/each}}
+                        </datalist>
+                        <button type="button" class="mgs-dice-btn" data-action="randomizeField" data-field="instinct"
+                                data-tooltip="{{localize 'MOUSEGUARD.DetailsDialog.Randomize'}}">
+                            <i class="fa-solid fa-dice"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {{/if}}
+        </fieldset>
+        {{/if}}
+
+        <footer class="mgs-dialog-footer">
+            <button type="button" class="mgs-btn mgs-btn--secondary" data-action="closeDialog">
+                <i class="fa-solid fa-xmark"></i> {{localize "Cancel"}}
+            </button>
+            <button type="submit" class="mgs-btn mgs-btn--primary">
+                <i class="fa-solid fa-check"></i> {{localize "MOUSEGUARD.DetailsDialog.Apply"}}
+            </button>
+        </footer>
+    </form>
+</div>
