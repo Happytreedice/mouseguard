@@ -44,7 +44,7 @@ export class MouseGuardDetailsDialog extends HandlebarsApplicationMixin(Applicat
         super({ id: MouseGuardDetailsDialog.idFor(actor), ...options });
         this.actor = actor;
         this.onlyEmpty = true;
-        this.formState = this.#getInitialState();
+        this.formState = MouseGuardDetailsDialog.getInitialState(this.actor);
     }
 
     /** @override */
@@ -90,7 +90,7 @@ export class MouseGuardDetailsDialog extends HandlebarsApplicationMixin(Applicat
 
         const existing = foundry.applications.instances?.get(MouseGuardDetailsDialog.idFor(actor));
         if (existing instanceof MouseGuardDetailsDialog) {
-            existing.formState = existing.#getInitialState();
+            existing.formState = MouseGuardDetailsDialog.getInitialState(existing.actor);
             await existing.render({ force: true });
             existing.bringToFront?.();
             return existing;
@@ -106,12 +106,15 @@ export class MouseGuardDetailsDialog extends HandlebarsApplicationMixin(Applicat
         return game.i18n.format("MOUSEGUARD.DetailsDialog.TitleFor", { name: this.actor?.name ?? "" });
     }
 
-    /** Gather current actor values into a clean working state. */
-    #getInitialState() {
-        const actor = this.actor;
-        const system = actor.system ?? {};
+    /**
+     * Gather current actor values into a clean working state.
+     * @param {Actor} actor
+     * @returns {object}
+     */
+    static getInitialState(actor) {
+        const system = actor?.system ?? {};
         const details = system.details ?? {};
-        const isCharacter = actor.type === "character";
+        const isCharacter = actor?.type === "character";
 
         if (isCharacter) {
             const rewards = system.rewards ?? {};
@@ -219,8 +222,12 @@ export class MouseGuardDetailsDialog extends HandlebarsApplicationMixin(Applicat
     /*  Action Handlers                             */
     /* -------------------------------------------- */
 
-    /** Generate all fields (or only empty fields if toggle is active). */
-    static async #onGenerateAll(event, target) {
+    /**
+     * Generate all fields (or only empty fields if toggle is active).
+     * @this {MouseGuardDetailsDialog}
+     */
+    static async #onGenerateAll(event) {
+        event.preventDefault();
         const isCharacter = this.actor.type === "character";
         const overrides = {};
 
@@ -248,8 +255,12 @@ export class MouseGuardDetailsDialog extends HandlebarsApplicationMixin(Applicat
         this.render();
     }
 
-    /** Randomize a single specific field. */
+    /**
+     * Randomize a single specific field.
+     * @this {MouseGuardDetailsDialog}
+     */
     static async #onRandomizeField(event, target) {
+        event.preventDefault();
         const field = target.dataset.field;
         if (!field) return;
 
@@ -352,20 +363,31 @@ export class MouseGuardDetailsDialog extends HandlebarsApplicationMixin(Applicat
         this.render();
     }
 
-    /** Reset form state to current database values. */
-    static async #onResetForm(event, target) {
-        this.formState = this.#getInitialState();
+    /**
+     * Reset form state to current database values.
+     * @this {MouseGuardDetailsDialog}
+     */
+    static async #onResetForm(event) {
+        event.preventDefault();
+        this.formState = MouseGuardDetailsDialog.getInitialState(this.actor);
         this.render();
     }
 
-    /** Toggle key character for NPC. */
-    static async #onToggleKey(event, target) {
+    /**
+     * Toggle key character for NPC.
+     * @this {MouseGuardDetailsDialog}
+     */
+    static async #onToggleKey(_event, target) {
         this.formState.keyCharacter = target.checked;
         this.render();
     }
 
-    /** Close dialog without saving. */
-    static async #onCloseDialog(event, target) {
+    /**
+     * Close dialog without saving.
+     * @this {MouseGuardDetailsDialog}
+     */
+    static async #onCloseDialog(event) {
+        event.preventDefault();
         this.close();
     }
 
