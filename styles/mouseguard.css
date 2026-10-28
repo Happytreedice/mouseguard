@@ -191,10 +191,95 @@
   font-size: 11px;
   font-style: italic;
   color: #b8b8b8;
-  max-width: 50%;
+  max-width: 35%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.mouse-combat-tracker .combat-team-block .combat-team-header .team-disposition-block {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+.mouse-combat-tracker .combat-team-block .combat-team-header .team-disposition-block .team-dispo-label {
+  color: #d2c19a;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-right: 2px;
+}
+.mouse-combat-tracker .combat-team-block .combat-team-header .team-disposition-block .team-dispo-value {
+  font-size: 12px;
+  color: #fff;
+  min-width: 34px;
+  text-align: center;
+}
+.mouse-combat-tracker .combat-team-block .combat-team-header .team-disposition-block .team-dispo-value strong {
+  color: #ffda73;
+  font-size: 13px;
+}
+.mouse-combat-tracker .combat-team-block .combat-team-header .team-disposition-block .team-dispo-value.is-zero {
+  color: #ff6b6b;
+  text-decoration: line-through;
+}
+.mouse-combat-tracker .combat-team-block .combat-team-header .team-disposition-block .team-dispo-value.is-zero strong {
+  color: #ff6b6b;
+}
+.mouse-combat-tracker .combat-team-block .combat-team-header .team-disposition-block .team-dispo-btn {
+  width: 18px;
+  height: 18px;
+  line-height: 16px;
+  padding: 0;
+  margin: 0;
+  font-size: 9px;
+  border: 1px solid #555;
+  border-radius: 2px;
+  background: #3a3a3a;
+  color: #eee;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.mouse-combat-tracker .combat-team-block .combat-team-header .team-disposition-block .team-dispo-btn:hover {
+  background: #555;
+  color: #fff;
+  border-color: #888;
+}
+.mouse-combat-tracker .combat-team-block .combat-team-header .team-disposition-block .team-dispo-btn.minus:hover {
+  background: #7a2222;
+  border-color: #c44;
+}
+.mouse-combat-tracker .combat-team-block .combat-team-header .team-disposition-block .team-dispo-btn.plus:hover {
+  background: #2a6630;
+  border-color: #4a9;
+}
+.mouse-combat-tracker .combat-team-block .combat-team-header .team-disposition-block .team-dispo-set-btn {
+  padding: 1px 6px;
+  font-size: 10px;
+  border: 1px solid #776a55;
+  border-radius: 2px;
+  background: #3d3527;
+  color: #e8d8be;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.mouse-combat-tracker .combat-team-block .combat-team-header .team-disposition-block .team-dispo-set-btn:hover {
+  background: #574b35;
+  color: #fff;
+  border-color: #a89476;
+}
+.mouse-combat-tracker .combat-team-block .combat-team-header .team-disposition-block .team-dispo-empty {
+  font-size: 10px;
+  font-style: italic;
+  color: #888;
 }
 .mouse-combat-tracker .combat-team-block .team-combatant-list {
   list-style: none;
@@ -1561,6 +1646,9 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
+}
+.mouseguard.sheet.actor.mgs-sheet.mgs-animal .mgs-header-grid {
+  grid-template-columns: 164px minmax(0, 1fr);
 }
 .mouseguard.sheet.actor.mgs-sheet .mgs-reward-grid--two {
   grid-template-columns: repeat(2, minmax(0, 1fr));

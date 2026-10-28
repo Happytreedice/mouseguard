@@ -58,6 +58,112 @@ export default class MouseSocket {
         }
     }
 
+    static async askDisposition(data) {
+        const combatId = data.combat?.id ?? data.combat?._id ?? data.combat;
+        const combat = game.combats.get(combatId);
+        const team = String(data.team || "1");
+        const teamLabel = game.i18n.localize(team === "2" ? "COMBAT.Team2" : "COMBAT.Team1");
+        const currentDispo = data.disposition || combat?.getDisposition?.(team) || { current: 0, starting: 0 };
+
+        const htmlContent = await foundry.applications.handlebars.renderTemplate(
+            "systems/mouseguard/templates/parts/conflict-disposition.hbs",
+            {
+                team,
+                teamLabel,
+                disposition: currentDispo
+            }
+        );
+
+        const dialog = new foundry.applications.api.DialogV2({
+            window: {
+                title: game.i18n.format("MOUSEGUARD.Conflict.DispositionTitle", { team: teamLabel })
+            },
+            content: htmlContent,
+            buttons: [
+                {
+                    action: "ok",
+                    label: "MOUSEGUARD.Conflict.Apply",
+                    default: true,
+                    callback: async (event, button, dialog) => {
+                        const form = dialog.element.querySelector("form") ?? dialog.element;
+                        const startingVal = parseInt(form.querySelector("#conflict_dispo_starting")?.value, 10) || 0;
+                        const currentVal = parseInt(form.querySelector("#conflict_dispo_current")?.value, 10) || startingVal;
+
+                        await this.requestSetDisposition(combatId, team, startingVal, currentVal);
+                    }
+                },
+                {
+                    action: "cancel",
+                    label: "MOUSEGUARD.Conflict.Cancel"
+                }
+            ]
+        });
+
+        dialog.render(true);
+    }
+
+    static async setDisposition(data) {
+        if (!game.user.isGM) return;
+        const combatId = data.combat?.id ?? data.combat?._id ?? data.combat;
+        const combat = game.combats.get(combatId);
+        if (!combat) return;
+
+        const team = String(data.team || "1");
+        const starting = Math.max(0, parseInt(data.starting, 10) || 0);
+        const current = Math.max(0, Math.min(starting, parseInt(data.current ?? starting, 10) || 0));
+
+        await combat.setDisposition(team, { starting, current });
+    }
+
+    static async adjustDisposition(data) {
+        if (!game.user.isGM) return;
+        const combatId = data.combat?.id ?? data.combat?._id ?? data.combat;
+        const combat = game.combats.get(combatId);
+        if (!combat) return;
+
+        const team = String(data.team || "1");
+        const delta = parseInt(data.delta, 10) || 0;
+        await combat.adjustDisposition(team, delta);
+
+        const updated = combat.getDisposition(team);
+        if (updated && updated.current === 0) {
+            const teamLabel = game.i18n.localize(team === "2" ? "COMBAT.Team2" : "COMBAT.Team1");
+            ui.notifications.warn(game.i18n.format("MOUSEGUARD.Conflict.TeamDefeated", { team: teamLabel }));
+            ChatMessage.create({
+                content: `<div class="mouse-conflict-defeated"><strong>${teamLabel}</strong>: ${game.i18n.format("MOUSEGUARD.Conflict.TeamDefeated", { team: teamLabel })}</div>`
+            });
+        }
+    }
+
+    static async requestAdjustDisposition(combatId, team, delta) {
+        const payload = {
+            action: "adjustDisposition",
+            combat: combatId,
+            team: String(team),
+            delta: Number(delta)
+        };
+        if (game.user.isGM) {
+            await this.adjustDisposition(payload);
+        } else {
+            game.socket.emit("system.mouseguard", payload);
+        }
+    }
+
+    static async requestSetDisposition(combatId, team, starting, current) {
+        const payload = {
+            action: "setDisposition",
+            combat: combatId,
+            team: String(team),
+            starting: Number(starting),
+            current: Number(current)
+        };
+        if (game.user.isGM) {
+            await this.setDisposition(payload);
+        } else {
+            game.socket.emit("system.mouseguard", payload);
+        }
+    }
+
     static async askMoves(data) {
         const htmlContent = await foundry.applications.handlebars.renderTemplate(
             "systems/mouseguard/templates/parts/conflict-move-manager.hbs",

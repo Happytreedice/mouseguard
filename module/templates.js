@@ -11,6 +11,7 @@ export const preloadHandlebarsTemplates = async function () {
         "systems/mouseguard/templates/effects/effect.hbs",
         "systems/mouseguard/templates/parts/conflict-manager.hbs",
         "systems/mouseguard/templates/parts/conflict-move-manager.hbs",
+        "systems/mouseguard/templates/parts/conflict-disposition.hbs",
         "systems/mouseguard/templates/parts/sheet-attributes.html",
         "systems/mouseguard/templates/parts/sheet-groups.html",
         "systems/mouseguard/templates/chat/combat-action.hbs",

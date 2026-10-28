@@ -1,3 +1,5 @@
+import MouseSocket from "./socket.js";
+
 /**
  * Modern ApplicationV2 Combat Tracker for Mouse Guard conflicts.
  * Supports teams (Team 1, Team 2, Unassigned), Conflict Captains, and Combat Moves.
@@ -11,6 +13,9 @@ export default class MouseCombatTracker extends CombatTracker {
         actions: {
             askMove: MouseCombatTracker.#onAskMove,
             askGoal: MouseCombatTracker.#onAskGoal,
+            askDisposition: MouseCombatTracker.#onAskDisposition,
+            adjustDisposition: MouseCombatTracker.#onAdjustDisposition,
+            setDisposition: MouseCombatTracker.#onSetDisposition,
             doMove: MouseCombatTracker.#onDoMove
         }
     };
@@ -50,23 +55,47 @@ export default class MouseCombatTracker extends CombatTracker {
         const combat = this.viewed;
         const turns = context.turns || [];
 
+        const dispo1 = combat?.getDisposition?.("1") || combat?.getFlag("mouseguard", "disposition1") || null;
+        const dispo2 = combat?.getDisposition?.("2") || combat?.getFlag("mouseguard", "disposition2") || null;
+
+        const cc1Id = combat?.getFlag("mouseguard", "ConflictCaptain");
+        const cc2Id = combat?.getFlag("mouseguard", "ConflictCaptain2");
+
+        const cc1Combatant = cc1Id ? combat?.combatants.get(cc1Id) : null;
+        const cc2Combatant = cc2Id ? combat?.combatants.get(cc2Id) : null;
+
+        const canAdjustTeam1 = game.user.isGM || Boolean(cc1Combatant?.actor?.isOwner);
+        const canAdjustTeam2 = game.user.isGM || Boolean(cc2Combatant?.actor?.isOwner);
+
         context.teams = {
             team1: {
                 id: "1",
                 label: game.i18n.localize("COMBAT.Team1"),
                 goal: combat?.getFlag("mouseguard", "goal1") || game.i18n.localize("COMBAT.NoGoal"),
+                disposition: dispo1,
+                hasDisposition: Boolean(dispo1 && dispo1.starting > 0),
+                canAdjust: canAdjustTeam1,
+                isZero: Boolean(dispo1 && dispo1.starting > 0 && dispo1.current === 0),
                 turns: turns.filter((t) => t.team === "1" || t.team === 1)
             },
             team2: {
                 id: "2",
                 label: game.i18n.localize("COMBAT.Team2"),
                 goal: combat?.getFlag("mouseguard", "goal2") || game.i18n.localize("COMBAT.NoGoal"),
+                disposition: dispo2,
+                hasDisposition: Boolean(dispo2 && dispo2.starting > 0),
+                canAdjust: canAdjustTeam2,
+                isZero: Boolean(dispo2 && dispo2.starting > 0 && dispo2.current === 0),
                 turns: turns.filter((t) => t.team === "2" || t.team === 2)
             },
             team0: {
                 id: "0",
                 label: game.i18n.localize("COMBAT.Team0"),
                 goal: null,
+                disposition: null,
+                hasDisposition: false,
+                canAdjust: false,
+                isZero: false,
                 turns: turns.filter((t) => !t.team || t.team === "0" || t.team === 0)
             }
         };
@@ -83,7 +112,7 @@ export default class MouseCombatTracker extends CombatTracker {
         entries.unshift({
             label: "COMBAT.ConflictCaptain",
             icon: "fa-solid fa-crown",
-            visible: (li) => game.user.isGM,
+            visible: () => game.user.isGM,
             onClick: async (event, li) => {
                 const combatantId = li.dataset.combatantId;
                 const combatant = this.viewed?.combatants.get(combatantId);
@@ -178,12 +207,34 @@ export default class MouseCombatTracker extends CombatTracker {
     /*  Action Handlers                             */
     /* -------------------------------------------- */
 
-    static async #onAskMove(event, target) {
+    static async #onAskMove() {
         await this.viewed?.askMove();
     }
 
-    static async #onAskGoal(event, target) {
+    static async #onAskGoal() {
         await this.viewed?.askGoal();
+    }
+
+    static async #onAskDisposition(_event, target) {
+        const team = target.dataset.team;
+        await this.viewed?.askDisposition(team);
+    }
+
+    static async #onAdjustDisposition(event, target) {
+        event.preventDefault();
+        event.stopPropagation();
+        const team = target.dataset.team;
+        const delta = parseInt(target.dataset.delta, 10) || 0;
+        if (!team || !delta || !this.viewed) return;
+        await MouseSocket.requestAdjustDisposition(this.viewed.id, team, delta);
+    }
+
+    static async #onSetDisposition(event, target) {
+        event.preventDefault();
+        event.stopPropagation();
+        const team = target.dataset.team;
+        if (!team || !this.viewed) return;
+        await MouseSocket.askDisposition({ combat: this.viewed, team });
     }
 
     static async #onDoMove(event, target) {
@@ -202,7 +253,7 @@ export default class MouseCombatTracker extends CombatTracker {
     firstOwner(doc) {
         if (!doc) return null;
         const owners = Object.entries(doc.ownership || {})
-            .filter(([id, level]) => level === CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER)
+            .filter(([, level]) => level === CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER)
             .map(([id]) => game.users.get(id))
             .filter((u) => u && u.active);
 

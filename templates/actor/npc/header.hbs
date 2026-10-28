@@ -30,8 +30,6 @@
     </section>
 
     <section class="mgs-note mgs-npc-box">
-        <h3 class="mgs-subhead">{{localize "MOUSEGUARD.Sheet.Disposition"}}</h3>
-        {{> "systems/mouseguard/templates/actor/npc/parts/disposition.hbs"}}
         {{#if editable}}
         <a class="mgs-chip mgs-key-chip {{#if keyCharacter}}active{{/if}}" data-action="toggleKey" role="button" tabindex="0"
            aria-pressed="{{#if keyCharacter}}true{{else}}false{{/if}}" data-tooltip="MOUSEGUARD.NPCSheet.KeyCharacterHint">

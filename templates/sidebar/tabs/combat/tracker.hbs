@@ -4,7 +4,39 @@
         <div class="combat-team-header flexrow" data-team="{{ team.id }}">
             <h3 class="team-title noborder">{{ team.label }}</h3>
             {{#if team.goal}}
-            <span class="team-goal-text">{{ team.goal }}</span>
+            <span class="team-goal-text" data-tooltip="{{ team.goal }}">{{ team.goal }}</span>
+            {{/if}}
+
+            {{#if (ne team.id "0")}}
+            <div class="team-disposition-block flexrow">
+                <span class="team-dispo-label">{{localize "MOUSEGUARD.Sheet.Disposition"}}:</span>
+                {{#if team.hasDisposition}}
+                    {{#if team.canAdjust}}
+                    <button type="button" class="team-dispo-btn minus" data-action="adjustDisposition" data-team="{{ team.id }}" data-delta="-1" data-tooltip="{{ localize 'MOUSEGUARD.DispositionMinus' }}" aria-label="{{ localize 'MOUSEGUARD.DispositionMinus' }}">
+                        <i class="fa-solid fa-minus" inert></i>
+                    </button>
+                    {{/if}}
+                    <span class="team-dispo-value {{#if team.isZero}}is-zero{{/if}}">
+                        <strong>{{ team.disposition.current }}</strong>&sol;{{ team.disposition.starting }}
+                    </span>
+                    {{#if team.canAdjust}}
+                    <button type="button" class="team-dispo-btn plus" data-action="adjustDisposition" data-team="{{ team.id }}" data-delta="1" data-tooltip="{{ localize 'MOUSEGUARD.DispositionPlus' }}" aria-label="{{ localize 'MOUSEGUARD.DispositionPlus' }}">
+                        <i class="fa-solid fa-plus" inert></i>
+                    </button>
+                    <button type="button" class="team-dispo-btn edit" data-action="setDisposition" data-team="{{ team.id }}" data-tooltip="{{ localize 'MOUSEGUARD.Conflict.EditDisposition' }}" aria-label="{{ localize 'MOUSEGUARD.Conflict.EditDisposition' }}">
+                        <i class="fa-solid fa-pen-to-square" inert></i>
+                    </button>
+                    {{/if}}
+                {{else}}
+                    {{#if team.canAdjust}}
+                    <button type="button" class="team-dispo-set-btn" data-action="setDisposition" data-team="{{ team.id }}" data-tooltip="{{ localize 'MOUSEGUARD.Conflict.SetDisposition' }}">
+                        <i class="fa-solid fa-plus" inert></i> {{ localize "MOUSEGUARD.Conflict.SetDisposition" }}
+                    </button>
+                    {{else}}
+                    <span class="team-dispo-empty">{{ localize "MOUSEGUARD.Conflict.NoDisposition" }}</span>
+                    {{/if}}
+                {{/if}}
+            </div>
             {{/if}}
         </div>
 

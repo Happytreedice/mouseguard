@@ -164,6 +164,9 @@ Hooks.once("init", async function () {
         if (data.action === "setGoal") MouseSocket.setGoal(data);
         if (data.action === "askMoves") MouseSocket.askMoves(data);
         if (data.action === "setMoves") MouseSocket.setMoves(data);
+        if (data.action === "askDisposition") MouseSocket.askDisposition(data);
+        if (data.action === "setDisposition") MouseSocket.setDisposition(data);
+        if (data.action === "adjustDisposition") MouseSocket.adjustDisposition(data);
     });
 
     // Register Handlebars Helpers

@@ -4721,6 +4721,7 @@ var preloadHandlebarsTemplates = async function() {
     "systems/mouseguard/templates/effects/effect.hbs",
     "systems/mouseguard/templates/parts/conflict-manager.hbs",
     "systems/mouseguard/templates/parts/conflict-move-manager.hbs",
+    "systems/mouseguard/templates/parts/conflict-disposition.hbs",
     "systems/mouseguard/templates/parts/sheet-attributes.html",
     "systems/mouseguard/templates/parts/sheet-groups.html",
     "systems/mouseguard/templates/chat/combat-action.hbs",
@@ -4890,6 +4891,99 @@ var MouseSocket = class {
       }
     }
   }
+  static async askDisposition(data) {
+    const combatId = data.combat?.id ?? data.combat?._id ?? data.combat;
+    const combat = game.combats.get(combatId);
+    const team = String(data.team || "1");
+    const teamLabel = game.i18n.localize(team === "2" ? "COMBAT.Team2" : "COMBAT.Team1");
+    const currentDispo = data.disposition || combat?.getDisposition?.(team) || { current: 0, starting: 0 };
+    const htmlContent = await foundry.applications.handlebars.renderTemplate(
+      "systems/mouseguard/templates/parts/conflict-disposition.hbs",
+      {
+        team,
+        teamLabel,
+        disposition: currentDispo
+      }
+    );
+    const dialog = new foundry.applications.api.DialogV2({
+      window: {
+        title: game.i18n.format("MOUSEGUARD.Conflict.DispositionTitle", { team: teamLabel })
+      },
+      content: htmlContent,
+      buttons: [
+        {
+          action: "ok",
+          label: "MOUSEGUARD.Conflict.Apply",
+          default: true,
+          callback: async (event, button, dialog2) => {
+            const form = dialog2.element.querySelector("form") ?? dialog2.element;
+            const startingVal = parseInt(form.querySelector("#conflict_dispo_starting")?.value, 10) || 0;
+            const currentVal = parseInt(form.querySelector("#conflict_dispo_current")?.value, 10) || startingVal;
+            await this.requestSetDisposition(combatId, team, startingVal, currentVal);
+          }
+        },
+        {
+          action: "cancel",
+          label: "MOUSEGUARD.Conflict.Cancel"
+        }
+      ]
+    });
+    dialog.render(true);
+  }
+  static async setDisposition(data) {
+    if (!game.user.isGM) return;
+    const combatId = data.combat?.id ?? data.combat?._id ?? data.combat;
+    const combat = game.combats.get(combatId);
+    if (!combat) return;
+    const team = String(data.team || "1");
+    const starting = Math.max(0, parseInt(data.starting, 10) || 0);
+    const current = Math.max(0, Math.min(starting, parseInt(data.current ?? starting, 10) || 0));
+    await combat.setDisposition(team, { starting, current });
+  }
+  static async adjustDisposition(data) {
+    if (!game.user.isGM) return;
+    const combatId = data.combat?.id ?? data.combat?._id ?? data.combat;
+    const combat = game.combats.get(combatId);
+    if (!combat) return;
+    const team = String(data.team || "1");
+    const delta = parseInt(data.delta, 10) || 0;
+    await combat.adjustDisposition(team, delta);
+    const updated = combat.getDisposition(team);
+    if (updated && updated.current === 0) {
+      const teamLabel = game.i18n.localize(team === "2" ? "COMBAT.Team2" : "COMBAT.Team1");
+      ui.notifications.warn(game.i18n.format("MOUSEGUARD.Conflict.TeamDefeated", { team: teamLabel }));
+      ChatMessage.create({
+        content: `<div class="mouse-conflict-defeated"><strong>${teamLabel}</strong>: ${game.i18n.format("MOUSEGUARD.Conflict.TeamDefeated", { team: teamLabel })}</div>`
+      });
+    }
+  }
+  static async requestAdjustDisposition(combatId, team, delta) {
+    const payload = {
+      action: "adjustDisposition",
+      combat: combatId,
+      team: String(team),
+      delta: Number(delta)
+    };
+    if (game.user.isGM) {
+      await this.adjustDisposition(payload);
+    } else {
+      game.socket.emit("system.mouseguard", payload);
+    }
+  }
+  static async requestSetDisposition(combatId, team, starting, current) {
+    const payload = {
+      action: "setDisposition",
+      combat: combatId,
+      team: String(team),
+      starting: Number(starting),
+      current: Number(current)
+    };
+    if (game.user.isGM) {
+      await this.setDisposition(payload);
+    } else {
+      game.socket.emit("system.mouseguard", payload);
+    }
+  }
   static async askMoves(data) {
     const htmlContent = await foundry.applications.handlebars.renderTemplate(
       "systems/mouseguard/templates/parts/conflict-move-manager.hbs",
@@ -5007,6 +5101,8 @@ var MouseCombat = class extends Combat {
           ConflictCaptain2: null,
           goal1: null,
           goal2: null,
+          disposition1: null,
+          disposition2: null,
           team1Move: null,
           team2Move: null
         }
@@ -5014,13 +5110,33 @@ var MouseCombat = class extends Combat {
     });
     return allowed;
   }
+  getDisposition(team) {
+    return this.getFlag("mouseguard", "disposition" + team) ?? null;
+  }
+  async setDisposition(team, data) {
+    const starting = Math.max(0, parseInt(data.starting, 10) || 0);
+    const current = Math.max(0, Math.min(starting, parseInt(data.current ?? starting, 10) || 0));
+    return this.setFlag("mouseguard", "disposition" + team, { current, starting });
+  }
+  async adjustDisposition(team, delta) {
+    const currentData = this.getDisposition(team);
+    if (!currentData || !currentData.starting) return;
+    const current = Math.max(0, Math.min(currentData.starting, currentData.current + delta));
+    return this.setFlag("mouseguard", "disposition" + team, { ...currentData, current });
+  }
   async startCombat() {
     const goal = this.getFlag("mouseguard", "goal1");
     const goal2 = this.getFlag("mouseguard", "goal2");
     const CC = this.getFlag("mouseguard", "ConflictCaptain");
     const CC2 = this.getFlag("mouseguard", "ConflictCaptain2");
+    const dispo1 = this.getDisposition("1");
+    const dispo2 = this.getDisposition("2");
     if (!CC) {
       ui.notifications.error(game.i18n.localize("COMBAT.NeedCC"));
+      return false;
+    }
+    if (!CC2) {
+      ui.notifications.error(game.i18n.localize("MOUSEGUARD.Conflict.NeedCaptainTeam2"));
       return false;
     }
     if (!goal) {
@@ -5033,7 +5149,17 @@ var MouseCombat = class extends Combat {
       await this.askGoal();
       return false;
     }
-    if (goal && goal2 && CC && CC2) {
+    if (!dispo1 || !dispo1.starting) {
+      ui.notifications.warn(game.i18n.localize("MOUSEGUARD.Conflict.NeedDisposition"));
+      await this.askDisposition("1");
+      return false;
+    }
+    if (!dispo2 || !dispo2.starting) {
+      ui.notifications.warn(game.i18n.localize("MOUSEGUARD.Conflict.NeedDisposition"));
+      await this.askDisposition("2");
+      return false;
+    }
+    if (goal && goal2 && CC && CC2 && dispo1?.starting && dispo2?.starting) {
       await this.askMove();
       return this.update({ round: 1, turn: 0 });
     }
@@ -5074,6 +5200,37 @@ var MouseCombat = class extends Combat {
         { action: "askGoal", combat: this.id, team: "2" },
         { recipients: [player2.id] }
       );
+    }
+  }
+  async askDisposition(team) {
+    const CC = this.getFlag("mouseguard", "ConflictCaptain");
+    const CC2 = this.getFlag("mouseguard", "ConflictCaptain2");
+    if (!CC) {
+      ui.notifications.error(game.i18n.localize("MOUSEGUARD.Conflict.NeedCaptainTeam1"));
+      return false;
+    }
+    if (!CC2) {
+      ui.notifications.error(game.i18n.localize("MOUSEGUARD.Conflict.NeedCaptainTeam2"));
+      return false;
+    }
+    const teamsToAsk = team ? [String(team)] : ["1", "2"];
+    for (const t of teamsToAsk) {
+      const ccId = t === "2" ? CC2 : CC;
+      const player = this.getCCPlayerByID(ccId);
+      const dispo = this.getDisposition(t) || { current: 0, starting: 0 };
+      const payload = {
+        action: "askDisposition",
+        combat: this.id,
+        team: t,
+        disposition: dispo
+      };
+      if (player && player.id === game.user.id) {
+        await MouseSocket.askDisposition(payload);
+      } else if (player) {
+        await game.socket.emit("system.mouseguard", payload, {
+          recipients: [player.id]
+        });
+      }
     }
   }
   async setGoal(goal, team) {
@@ -5143,6 +5300,9 @@ var MouseCombatTracker = class _MouseCombatTracker extends CombatTracker {
     actions: {
       askMove: _MouseCombatTracker.#onAskMove,
       askGoal: _MouseCombatTracker.#onAskGoal,
+      askDisposition: _MouseCombatTracker.#onAskDisposition,
+      adjustDisposition: _MouseCombatTracker.#onAdjustDisposition,
+      setDisposition: _MouseCombatTracker.#onSetDisposition,
       doMove: _MouseCombatTracker.#onDoMove
     }
   };
@@ -5177,23 +5337,43 @@ var MouseCombatTracker = class _MouseCombatTracker extends CombatTracker {
     await super._prepareTrackerContext(context, options);
     const combat = this.viewed;
     const turns = context.turns || [];
+    const dispo1 = combat?.getDisposition?.("1") || combat?.getFlag("mouseguard", "disposition1") || null;
+    const dispo2 = combat?.getDisposition?.("2") || combat?.getFlag("mouseguard", "disposition2") || null;
+    const cc1Id = combat?.getFlag("mouseguard", "ConflictCaptain");
+    const cc2Id = combat?.getFlag("mouseguard", "ConflictCaptain2");
+    const cc1Combatant = cc1Id ? combat?.combatants.get(cc1Id) : null;
+    const cc2Combatant = cc2Id ? combat?.combatants.get(cc2Id) : null;
+    const canAdjustTeam1 = game.user.isGM || Boolean(cc1Combatant?.actor?.isOwner);
+    const canAdjustTeam2 = game.user.isGM || Boolean(cc2Combatant?.actor?.isOwner);
     context.teams = {
       team1: {
         id: "1",
         label: game.i18n.localize("COMBAT.Team1"),
         goal: combat?.getFlag("mouseguard", "goal1") || game.i18n.localize("COMBAT.NoGoal"),
+        disposition: dispo1,
+        hasDisposition: Boolean(dispo1 && dispo1.starting > 0),
+        canAdjust: canAdjustTeam1,
+        isZero: Boolean(dispo1 && dispo1.starting > 0 && dispo1.current === 0),
         turns: turns.filter((t) => t.team === "1" || t.team === 1)
       },
       team2: {
         id: "2",
         label: game.i18n.localize("COMBAT.Team2"),
         goal: combat?.getFlag("mouseguard", "goal2") || game.i18n.localize("COMBAT.NoGoal"),
+        disposition: dispo2,
+        hasDisposition: Boolean(dispo2 && dispo2.starting > 0),
+        canAdjust: canAdjustTeam2,
+        isZero: Boolean(dispo2 && dispo2.starting > 0 && dispo2.current === 0),
         turns: turns.filter((t) => t.team === "2" || t.team === 2)
       },
       team0: {
         id: "0",
         label: game.i18n.localize("COMBAT.Team0"),
         goal: null,
+        disposition: null,
+        hasDisposition: false,
+        canAdjust: false,
+        isZero: false,
         turns: turns.filter((t) => !t.team || t.team === "0" || t.team === 0)
       }
     };
@@ -5207,7 +5387,7 @@ var MouseCombatTracker = class _MouseCombatTracker extends CombatTracker {
     entries.unshift({
       label: "COMBAT.ConflictCaptain",
       icon: "fa-solid fa-crown",
-      visible: (li) => game.user.isGM,
+      visible: () => game.user.isGM,
       onClick: async (event, li) => {
         const combatantId = li.dataset.combatantId;
         const combatant = this.viewed?.combatants.get(combatantId);
@@ -5285,11 +5465,30 @@ var MouseCombatTracker = class _MouseCombatTracker extends CombatTracker {
   /* -------------------------------------------- */
   /*  Action Handlers                             */
   /* -------------------------------------------- */
-  static async #onAskMove(event, target) {
+  static async #onAskMove() {
     await this.viewed?.askMove();
   }
-  static async #onAskGoal(event, target) {
+  static async #onAskGoal() {
     await this.viewed?.askGoal();
+  }
+  static async #onAskDisposition(_event, target) {
+    const team = target.dataset.team;
+    await this.viewed?.askDisposition(team);
+  }
+  static async #onAdjustDisposition(event, target) {
+    event.preventDefault();
+    event.stopPropagation();
+    const team = target.dataset.team;
+    const delta = parseInt(target.dataset.delta, 10) || 0;
+    if (!team || !delta || !this.viewed) return;
+    await MouseSocket.requestAdjustDisposition(this.viewed.id, team, delta);
+  }
+  static async #onSetDisposition(event, target) {
+    event.preventDefault();
+    event.stopPropagation();
+    const team = target.dataset.team;
+    if (!team || !this.viewed) return;
+    await MouseSocket.askDisposition({ combat: this.viewed, team });
   }
   static async #onDoMove(event, target) {
     const combatantId = target.dataset.combatantId;
@@ -5304,7 +5503,7 @@ var MouseCombatTracker = class _MouseCombatTracker extends CombatTracker {
   /* -------------------------------------------- */
   firstOwner(doc) {
     if (!doc) return null;
-    const owners = Object.entries(doc.ownership || {}).filter(([id, level]) => level === CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER).map(([id]) => game.users.get(id)).filter((u) => u && u.active);
+    const owners = Object.entries(doc.ownership || {}).filter(([, level]) => level === CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER).map(([id]) => game.users.get(id)).filter((u) => u && u.active);
     const playerOwner = owners.find((u) => !u.isGM);
     return playerOwner ?? owners.find((u) => u.isGM) ?? null;
   }
@@ -6386,6 +6585,9 @@ Hooks.once("init", async function() {
     if (data.action === "setGoal") MouseSocket.setGoal(data);
     if (data.action === "askMoves") MouseSocket.askMoves(data);
     if (data.action === "setMoves") MouseSocket.setMoves(data);
+    if (data.action === "askDisposition") MouseSocket.askDisposition(data);
+    if (data.action === "setDisposition") MouseSocket.setDisposition(data);
+    if (data.action === "adjustDisposition") MouseSocket.adjustDisposition(data);
   });
   Handlebars.registerHelper("slugify", function(value) {
     return typeof value === "string" ? value.slugify({ strict: true }) : "";

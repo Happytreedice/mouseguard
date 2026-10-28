@@ -73,7 +73,6 @@
         "units": "ft"
     },
     "initiative": "1d20",
-    "primaryTokenAttribute": "disposition.current",
     "url": "https://github.com/Happytreedice/mouseguard",
     "manifest": "https://github.com/Happytreedice/mouseguard/releases/latest/download/system.json",
     "download": "https://github.com/Happytreedice/mouseguard/releases/download/v0.3.0/system.zip",

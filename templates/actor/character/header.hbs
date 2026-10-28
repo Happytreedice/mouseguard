@@ -45,21 +45,6 @@
             </div>
             {{/each}}
         </div>
-        <div class="mgs-dispo" data-tooltip="MOUSEGUARD.Sheet.DispositionHint">
-            <span class="mgs-dispo-label">{{localize "MOUSEGUARD.Sheet.Disposition"}}</span>
-            {{#if editMode}}
-            <input type="number" name="system.disposition.current" value="{{disposition.current}}" min="0" step="1"
-                   aria-label="{{localize "MOUSEGUARD.Sheet.DispositionCurrent"}}">
-            <span class="mgs-dispo-sep">/</span>
-            <input type="number" name="system.disposition.starting" value="{{disposition.starting}}" min="0" step="1"
-                   aria-label="{{localize "MOUSEGUARD.Sheet.DispositionStarting"}}">
-            {{else}}
-            <a class="mgs-dispo-value" data-action="adjust" data-path="system.disposition.current" data-min="0" data-max="99"
-               role="button" tabindex="0">{{disposition.current}}</a>
-            <span class="mgs-dispo-sep">/</span>
-            <span class="mgs-dispo-start">{{disposition.starting}}</span>
-            {{/if}}
-        </div>
     </section>
   </div>
 </header>
